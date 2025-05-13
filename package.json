@@ -1,0 +1,45 @@
+{
+  "name": "backend-de-ledi",
+  "version": "1.0.0",
+  "description": "\"# Backend-de-Ledi\"",
+  "homepage": "https://github.com/LediBackend/Backend-de-Ledi#readme",
+  "bugs": {
+    "url": "https://github.com/LediBackend/Backend-de-Ledi/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LediBackend/Backend-de-Ledi.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/chalk": "^0.4.31",
+    "@types/nodemon": "^1.19.6",
+    "bcrypt": "^5.1.1",
+    "bcrypt-ts": "^6.0.0",
+    "chalk": "^5.4.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "mongoose": "^8.13.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.1",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

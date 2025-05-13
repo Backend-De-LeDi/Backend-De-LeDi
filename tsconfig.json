@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Traduce el código a ES2020, compatible con Node.js moderno.
+    "module": "CommonJS", // Utiliza módulos ECMAScript (ESM).
+    "rootDir": "./src", // Carpeta que contiene tu código fuente.
+    "outDir": "./dist", // Carpeta donde se generan los archivos compilados.
+    "strict": true, // Habilita todas las comprobaciones estrictas.
+    "esModuleInterop": true, // Facilita la interoperabilidad con módulos CommonJS.
+    "resolveJsonModule": true, // Permite importar archivos JSON directamente.
+    "forceConsistentCasingInFileNames": true, // Garantiza consistencia en los nombres de archivo.
+    "moduleResolution": "node", // Configura el sistema de resolución de módulos a Node.js.
+    "noEmit": false, // No emite archivos compilados.
+    "skipLibCheck": true, // Omite la comprobación de tipos en bibliotecas para mejorar la velocidad.
+    "allowSyntheticDefaultImports": true, // Permite importaciones por defecto para compatibilidad con ES.
+    "incremental": false, // Acelera las recompilaciones incrementales.
+    "types": ["node"], // Incluye tipos de Node.js automáticamente.
+    "allowImportingTsExtensions": false
+  },
+  "include": [
+    "src/**/*" // Incluye todos los archivos dentro de `src`.
+  ],
+  "exclude": [
+    "node_modules", // Excluye la carpeta de módulos de Node.js.
+    "dist" // Evita compilar los archivos generados.
+  ]
+}
