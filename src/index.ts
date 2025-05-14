@@ -9,10 +9,13 @@ import chalk from "chalk";
 import route from "./books/infrastructure/expressBooksRouter";
 
 const app = express();
+
 const fileUpload = path.join(__dirname, "./uploads");
+
 if (!fs.existsSync(fileUpload)) {
   fs.mkdirSync(fileUpload, { recursive: true });
 }
+
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
