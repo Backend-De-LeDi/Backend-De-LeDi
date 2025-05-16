@@ -6,7 +6,7 @@ import connections from "./books/infrastructure/db/database";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
-import route from "./books/infrastructure/expressBooksRouter";
+import route from "./books/infrastructure/booksRouter";
 
 const app = express();
 
