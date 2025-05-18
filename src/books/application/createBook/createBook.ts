@@ -1,9 +1,11 @@
 import { Books } from "../../domain/books";
 import { BooksRepository } from "../../domain/booksRepository";
 import type { Types } from "mongoose";
-import { coverImage } from "../../../types/book.types";
+import { coverImage } from "../../../types/bookTypes";
+
 export class BookCreate {
   constructor(private repository: BooksRepository) {}
+
   async run(
     title: string,
     descriptions: string,
@@ -16,7 +18,9 @@ export class BookCreate {
     coverImage: coverImage
   ): Promise<void> {
     const book = new Books(title, descriptions, author, userId, category, language, available, content, coverImage);
+
     console.log(book);
+
     await this.repository.createBook(book);
   }
 }
