@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import ENV from "../config/config.env";
+import ENV from "../config/configEnv";
 import chalk from "chalk";
 
 cloudinary.config({
