@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import { coverImage } from "../../types/book.types";
+import { coverImage } from "../../types/bookTypes";
 export class Books {
   constructor(
     public title: string,
