@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import ENV from "./books/shader/config/config.env";
+import ENV from "./books/shader/config/configEnv";
 import connections from "./books/infrastructure/db/database";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
-import route from "./books/infrastructure/booksRouter";
+import route from "./books/infrastructure/booksRoute";
 
 const app = express();
 
