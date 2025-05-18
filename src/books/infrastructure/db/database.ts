@@ -1,5 +1,5 @@
 import mongoose, { Connection } from "mongoose";
-import ENV from "../../shader/config/config.env";
+import ENV from "../../shader/config/configEnv";
 import chalk from "chalk";
 
 const connections = async (): Promise<Connection> => {
