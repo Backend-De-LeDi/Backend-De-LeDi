@@ -10,6 +10,7 @@ import chalk from "chalk";
 import { separator } from "../shader/utils/consoleSeparator";
 import { deleteCoverImage } from "../shader/utils/deleteCoverImage";
 import { fileDelete } from "../shader/utils/deleteFile";
+import { sendFile } from "../shader/utils/sendFile";
 
 export class ExpressController {
   //método para crear libros
@@ -51,6 +52,8 @@ export class ExpressController {
       const contentId = new mongoose.Types.ObjectId(String(newContent._id));
       await newContent.save();
 
+      const pathInternal = await sendFile(newContent.path);
+
       await serviceContainer.book.createBook.run(
         textFormat,
         descriptions,
@@ -60,6 +63,7 @@ export class ExpressController {
         language,
         isAvailable,
         contentId,
+        pathInternal.path,
         coverImage
       );
 
