@@ -19,6 +19,7 @@ export interface IBook extends PropBooks {
   createdAt: Date;
   content: Types.ObjectId;
   coverImage: coverImage;
+  pathInternal: string;
 }
 
 export interface SearchedBook extends IBook {
