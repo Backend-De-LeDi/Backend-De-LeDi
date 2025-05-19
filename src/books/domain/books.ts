@@ -10,6 +10,7 @@ export class Books {
     public language: string,
     public available: boolean,
     public content: Types.ObjectId,
+    public pathInternal: string,
     public coverImage: coverImage
   ) {}
 }
