@@ -11,6 +11,7 @@ const bookSchema = new Schema<IBook>({
   available: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   content: { type: Schema.Types.ObjectId, ref: "ContentBooks", required: true },
+  pathInternal: { type: String, require: true },
   coverImage: {
     type: {
       id_image: { type: String, required: true },
