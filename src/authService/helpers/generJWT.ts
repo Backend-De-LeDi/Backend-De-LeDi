@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-import ENV from "../config/env";
-import { AuthUser } from "../types/auth-types";
+import ENV from "../../config/env";
 
 const JWT_SECRET = "clave_secreta";
 export const generarJWT = (id: any) => {

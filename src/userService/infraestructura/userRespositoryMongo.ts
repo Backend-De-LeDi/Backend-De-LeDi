@@ -1,6 +1,8 @@
-import { UserModel } from "./DataBase/models/userModels";
+import { UserModel } from "./models/userModels";
 import { IUserRepository } from "../domain/ports/UserRepositoryPorts";
+
 import { User } from "../domain/entities/UserTypes";
+
 
 export class UserMongoRepository implements IUserRepository {
     async createUser(user: User): Promise<User> {
@@ -8,6 +10,8 @@ export class UserMongoRepository implements IUserRepository {
         return await newUser.save();
     }
 }
+
+
 // async findUser(): Promise<User[]> {
 //     return await UserModel.find().exec()
 // }
@@ -16,9 +20,7 @@ export class UserMongoRepository implements IUserRepository {
 // async findByID(id: any): Promise<User | null> {
 //     return await UserModel.findById(id).exec()
 // }
-// async findByEmail(email: string): Promise<User | null> {
-//     return await UserModel.findOne({ email: email }).exec()
-// }
+
 // async findByUserName(userName: string): Promise<User | null> {
 //     return await UserModel.findOne({ userName: userName }).exec()
 // }

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { registerValidation } from "../../shared/validations/user.validations";
 
 import { createUsers, } from "../controllers/user.controllers";
+import { registerValidation } from "../../../shared/validations/user.validations";
 
 export const userRoutes = Router();
 

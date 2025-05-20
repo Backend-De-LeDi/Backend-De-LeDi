@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { getMeCtrl, login, logout, } from "../controllers/auth.controllers";
-import { validateJWT } from "../middleware/validateJWT";
+import { validateJWT } from "../../../shared/middlewares/validateJWT";
 
 export const authRoutes = Router();
 

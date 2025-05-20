@@ -1,25 +1,20 @@
 //dates of user
-// export interface User {
-//     id: any;
-//     userName: string,
-//     name: string,
-//     lastName: string,
-//     email: string,
-//     password: string,
-//     birthDate: Date,
-//     rol: string,
-//     avatar?: string,
-//     preference: {
-//         category: string[],
-//         language: string
-//     }
-// }
 export class User {
+    public _id: any;
     constructor(
         public readonly email: string,
         public readonly password: string,
+        public readonly lastName: string,
         public readonly userName: string,
-
+        public readonly name: string,
+        public readonly birthDate: Date,
+        public readonly rol: string,
+        public readonly nivel: string,
+        public readonly avatar: string,
+        public readonly preference: {
+            category: string[],
+            language: string
+        }
 
     ) { }
 }

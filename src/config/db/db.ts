@@ -1,6 +1,6 @@
 // db.ts
 import mongoose from 'mongoose';
-import ENV from '../../../config/env';
+import ENV from '../env';
 
 const mongoURL = ENV.mongoURL as string;
 

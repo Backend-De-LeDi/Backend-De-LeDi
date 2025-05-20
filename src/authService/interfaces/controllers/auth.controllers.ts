@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import session from 'express-session';
 
 
 declare global {
@@ -10,10 +11,13 @@ declare global {
     }
 
 }
-import { generarJWT } from "../helpers/generJWT";
-import { save_user } from "../utils/getUserDates";
+import { generarJWT } from "../../helpers/generJWT";
+import { AuthUserRepository } from "../../domain/authUserRepository";
+import { AuthMongoRepostitory } from "../../infraestructura/authUserRepositoryMongo";
+import { Auth_users } from "../../application/service/Auth.Service";
 
-// const authService = new AuthService();
+const authUserRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory()
+const authUserService = new Auth_users(authUserRepositoryMongo)
 
 declare module "express-session" {
     interface SessionData {
@@ -28,13 +32,12 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
-        const result = await save_user(email, password)
-        console.log(result.result.name)
+        const result = await authUserService.login(email, password)
 
         if (!result) {
             res.status(401).json({ msg: 'Credenciales incorrectas' });
         } else {
-            const id = result.result._id
+            const id = result._id
             console.log(id)
             const token = await generarJWT(id);
             req.session.token = token;
