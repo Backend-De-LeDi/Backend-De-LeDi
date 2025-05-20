@@ -6,6 +6,7 @@ export interface IUserRepository {
 }
 
 
+
 // findUser(): Promise<User[]>
 // findByID(id: any): Promise<User | null>
 // findByUserName(user: string): Promise<User | null>

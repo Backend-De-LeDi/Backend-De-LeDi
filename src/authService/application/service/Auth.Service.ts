@@ -1,7 +1,7 @@
 // application/Auth_users.ts
 import bcrypt from 'bcrypt';
 import { User } from "../../../userService/domain/entities/UserTypes";
-import { AuthUserRepository } from "../../domain/authUserRepository";
+import { AuthUserRepository } from "../../../userService/domain/ports/AuthUserRepository";
 
 export class Auth_users {
     constructor(

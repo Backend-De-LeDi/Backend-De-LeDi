@@ -1,19 +1,26 @@
 import { Request, Response } from "express";
-import { UserMongoRepository } from "../../infraestructura/userRespositoryMongo";
+import { AuthMongoRepostitory, UniqueUsernameRepository, UserMongoRepository } from "../../infraestructura/userRespositoryMongo";
 import { User } from "../../domain/entities/UserTypes";
 import { IUserRepository } from "../../domain/ports/UserRepositoryPorts";
-import { User_data } from "../../application/service/User.Service";
+import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
+import { UniqueUserName } from "../../domain/ports/UniqueUserNAme";
+import { User_data } from "../../application/service/Register.Service";
 interface UserRequestParams {
     id: string;
 }
 
 // initialize the user service
 const userRespositoryMongo: IUserRepository = new UserMongoRepository()
-const userService: IUserRepository = new User_data(userRespositoryMongo)
+const authRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory()
+const uniqueUsernameRepository = new UniqueUsernameRepository();
+const uniqueUsername = new UniqueUsernameRepository();
+const userService: IUserRepository = new User_data(userRespositoryMongo, authRepositoryMongo, uniqueUsername)
+
 export const createUsers = async (req: Request<UserRequestParams>, res: Response) => {
     try {
         const users: User = req.body;
         const result = await userService.createUser(users)
+
 
         res.status(200).json(result)
 
