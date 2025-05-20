@@ -7,6 +7,4 @@ export interface BooksRepository {
   getAllBooks(): Promise<Books[]>;
   deleteBook(id: Types.ObjectId): Promise<void>;
   getBookById(id: Types.ObjectId): Promise<SearchedBook | null>;
-  // getBookById(id: ObjectId): Promise<Books | null>;
-  // delete(id: ObjectId): Promise<void>;
 }
