@@ -61,8 +61,8 @@ export const login = async (req: Request, res: Response) => {
 
 
     } catch (error) {
-        console.error("Error en /login:", error);
-        res.status(500).json({ msg: 'Error interno del servidor' });
+        console.log(error)
+        res.status(500).json({ message: "internal server error", error });
     }
 }
 
@@ -76,12 +76,19 @@ export const getMeCtrl = async (req: Request, res: Response): Promise<void> => {
 }
 export const logout = async (req: Request, res: Response) => {
     req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ message: "error closing session" });
-        }
-        res.clearCookie("connect.sid");
-        res.clearCookie('token');
+        try {
+            if (err) {
+                return res.status(500).json({ message: "error closing session" });
+            }
+            res.clearCookie("connect.sid");
+            res.clearCookie('token');
 
-        return res.json({ message: "Session closed successfully" });
+            return res.json({ message: "Session closed successfully" });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "internal server error", error });
+        }
+
+
     });
 }

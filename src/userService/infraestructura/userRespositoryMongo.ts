@@ -1,12 +1,15 @@
 import { UserModel } from "./models/userModels";
-import { IUserRepository } from "../domain/ports/UserRepositoryPorts";
+import { IRegisterRepository } from "../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../domain/ports/AuthUserRepository";
-import { UniqueUserName } from "../domain/ports/UniqueUserNAme";
+import { UniqueUserName } from "../domain/ports/UniqueUserName";
 
 import { User } from "../domain/entities/UserTypes";
+import { UpdateUSerRepository } from "../domain/ports/UpdateUserRepository";
+import { FindAndDeleteRepo } from "../domain/ports/FindAndDeleteRepo";
 
 
-export class UserMongoRepository implements IUserRepository {
+
+export class UserMongoRepository implements IRegisterRepository {
     async createUser(user: User): Promise<User> {
         const newUser = new UserModel(user)
         return await newUser.save();
@@ -34,22 +37,27 @@ export class UniqueUsernameRepository implements UniqueUserName {
     }
 }
 
+export class UpdateUSerMongo implements UpdateUSerRepository {
+    async updateUSer(id: string, User: Partial<User>): Promise<User | null> {
+        const newUser = await UserModel.findByIdAndUpdate(id, User, { new: true })
+        if (newUser) {
+            return newUser
+        }
+        return null
+    }
+}
 
-// async findUser(): Promise<User[]> {
-//     return await UserModel.find().exec()
-// }
+export class findAndDeleteMongo implements FindAndDeleteRepo {
+    async findByID(id: any): Promise<User | null> {
+        const result = await UserModel.findById(id)
+        return result
+    }
+    async deleteUser(id: string): Promise<void> {
+        const result = await UserModel.findByIdAndDelete(id)
+    }
+    async findUser(): Promise<User[]> {
+        const result = await UserModel.find()
+        return result
+    }
 
-
-// async findByID(id: any): Promise<User | null> {
-//     return await UserModel.findById(id).exec()
-// }
-
-// async findByUserName(userName: string): Promise<User | null> {
-//     return await UserModel.findOne({ userName: userName }).exec()
-// }
-// async updateUSer(id: string, User: Partial<User>): Promise<User | null> {
-//     return await UserModel.findByIdAndUpdate(id, User, { new: true })
-// }
-// async deleteUser(id: string): Promise<void> {
-//     const deleted = await UserModel.findByIdAndDelete(id)
-// }
+}

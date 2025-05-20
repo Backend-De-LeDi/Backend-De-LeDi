@@ -11,17 +11,18 @@ export const validateJWT = (req: Request, res: Response, next: NextFunction): vo
 
     if (!token || typeof token !== 'string') {
         res.status(403).json({ message: 'Token no proporcionado' });
-        return
+        return;
     }
 
-    jwt.verify(token as string, SECRET_KEY as string, (err, decoded) => {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
             res.status(401).json({ message: 'Token inválido' });
-            return
+            return;
         }
 
-        req.user = decoded; // <- Aquí debería agregarse correctamente
+        req.user = decoded;
         next();
     });
 };
+
 
