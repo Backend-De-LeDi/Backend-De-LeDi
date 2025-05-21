@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { FindAndDeleteUser } from "../../application/service/FindAndDelete.service";
 import { FindAndDeleteRepo } from "../../domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo } from "../../infraestructura/userRespositoryMongo";
-import { modifiers } from "chalk";
 
 
 const findAndDeleteUser: FindAndDeleteRepo = new findAndDeleteMongo()

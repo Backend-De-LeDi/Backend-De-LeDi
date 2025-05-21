@@ -2,7 +2,6 @@ import { UserModel } from "./models/userModels";
 import { IRegisterRepository } from "../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../domain/ports/UniqueUserName";
-
 import { User } from "../domain/entities/UserTypes";
 import { UpdateUSerRepository } from "../domain/ports/UpdateUserRepository";
 import { FindAndDeleteRepo } from "../domain/ports/FindAndDeleteRepo";

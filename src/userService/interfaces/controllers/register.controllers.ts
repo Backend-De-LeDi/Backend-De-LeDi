@@ -19,9 +19,7 @@ export const registers = async (req: Request<UserRequestParams>, res: Response) 
     try {
         const users: User = req.body;
         const result = await userService.createUser(users)
-
-
-        res.status(200).json(result)
+        res.status(200).json({ msg: 'user creaded  successful', result })
 
     } catch (error) {
         console.log(error)

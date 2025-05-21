@@ -35,37 +35,32 @@ export const login = async (req: Request, res: Response) => {
         const result = await authUserService.login(email, password)
 
         if (!result) {
-            res.status(401).json({ msg: 'Credenciales incorrectas' });
+            res.status(400).json({ msg: 'Credenciales incorrectas' });
         } else {
             const id = result._id
-            console.log(id)
+
             const token = await generarJWT(id);
             req.session.token = token;
             req.session.isLoggedIn = true
-            // req.session.id = result.result.id
 
-
-
-            console.log(token)
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
                 maxAge: 3600000,
             });
-            console.log(res.cookie)
+
             res.status(200).json({
                 msg: 'Authentication successful',
                 token,
             });
         }
-
-
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "internal server error", error });
     }
 }
 
+//get user 
 export const getMeCtrl = async (req: Request, res: Response): Promise<void> => {
     try {
         const user_data = req.user
@@ -74,6 +69,8 @@ export const getMeCtrl = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ message: (error as Error).message });
     }
 }
+
+//logout
 export const logout = async (req: Request, res: Response) => {
     req.session.destroy((err) => {
         try {

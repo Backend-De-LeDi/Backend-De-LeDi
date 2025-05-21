@@ -5,12 +5,11 @@ import connectDB from './config/db/db'
 import * as dotenv from "dotenv";
 dotenv.config();
 import ENV from "./config/env";
-// import separatorConsole from "./utils/consoleSeparator";
-
 
 import { userRoutes } from "./userService/interfaces/routes/userService.routes"
 import { authRoutes } from "./authService/interfaces/routes/auth.routes"
 import session from "express-session";
+import { bookRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 
 const app = express();
 connectDB()
@@ -29,6 +28,7 @@ app.use(session({
 
 app.use(userRoutes)
 app.use(authRoutes)
+app.use(bookRouter)
 
 
 app.listen(Number(ENV.PORT), () => {
