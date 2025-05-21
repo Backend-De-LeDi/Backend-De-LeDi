@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-export const bookRouter = Router();
+export const progressRouter = Router();
 import { saveBookProgress } from "../controllers/bookSaveProgress.controllers";
 import { updateProgresBook } from "../controllers/updateProgress.controllers";
 import { deleteProgresBook } from "../controllers/deleteProgress.controllers";
 
 
-bookRouter.post('/progress', saveBookProgress)
-bookRouter.put('/progress', updateProgresBook)
-bookRouter.delete('/progress', deleteProgresBook)
+progressRouter.post('/progress', saveBookProgress)
+progressRouter.put('/progress', updateProgresBook)
+progressRouter.delete('/progress', deleteProgresBook)
 
