@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import { BookSaveProgres } from "../../aplication/service/SaveProgress.Service";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
-import { BookProgresMongo } from "../../infraestructura/bookProgressRepoMongo";
+import { BookProgresMongo } from "../../infrastructure/bookProgressRepoMongo";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 
 const saveRepoMongo: BookProgresPort = new BookProgresMongo()

@@ -1,16 +1,7 @@
-// import chalk from "chalk";
-
-// const separatorConsole = (message: string, error?: any): void => {
-//   if (!error) {
-//     console.log("-----------------------------------------------------------------------");
-//     console.log(chalk.magenta(`                  ${message}`));
-//     console.log("-----------------------------------------------------------------------");
-//   } else {
-//     console.log("-----------------------------------------------------------------------");
-//     console.log(chalk.magenta(`                  ${message}`));
-//     console.log("-----------------------------------------------------------------------");
-//     console.log(error);
-//     console.log("-----------------------------------------------------------------------");
-//   }
-// };
-// export default separatorConsole;
+export const separator: () => string = () => {
+  let str = "";
+  for (let i = 0; i < 100; i++) {
+    str += "-";
+  }
+  return str;
+};

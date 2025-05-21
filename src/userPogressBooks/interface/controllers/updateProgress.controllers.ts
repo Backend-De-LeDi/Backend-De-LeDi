@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
-import { UpdateProgressMongo, DeleteRepo } from "../../infraestructura/bookProgressRepoMongo";
+import { UpdateProgressMongo, DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
 
 const updateRepo = new UpdateProgressMongo();
 const deleteRepo = new DeleteRepo();

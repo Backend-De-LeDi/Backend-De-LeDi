@@ -13,7 +13,7 @@ declare global {
 }
 import { generarJWT } from "../../helpers/generJWT";
 import { AuthUserRepository } from "../../../userService/domain/ports/AuthUserRepository";
-import { AuthMongoRepostitory } from "../../../userService/infraestructura/userRespositoryMongo";
+import { AuthMongoRepostitory } from "../../../userService/infrastructure/userRespositoryMongo";
 import { Auth_users } from "../../application/service/Auth.Service";
 
 const authUserRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory()
