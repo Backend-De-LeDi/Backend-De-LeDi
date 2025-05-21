@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Books } from "./books";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../types/bookTypes";
 
 export interface BooksRepository {
   createBook(book: Books): Promise<void>;

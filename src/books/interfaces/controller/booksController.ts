@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { serviceContainer } from "../../services/serviceContainer";
-import { coverImage, PropBooks, SearchedBook } from "../../../types/bookTypes";
+import { coverImage, PropBooks, SearchedBook } from "../../types/bookTypes";
 import { formatter } from "../../../shared/utils/textFormatter";
 import { BookModel } from "../../infrastructure/model/books.model";
 import { subirImagen } from "../../../shared/utils/uploadCorverImage";
