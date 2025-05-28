@@ -10,13 +10,13 @@ import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { fileDelete } from "../../../shared/utils/deleteFile";
-import { sendFile } from "../../../shared/utils/sendFile";
+import ENV from "../../../config/configEnv";
 
 export class ExpressController {
   //método para crear libros
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const { title, author, descriptions, category, available, language, userId }: PropBooks = req.body;
+      const { title, author, descriptions, category, available, language, userId, summary }: PropBooks = req.body;
 
       const files = req.files as { [key: string]: Express.Multer.File[] };
 
@@ -52,8 +52,6 @@ export class ExpressController {
       const contentId = new mongoose.Types.ObjectId(String(newContent._id));
       await newContent.save();
 
-      const pathInternal = await sendFile(newContent.path);
-
       await serviceContainer.book.createBook.run(
         textFormat,
         descriptions,
@@ -63,8 +61,8 @@ export class ExpressController {
         language,
         isAvailable,
         contentId,
-        pathInternal.path,
-        coverImage
+        coverImage,
+        summary
       );
 
       return res.json({ msg: "libro subido correctamente" }).status(200);
@@ -75,7 +73,7 @@ export class ExpressController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" }).status(500);
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
 
@@ -122,33 +120,104 @@ export class ExpressController {
 
       return res.json({ msg: "libro eliminado correctamente" }).status(200);
     } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getAllBook"));
+      console.log(chalk.yellow("Error en el controlador: deleteBook"));
       console.log(chalk.yellow(separator()));
       console.log();
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" }).status(500);
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
 
   // método para obtener un libro en la base de datos en base a su id que recibe por parámetro
-  async getBookById(req: Request, res: Response): Promise<void> {
+  async getBookById(req: Request, res: Response): Promise<Response> {
+    try {
+      const id = req.params.id;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) return res.json({ msg: "id invalida" }).status(404);
+
+      const idValid = new mongoose.Types.ObjectId(id);
+
+      const book = await serviceContainer.book.getBooksById.run(idValid);
+
+      if (!book) return res.json({ msg: "libro no encontrado" }).status(200);
+
+      return res.json(book);
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getBookById"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    }
+  }
+
+  // método para obtener un libros en la base de datos en base a la query que venga por parámetro
+  async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
+    try {
+      const query = decodeURIComponent(req.params.query);
+
+      const books = await serviceContainer.book.getIntelligenceBook.run(query);
+
+      if (books.length === 0) return res.status(404).json({ msg: "no se encontró ningún libro en la búsqueda" });
+
+      return res.status(200).json(books);
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getIntelligenceBooks"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    }
+  }
+
+  // método para obtener un libros en la base de datos en base a su categoría que recibe por parámetro
+  async getBookByCategory(req: Request, res: Response): Promise<Response> {
+    try {
+      const category = req.params.category;
+
+      const categoryString = Array.isArray(category) ? category.join(",") : (category as string);
+
+      const categoryArray = categoryString.split(",");
+
+      const books = await serviceContainer.book.getBooksByCategory.run(categoryArray);
+
+      if (books.length === 0) return res.status(404).json({ msg: "no se encontró ningún libro con esas categorías" });
+
+      return res.status(200).json(books);
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getBookByCategory"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    }
+  }
+
+  async getContentBookById(req: Request, res: Response): Promise<void> {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.json({ msg: "id invalida" }).status(404);
+      res.status(404).json({ msg: "ID inválida" });
       return;
     }
 
     const idValid = new mongoose.Types.ObjectId(id);
 
-    const book = await serviceContainer.book.getBooksById.run(idValid);
+    const pathBook = await serviceContainer.book.getContentById.run(idValid);
 
-    if (!book) {
-      res.json({ msg: "libro no encontrado" }).status(200);
+    if (!pathBook) {
+      res.status(200).json({ msg: "Libro no encontrado" });
       return;
     }
-    res.json(book);
+
+    res.sendFile(ENV.ROUTE_EXTENSION + pathBook);
   }
 }
