@@ -1,8 +1,5 @@
 import { model, Schema } from "mongoose";
-
-interface IContainer {
-  path: string;
-}
+import { IContainer } from "../../../types/contentBook";
 
 const contentBook = new Schema<IContainer>({
   path: { type: String, required: true },
