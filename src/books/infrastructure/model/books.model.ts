@@ -1,3 +1,4 @@
+import { title } from "process";
 import { IBook } from "../../../types/bookTypes";
 import { Schema, model } from "mongoose";
 
@@ -12,6 +13,7 @@ const bookSchema = new Schema<IBook>({
   createdAt: { type: Date, default: Date.now },
   content: { type: Schema.Types.ObjectId, ref: "ContentBooks", required: true },
   pathInternal: { type: String, require: true },
+  summary: { type: String, require: true },
   coverImage: {
     type: {
       id_image: { type: String, required: true },
