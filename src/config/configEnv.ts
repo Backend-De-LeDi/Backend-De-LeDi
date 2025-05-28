@@ -7,6 +7,7 @@ const ENV: Env = {
   CLOUD_NAME: process.env.CLOUD_NAME,
   API_KEY: process.env.API_KEY,
   API_SECRET: process.env.API_SECRET,
+  ROUTE_EXTENSION: process.env.ABSOLUTE_PATH,
 };
 
 interface Env {
@@ -15,6 +16,7 @@ interface Env {
   CLOUD_NAME: string | undefined;
   API_KEY: string | undefined;
   API_SECRET: string | undefined;
+  ROUTE_EXTENSION: string | undefined;
 }
 
 export default ENV;
