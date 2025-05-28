@@ -15,10 +15,10 @@ export class BookCreate {
     language: string,
     available: boolean,
     content: Types.ObjectId,
-    pathInternal: string,
-    coverImage: coverImage
+    coverImage: coverImage,
+    summary: string
   ): Promise<void> {
-    const book = new Books(title, descriptions, author, userId, category, language, available, content, pathInternal, coverImage);
+    const book = new Books(title, descriptions, author, userId, category, language, available, content, coverImage, summary);
 
     await this.repository.createBook(book);
   }
