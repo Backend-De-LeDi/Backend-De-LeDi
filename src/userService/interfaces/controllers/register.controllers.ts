@@ -20,8 +20,19 @@ export const registers = async (req: Request, res: Response) => {
     return;
 
   } catch (error) {
-    console.log(error)
+
+    if ((error as any).message === "Email already in use") {
+      res.status(409).json({ error: (error as any).message });
+      return
+    }
+    if ((error as any).message === "UserName already in use") {
+      res.status(409).json({ error: (error as any).message });
+      return
+    }
+
+    console.log(error);
     res.status(500).json({ message: "internal server error", error });
+
   }
 }
 

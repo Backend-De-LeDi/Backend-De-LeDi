@@ -47,8 +47,7 @@ const UserSchema = new Schema<User>({
                 },
 
             },
-        ),
-        required: true,
-    },
+        )
+    }
 })
 export const UserModel = mongoose.model<User>("User", UserSchema)

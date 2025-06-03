@@ -40,7 +40,7 @@ export const login = async (req: Request, res: Response) => {
             const id = result._id
             const rol = result.rol
 
-            const token = await generarJWT(id);
+            const token = await generarJWT(id, rol);
             req.session.token = token;
             req.session.isLoggedIn = true
             if (isWeb) {
