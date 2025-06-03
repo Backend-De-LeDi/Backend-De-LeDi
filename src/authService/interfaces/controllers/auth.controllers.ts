@@ -33,25 +33,34 @@ export const login = async (req: Request, res: Response) => {
 
     try {
         const result = await authUserService.login(email, password)
-
+        const isWeb = req.headers["x-client"] !== "mobile";
         if (!result) {
             res.status(400).json({ msg: 'Credenciales incorrectas' });
         } else {
             const id = result._id
+            const rol = result.rol
 
             const token = await generarJWT(id);
             req.session.token = token;
             req.session.isLoggedIn = true
+            if (isWeb) {
 
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 3600000,
-            });
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: true,
+                    maxAge: 3600000,
+                });
+
+            }
+
 
             res.status(200).json({
                 msg: 'Authentication successful',
                 token,
+                user: {
+                    id,
+                    rol,
+                },
             });
         }
     } catch (error) {

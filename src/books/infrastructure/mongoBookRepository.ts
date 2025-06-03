@@ -2,7 +2,7 @@ import { BookModel } from "./model/books.model";
 import { BooksRepository } from "../domain/booksRepository";
 import { Books } from "../domain/books";
 import { Types } from "mongoose";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../types/bookTypes";
 
 export class MongoBookRepository implements BooksRepository {
   //método de repositorio que es para crear o almacenar un nuevo libro

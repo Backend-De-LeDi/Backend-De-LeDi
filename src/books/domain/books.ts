@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import { coverImage } from "../../types/bookTypes";
+import { coverImage } from "../types/bookTypes";
 export class Books {
   constructor(
     public title: string,
@@ -12,5 +12,5 @@ export class Books {
     public content: Types.ObjectId,
     public pathInternal: string,
     public coverImage: coverImage
-  ) {}
+  ) { }
 }

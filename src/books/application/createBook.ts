@@ -1,10 +1,10 @@
 import { Books } from "../domain/books";
 import { BooksRepository } from "../domain/booksRepository";
 import type { Types } from "mongoose";
-import { coverImage } from "../../types/bookTypes";
+import { coverImage } from "../types/bookTypes";
 
 export class BookCreate {
-  constructor(private repository: BooksRepository) {}
+  constructor(private repository: BooksRepository) { }
 
   async run(
     title: string,
