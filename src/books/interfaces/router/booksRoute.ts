@@ -2,42 +2,47 @@ import { Router } from "express";
 import { ExpressController } from "../controller/booksController";
 import upload from "../../../shared/middlewares/storage";
 import { Request, Response } from "express";
+import { parseFormData } from "../../../shared/utils/parseFormData";
+import { validatorBooks } from "../../../shared/middlewares/validatorData";
+import { bookSchema } from "../../../shared/validations/book.validations";
 
-const route = Router();
+const BookRouter = Router();
 const controller = new ExpressController();
 
-route.post(
+BookRouter.post(
   "/books",
   upload.fields([
     { name: "file", maxCount: 1 },
     { name: "img", maxCount: 1 },
   ]),
+  parseFormData,
+  validatorBooks(bookSchema),
   (req: Request, res: Response) => {
     controller.createBook(req, res);
   }
 );
 
-route.get("/books", (req: Request, res: Response) => {
+BookRouter.get("/books", (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
-route.get("/book/:id", (req: Request, res: Response) => {
+BookRouter.get("/book/:id", (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
-route.delete("/book/:id", (req: Request, res: Response) => {
+BookRouter.delete("/book/:id", (req: Request, res: Response) => {
   controller.deleteBook(req, res);
 });
 
-route.get("/books/:query", (req: Request, res: Response) => {
+BookRouter.get("/books/:query", (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-route.get("/booksByCategory/:category", (req: Request, res: Response) => {
+BookRouter.get("/booksByCategory/:category", (req: Request, res: Response) => {
   controller.getBookByCategory(req, res);
 });
 
-route.get("/book/content/:id", (req: Request, res: Response) => {
+BookRouter.get("/book/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
-export default route;
+export default BookRouter;
