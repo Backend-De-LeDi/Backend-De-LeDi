@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
-import ENV from "../../config/configEnv";
+import ENV from "../../shared/config/configEnv";
 
-const JWT_SECRET = ENV.JWT_SECRET;
-export const generarJWT = (id: any, rol: string) => {
+const JWT_SECRET = "clave_secreta";
+export const generarJWT = (id: any) => {
   return new Promise((resolve, reject) => {
     const payload = { id };
     console.log(payload);

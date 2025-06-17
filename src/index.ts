@@ -4,10 +4,10 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 import morgan from "morgan";
-import connections from './config/db/database'
+import connections from './shared/config/db/database'
 import * as dotenv from "dotenv";
 dotenv.config();
-import ENV from "./config/configEnv";
+import ENV from "./shared/config/configEnv";
 
 import { userRoutes } from "./userService/interfaces/routes/userService.routes"
 import route from "./books/interfaces/router/booksRoute";

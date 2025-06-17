@@ -3,7 +3,7 @@ import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt-ts';
 
 export class Register {
     constructor(
