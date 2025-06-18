@@ -8,16 +8,16 @@ cloudinary.config({
   api_secret: ENV.API_SECRET,
 });
 
-export async function subirImagen(rutaArchivo: string) {
+export async function uploadCoverImagen(filePhat: string) {
   try {
-    const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "book_covers" });
+    const result = await cloudinary.uploader.upload(filePhat, { folder: "BooksCovers" });
 
     console.log("Imagen subida exitosamente:", result.secure_url);
 
     return result;
   } catch (error) {
     console.log();
-    console.error(chalk.red("Error en la utilidad: subirImagen"));
+    console.error(chalk.red("Error en la utilidad: uploadCoverImagen"));
     console.log();
     console.log(error);
     console.log();
