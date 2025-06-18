@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
 import { serviceContainer } from "../../services/serviceContainer";
-import { coverImage, PropBooks, SearchedBook } from "../../../types/bookTypes";
+import { PropBooks, SearchedBook } from "../../../types/bookTypes";
 import { formatter } from "../../../shared/utils/textFormatter";
-import { BookModel } from "../../infrastructure/model/books.model";
-import { subirImagen } from "../../../shared/utils/uploadCorverImage";
-import ContentBook from "../../infrastructure/model/contentBookModel";
+import { uploadCoverImagen } from "../../../shared/utils/uploadCorverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
-import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImage";
 import { fileDelete } from "../../../shared/utils/deleteFile";
-import ENV from "../../../config/configEnv";
+import { uploadBook } from "../../../shared/utils/uploadBook";
+import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 
 export class ExpressController {
   //método para crear libros
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const { title, author, descriptions, category, available, language, userId, summary }: PropBooks = req.body;
+      const { title, author, descriptions, category, available, language, summary }: PropBooks = req.body;
 
       const files = req.files as { [key: string]: Express.Multer.File[] };
 
@@ -29,41 +28,44 @@ export class ExpressController {
       if (!file) return res.status(400).json({ msg: "Faltan archivos de texto con el contenido del libro" });
       if (!img) return res.status(400).json({ msg: "Faltan archivos de la portada del libro " });
 
-      const textFormat = formatter(title);
-      const nameFormat = formatter(author);
-      const isAvailable = Boolean(available);
+      const titleFormat = formatter(title);
+      const descriptionsFormat = formatter(descriptions);
 
-      const BookExist = await BookModel.findOne({ title: textFormat, author: nameFormat });
-      if (BookExist) return res.status(409).json({ msg: "El libro ya existe" });
+      // console.log(titleFormat);
+      // console.log(descriptionsFormat);
 
-      const result = await subirImagen(img.path);
-      if (!result) return res.status(400).json({ msg: "Error al subir la imagen" });
+      const coverImage = await uploadCoverImagen(img.path);
+      const content = await uploadBook(file.path);
 
-      const coverImage: coverImage = {
-        id_image: result.public_id,
-        url_secura: result.secure_url,
-      };
+      // console.log(coverImage);
+      // console.log(content);
 
-      const isDeletingCoverImage = await fileDelete(img.path);
+      if (!coverImage || !content) {
+        await fileDelete(img.path);
+        await fileDelete(file.path);
+        return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
+      }
 
-      if (!isDeletingCoverImage) throw new Error(`la imagen no se elimino del directorio uploads \n por favor revise esta ruta ${img.path}`);
-
-      const newContent = new ContentBook({ path: file.path });
-      const contentId = new mongoose.Types.ObjectId(String(newContent._id));
-      await newContent.save();
-
-      await serviceContainer.book.createBook.run(
-        textFormat,
-        descriptions,
-        nameFormat,
-        userId,
+      serviceContainer.book.createBook.run(
+        titleFormat,
+        descriptionsFormat,
+        author,
         category,
         language,
-        isAvailable,
-        contentId,
-        coverImage,
+        available,
+        {
+          idContentBook: content.public_id,
+          url_secura: content.secure_url,
+        },
+        {
+          url_secura: coverImage.secure_url,
+          idCoverImage: coverImage.public_id,
+        },
         summary
       );
+
+      await fileDelete(img.path);
+      await fileDelete(file.path);
 
       return res.json({ msg: "libro subido correctamente" }).status(200);
     } catch (error) {
@@ -73,7 +75,7 @@ export class ExpressController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
     }
   }
 
@@ -98,25 +100,29 @@ export class ExpressController {
     try {
       const id = req.params.id;
 
+      // console.log({ id });
+
       if (!mongoose.Types.ObjectId.isValid(id)) return res.json({ msg: "id invalida" });
 
       const idValid = new mongoose.Types.ObjectId(id);
 
+      // console.log({ idValid });
+
       const book: SearchedBook | null = await serviceContainer.book.getBooksById.run(idValid);
       if (!book) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
-      const isDeletingCoverImage: boolean = await deleteCoverImage(book.coverImage.id_image);
-      if (!isDeletingCoverImage)
-        return res.status(500).json({ msg: "Ocurrió un error al eliminar la imagen en Cloudinary. Verifica si sigue existiendo." });
+      const isDeletingCoverImage: boolean = await deleteCoverImageInCloudinary(book.coverImage.idCoverImage);
+      const isDeletingBook: boolean = await deleteBookInCloudinary(book.content.idContentBook);
 
-      const contentBook = await ContentBook.findById(book.content._id);
-      if (!contentBook) return res.status(500).json({ msg: "Error al buscar el contenido del libro en la base de datos" });
+      if (!isDeletingCoverImage || !isDeletingBook) {
+        // console.log({ isDeletingCoverImage, isDeletingBook });
 
-      const isDeletingFiles = await fileDelete(contentBook.path);
+        console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
+      }
 
-      if (!isDeletingFiles) return res.status(500).json({ msg: "Error al eliminar el archivo del sistema. Verifica si existe en /uploads" });
+      // console.log({ isDeletingCoverImage, isDeletingBook });
+
       await serviceContainer.book.deleteBook.run(idValid);
-      await ContentBook.findByIdAndDelete(book.content._id);
 
       return res.json({ msg: "libro eliminado correctamente" }).status(200);
     } catch (error) {
@@ -201,23 +207,32 @@ export class ExpressController {
     }
   }
 
-  async getContentBookById(req: Request, res: Response): Promise<void> {
-    const id = req.params.id;
+  // método para obtener una url para visualizar el libro buscado por id
+  async getContentBookById(req: Request, res: Response): Promise<Response> {
+    try {
+      const id = req.params.id;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(404).json({ msg: "ID inválida" });
-      return;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ msg: "ID inválida" });
+      }
+
+      const idValid = new mongoose.Types.ObjectId(id);
+
+      const urlContentBook = await serviceContainer.book.getContentById.run(idValid);
+
+      if (!urlContentBook) {
+        return res.status(200).json({ msg: "Libro no encontrado" });
+      }
+
+      return res.status(200).json({ urlContentBook });
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getContentBookById"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
-
-    const idValid = new mongoose.Types.ObjectId(id);
-
-    const pathBook = await serviceContainer.book.getContentById.run(idValid);
-
-    if (!pathBook) {
-      res.status(200).json({ msg: "Libro no encontrado" });
-      return;
-    }
-
-    res.sendFile(ENV.ROUTE_EXTENSION + pathBook);
   }
 }
