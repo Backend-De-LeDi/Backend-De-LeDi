@@ -1,14 +1,14 @@
 import { Types, Document } from "mongoose";
-import { FullContentBook } from "./contentBook";
+import { ContentBook, FullContentBook } from "./contentBook";
 
 export interface coverImage {
-  id_image: string;
+  idCoverImage: string;
   url_secura: string;
 }
 
 export interface PropBooks extends Document {
   title: string;
-  author: string;
+  author: Types.ObjectId;
   descriptions: string;
   category: string[];
   available: boolean;
@@ -19,7 +19,7 @@ export interface PropBooks extends Document {
 
 export interface IBook extends PropBooks {
   createdAt: Date;
-  content: Types.ObjectId;
+  content: ContentBook;
   coverImage: coverImage;
   pathInternal: string;
 }
