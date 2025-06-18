@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: ENV.API_SECRET,
 });
 
-export async function deleteCoverImage(publicId: string): Promise<boolean> {
+export async function deleteCoverImageInCloudinary(publicId: string): Promise<boolean> {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
 
