@@ -1,8 +1,9 @@
-export interface IContainer {
-  path: string;
+export interface ContentBook {
+  url_secura: string;
+  idContentBook: string;
 }
 
-export interface FullContentBook extends IContainer {
+export interface FullContentBook extends ContentBook {
   _id: string;
   __v: number;
 }
