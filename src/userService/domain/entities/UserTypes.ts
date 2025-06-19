@@ -12,8 +12,7 @@ export class User {
         public readonly nivel: string,
         public readonly avatar: string,
         public readonly preference: {
-            category: string[],
-            language: string
+            category: string[]
         }
 
     ) { }
