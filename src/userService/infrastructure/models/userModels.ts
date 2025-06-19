@@ -41,14 +41,9 @@ const UserSchema = new Schema<User>({
                     type: [String],
                     required: true,
                 },
-                language: {
-                    type: String,
-                    required: true,
-                },
 
             },
         ),
-        required: true,
     },
 })
 export const UserModel = mongoose.model<User>("User", UserSchema)
