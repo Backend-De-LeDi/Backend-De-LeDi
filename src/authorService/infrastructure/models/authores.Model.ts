@@ -6,22 +6,6 @@ const AuthorSchenma = new Schema<Author>({
         type: String,
         required: true
     },
-    lastName: {
-        type: String,
-        required: true
-    },
-    birthDate: {
-        type: Date,
-        required: true
-    },
-    country: {
-        type: String,
-        required: true
-    },
-    province: {
-        type: String,
-        required: true
-    },
     biography: {
         type: String,
         required: true
