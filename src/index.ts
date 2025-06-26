@@ -14,6 +14,7 @@ import route from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes"
 import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
+import { autorRoutes } from "./authorService/interfaces/routes/authores.routes";
 
 const app = express();
 connections()
@@ -41,6 +42,7 @@ app.use(session({
 
 app.use(userRoutes)
 app.use(authRoutes)
+app.use(autorRoutes)
 app.use(progressRouter)
 app.use(route);
 

@@ -5,7 +5,7 @@ export class Author {
         public readonly lastName: string,
         public readonly birthDate: Date,
         public readonly biography: string,
-        public readonly parents: string,
+        public readonly country: string,
         public readonly province: string
     ) { }
 }

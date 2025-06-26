@@ -14,7 +14,7 @@ const AuthorSchenma = new Schema<Author>({
         type: Date,
         required: true
     },
-    parents: {
+    country: {
         type: String,
         required: true
     },

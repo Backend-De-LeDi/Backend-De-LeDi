@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
-import { SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
+import { findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
 
 const saveAuthor: ISaveAuthorRepository = new SaveAuthorMongoRepo();
-const authorService = new CreateAuthor(saveAuthor);
+const findAuthorRepo = new findAuthorMongoRepo()
+const authorService = new CreateAuthor(saveAuthor, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {
     const author: Author = req.body;

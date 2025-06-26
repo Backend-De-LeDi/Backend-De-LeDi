@@ -15,27 +15,28 @@ export const getAuthorById = async (req: Request, res: Response) => {
         const author = await findAuthorService.findAuthor(id);
 
         if (!author) {
-            return res.status(404).json({ message: "Autor no encontrado" });
+            res.status(404).json({ message: "Autor no encontrado" });
         }
 
-        return res.status(200).json(author);
+        res.status(200).json(author);
     } catch (error) {
         console.error("Error al buscar autor:", error);
-        return res.status(500).json({ message: "Error interno del servidor" });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
 export const getAuthorByName = async (req: Request, res: Response) => {
     try {
         const { name } = req.body;
+
         const author = await findAuthorService.findAuthorbyName(name);
 
         if (!author) {
-            return res.status(404).json({ message: "Autor no encontrado" });
+            res.status(404).json({ message: "Autor no encontrado" });
         }
 
-        return res.status(200).json(author);
+        res.status(200).json(author);
     } catch (error) {
         console.error("Error al buscar autor:", error);
-        return res.status(500).json({ message: "Error interno del servidor" });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
