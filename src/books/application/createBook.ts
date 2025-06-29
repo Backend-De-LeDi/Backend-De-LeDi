@@ -1,7 +1,7 @@
 import { Books } from "../domain/books";
 import { BooksRepository } from "../domain/booksRepository";
 import type { Types } from "mongoose";
-import { coverImage } from "../../types/bookTypes";
+import { CoverImage } from "../../types/bookTypes";
 import { ContentBook } from "../../types/contentBook";
 
 //clase que limita al Repositorio a realizar el almacenamiento del libro
@@ -11,15 +11,16 @@ export class BookCreate {
   async run(
     title: string,
     descriptions: string,
-    author: Types.ObjectId,
-    category: string[],
+    author: Types.ObjectId[],
+    subgenre: string[],
     language: string,
     available: boolean,
     content: ContentBook,
-    coverImage: coverImage,
-    summary: string
+    coverImage: CoverImage,
+    genreType: string,
+    yearBook?: Date
   ): Promise<void> {
-    const book = new Books(title, descriptions, author, category, language, available, content, coverImage, summary);
+    const book = new Books(title, descriptions, author, subgenre, language, available, content, coverImage, yearBook ?? new Date(), genreType);
 
     // console.log('datos ingresados al método run de la clase BookCreate:',book);
 
