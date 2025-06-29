@@ -1,21 +1,20 @@
 import { Request, Response } from "express";
-import { serviceContainer } from "../../services/serviceContainer";
+import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { PropBooks, SearchedBook } from "../../../types/bookTypes";
-import { formatter } from "../../../shared/utils/textFormatter";
-import { uploadCoverImagen } from "../../../shared/utils/uploadCorverImage";
+import { uploadBookCoverImagen } from "../../../shared/utils/uploadBookCoverImagen";
 import mongoose from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
-import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImage";
+import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImageInCloudinary";
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 
-export class ExpressController {
+export class BookController {
   //método para crear libros
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const { title, author, descriptions, category, available, language, summary }: PropBooks = req.body;
+      const { title, author, descriptions, subgenre, available, language, yearBook, genreType }: PropBooks = req.body;
 
       const files = req.files as { [key: string]: Express.Multer.File[] };
 
@@ -28,13 +27,7 @@ export class ExpressController {
       if (!file) return res.status(400).json({ msg: "Faltan archivos de texto con el contenido del libro" });
       if (!img) return res.status(400).json({ msg: "Faltan archivos de la portada del libro " });
 
-      const titleFormat = formatter(title);
-      const descriptionsFormat = formatter(descriptions);
-
-      // console.log(titleFormat);
-      // console.log(descriptionsFormat);
-
-      const coverImage = await uploadCoverImagen(img.path);
+      const coverImage = await uploadBookCoverImagen(img.path);
       const content = await uploadBook(file.path);
 
       // console.log(coverImage);
@@ -46,11 +39,11 @@ export class ExpressController {
         return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
-      serviceContainer.book.createBook.run(
-        titleFormat,
-        descriptionsFormat,
+      serviceContainer.book.createBooks.run(
+        title,
+        descriptions,
         author,
-        category,
+        subgenre,
         language,
         available,
         {
@@ -61,13 +54,14 @@ export class ExpressController {
           url_secura: coverImage.secure_url,
           idCoverImage: coverImage.public_id,
         },
-        summary
+        genreType,
+        yearBook
       );
 
       await fileDelete(img.path);
       await fileDelete(file.path);
 
-      return res.json({ msg: "libro subido correctamente" }).status(200);
+      return res.status(200).json({ msg: "libro subido correctamente" });
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: createBook"));
       console.log(chalk.yellow(separator()));
@@ -183,15 +177,15 @@ export class ExpressController {
   }
 
   // método para obtener un libros en la base de datos en base a su categoría que recibe por parámetro
-  async getBookByCategory(req: Request, res: Response): Promise<Response> {
+  async getBookBySubgenre(req: Request, res: Response): Promise<Response> {
     try {
-      const category = req.params.category;
+      const subgenre = req.params.subgenre;
 
-      const categoryString = Array.isArray(category) ? category.join(",") : (category as string);
+      const subgenreString = Array.isArray(subgenre) ? subgenre.join(",") : (subgenre as string);
 
-      const categoryArray = categoryString.split(",");
+      const subgenreArray = subgenreString.split(",");
 
-      const books = await serviceContainer.book.getBooksByCategory.run(categoryArray);
+      const books = await serviceContainer.book.getBooksBySubgenre.run(subgenreArray);
 
       if (books.length === 0) return res.status(404).json({ msg: "no se encontró ningún libro con esas categorías" });
 
@@ -207,7 +201,7 @@ export class ExpressController {
     }
   }
 
-  // método para obtener una url para visualizar el libro buscado por id
+  // método para obtener una url para visualizar el contenido del libro buscado por id
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
