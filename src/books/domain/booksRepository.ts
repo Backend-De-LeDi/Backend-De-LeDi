@@ -8,6 +8,6 @@ export interface BooksRepository {
   deleteBook(id: Types.ObjectId): Promise<void>;
   getBookById(id: Types.ObjectId): Promise<SearchedBook | null>;
   getIntelligenceBook(query: string): Promise<Books[]>;
-  getBooksByCategory(category: string[]): Promise<Books[]>;
+  getBooksBySubgenre(subgenre: string[]): Promise<Books[]>;
   getContentBookById(id: Types.ObjectId): Promise<string | null>;
 }
