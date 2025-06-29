@@ -6,10 +6,11 @@ import connections from "./config/db/database";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
-import BookRouter from "./books/interfaces/router/booksRoute";
+import bookRouter from "./books/interfaces/router/booksRoute";
 import { userRoutes } from "./userService/interfaces/routes/userService.routes";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
+import audiobookRouter from "./audiobooks/interface/routers/audiobooksRouter";
 
 const app = express();
 
@@ -36,7 +37,8 @@ app.use(
   })
 );
 
-app.use(BookRouter);
+app.use(bookRouter);
+app.use(audiobookRouter);
 app.use(userRoutes);
 app.use(authRoutes);
 
