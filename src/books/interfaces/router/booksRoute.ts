@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { ExpressController } from "../controller/booksController";
+import { BookController } from "../controller/booksController";
 import upload from "../../../shared/middlewares/storage";
 import { Request, Response } from "express";
 import { parseFormData } from "../../../shared/utils/parseFormData";
-import { validatorBooks } from "../../../shared/middlewares/validatorData";
+import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
 
-const BookRouter = Router();
-const controller = new ExpressController();
+const bookRouter = Router();
+const controller = new BookController();
 
-BookRouter.post(
+bookRouter.post(
   "/books",
   upload.fields([
     { name: "file", maxCount: 1 },
@@ -22,27 +22,27 @@ BookRouter.post(
   }
 );
 
-BookRouter.get("/books", (req: Request, res: Response) => {
+bookRouter.get("/books", (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
-BookRouter.get("/book/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/:id", (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
-BookRouter.delete("/book/:id", (req: Request, res: Response) => {
+bookRouter.delete("/book/:id", (req: Request, res: Response) => {
   controller.deleteBook(req, res);
 });
 
-BookRouter.get("/books/:query", (req: Request, res: Response) => {
+bookRouter.get("/books/:query", (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-BookRouter.get("/booksByCategory/:category", (req: Request, res: Response) => {
-  controller.getBookByCategory(req, res);
+bookRouter.get("/booksBySubgenre/:subgenre", (req: Request, res: Response) => {
+  controller.getBookBySubgenre(req, res);
 });
 
-BookRouter.get("/book/content/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
-export default BookRouter;
+export default bookRouter;
