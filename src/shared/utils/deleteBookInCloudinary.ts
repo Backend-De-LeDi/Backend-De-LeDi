@@ -17,7 +17,7 @@ export async function deleteBookInCloudinary(publicId: string): Promise<boolean>
     return result.result === "ok";
   } catch (error) {
     console.log();
-    console.error(chalk.red("Error en la utilidad: subirImagen"));
+    console.error(chalk.red("Error en la utilidad: deleteBookInCloudinary"));
     console.log();
     console.log(error);
     console.log();
