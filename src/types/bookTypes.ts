@@ -1,30 +1,42 @@
 import { Types, Document } from "mongoose";
-import { ContentBook, FullContentBook } from "./contentBook";
+import { ContentAudioBook, ContentBook, FullContentBook } from "./contentBook";
 
-export interface coverImage {
+export interface CoverImage {
   idCoverImage: string;
   url_secura: string;
 }
 
 export interface PropBooks extends Document {
   title: string;
-  author: Types.ObjectId;
+  author: Types.ObjectId[];
   descriptions: string;
-  category: string[];
-  available: boolean;
-  userId: Types.ObjectId;
+  subgenre: string[];
   language: string;
+  available: boolean;
+  yearBook: Date;
+  genreType: string;
+}
+
+export interface PropAudiobooks extends PropBooks {
   summary: string;
 }
 
 export interface IBook extends PropBooks {
-  createdAt: Date;
   content: ContentBook;
-  coverImage: coverImage;
-  pathInternal: string;
+  coverImage: CoverImage;
 }
 
 export interface SearchedBook extends IBook {
+  _id: string;
+  __v: number;
+}
+
+export interface IAudioBook extends Omit<IBook, "content"> {
+  summary: string;
+  content: ContentAudioBook;
+}
+
+export interface SearchedAudiobook extends IAudioBook {
   _id: string;
   __v: number;
 }
