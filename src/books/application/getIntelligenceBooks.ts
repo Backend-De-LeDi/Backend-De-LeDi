@@ -5,6 +5,6 @@ export class GetIntelligenceBook {
   constructor(private repository: BooksRepository) {}
 
   async run(query: string): Promise<Books[]> {
-    return this.repository.getIntelligenceBook(query);
+    return await this.repository.getIntelligenceBook(query);
   }
 }
