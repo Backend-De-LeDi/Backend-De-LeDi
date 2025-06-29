@@ -31,6 +31,7 @@ export class MongoBookRepository implements BooksRepository {
     return book;
   }
 
+  // método para obtener libros en la base de datos en base a una o varias palabras clave
   async getIntelligenceBook(query: string): Promise<Books[]> {
     //* búsqueda principal por autores
     let resBooks = await BookModel.find({ title: { $regex: query, $options: "i" } });
@@ -50,8 +51,9 @@ export class MongoBookRepository implements BooksRepository {
     return resBooks;
   }
 
-  async getBooksByCategory(category: string[]): Promise<Books[]> {
-    const books = await BookModel.find({ category: { $in: category } });
+  //
+  async getBooksBySubgenre(subgenre: string[]): Promise<Books[]> {
+    const books = await BookModel.find({ subgenre: { $in: subgenre } });
     return books;
   }
 
