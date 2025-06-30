@@ -24,8 +24,18 @@ const fileUpload = path.join(__dirname, "./uploads");
 if (!fs.existsSync(fileUpload)) {
   fs.mkdirSync(fileUpload, { recursive: true });
 }
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5500",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
 
-app.use(cors());
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.static("./src/uploads"));
