@@ -18,9 +18,22 @@ export class BookCreate {
     content: ContentBook,
     coverImage: CoverImage,
     genreType: string,
+    summary: string,
     yearBook?: Date
   ): Promise<void> {
-    const book = new Books(title, descriptions, author, subgenre, language, available, content, coverImage, yearBook ?? new Date(), genreType);
+    const book = new Books(
+      title,
+      descriptions,
+      author,
+      subgenre,
+      language,
+      available,
+      content,
+      coverImage,
+      summary,
+      yearBook ?? new Date(),
+      genreType
+    );
 
     // console.log('datos ingresados al método run de la clase BookCreate:',book);
 
