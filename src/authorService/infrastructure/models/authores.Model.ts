@@ -9,6 +9,10 @@ const AuthorSchenma = new Schema<Author>({
     biography: {
         type: String,
         required: true
+    },
+    avatar: {
+        type: String,
+
     }
 })
 

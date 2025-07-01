@@ -3,5 +3,6 @@ export class Author {
     constructor(
         public readonly name: string,
         public readonly biography: string,
+        public readonly avatar: string | null,
     ) { }
 }
