@@ -5,24 +5,24 @@ import { Types } from "mongoose";
 import { SearchedBook } from "../../types/bookTypes";
 
 export class MongoBookRepository implements BooksRepository {
-  //método de repositorio que es para crear o almacenar un nuevo libro
+  // * método de repositorio que es para crear o almacenar un nuevo libro
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
     await newBook.save();
   }
 
-  //método para obtener todo los libros en la base de datos
+  // * método para obtener todo los libros en la base de datos
   async getAllBooks(): Promise<Books[]> {
     const books = await BookModel.find();
     return books;
   }
 
-  // método para eliminar libro en la base de datos en base a su id
+  // * método para eliminar libro en la base de datos en base a su id
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
   }
 
-  // método para obtener un libro en la base de datos en base a su id
+  // * método para obtener un libro en la base de datos en base a su id
   async getBookById(id: Types.ObjectId): Promise<SearchedBook | null> {
     const book: SearchedBook | null = await BookModel.findById(id);
     if (!book) {
@@ -31,10 +31,12 @@ export class MongoBookRepository implements BooksRepository {
     return book;
   }
 
-  // método para obtener libros en la base de datos en base a una o varias palabras clave
+  // * método para obtener libros en la base de datos en base a una o varias palabras clave
   async getIntelligenceBook(query: string): Promise<Books[]> {
     //* búsqueda principal por autores
-    let resBooks = await BookModel.find({ title: { $regex: query, $options: "i" } });
+    let resBooks = await BookModel.find({
+      title: { $regex: query, $options: "i" },
+    });
 
     //!realizar la lógica mas adelante una ves que Jaqui termine el de el dominio de autores
     // if (resBooks.length === 0) {
@@ -44,14 +46,17 @@ export class MongoBookRepository implements BooksRepository {
     //* búsqueda terciaria por descripción y Resumen
     if (resBooks.length === 0) {
       resBooks = await BookModel.find({
-        $or: [{ descriptions: { $regex: query, $options: "i" } }, { summary: { $regex: query, $options: "i" } }],
+        $or: [
+          { descriptions: { $regex: query, $options: "i" } },
+          { summary: { $regex: query, $options: "i" } },
+        ],
       });
     }
 
     return resBooks;
   }
 
-  //
+  // * método que permite obtener libros en base a sus subgéneros
   async getBooksBySubgenre(subgenre: string[]): Promise<Books[]> {
     const books = await BookModel.find({ subgenre: { $in: subgenre } });
     return books;
@@ -65,4 +70,6 @@ export class MongoBookRepository implements BooksRepository {
 
     return book.content.url_secura;
   }
+
+  async getBookByGenreTypes(genreType: string): Promise<Books[]> {}
 }
