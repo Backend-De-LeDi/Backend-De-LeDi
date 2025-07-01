@@ -11,6 +11,7 @@ const bookSchema = new Schema<IBook>(
     language: { type: String, required: true },
     available: { type: Boolean, default: true },
     yearBook: { type: Date, default: Date.now },
+    summary: { type: String, required: true },
     content: {
       type: {
         idContentBook: { type: String, required: true },
