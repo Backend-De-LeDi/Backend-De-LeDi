@@ -10,4 +10,5 @@ export interface BooksRepository {
   getIntelligenceBook(query: string): Promise<Books[]>;
   getBooksBySubgenre(subgenre: string[]): Promise<Books[]>;
   getContentBookById(id: Types.ObjectId): Promise<string | null>;
+  getBookByGenreTypes(genreType: string): Promise<Books[]>;
 }
