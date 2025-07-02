@@ -86,7 +86,6 @@ export const bookSchema = z.object({
       message:
         "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
     })
-    .min(24, { message: "debes ingresar una id valida" }),
 
   // * --------------------------------------------------------------------------------------------
 });
