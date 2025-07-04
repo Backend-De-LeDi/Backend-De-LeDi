@@ -9,7 +9,7 @@ export interface CoverImage {
 export interface PropBooks extends Document {
   title: string;
   author: Types.ObjectId[];
-  descriptions: string;
+  summary: string;
   subgenre: string[];
   language: string;
   available: boolean;
