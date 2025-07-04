@@ -7,7 +7,7 @@ const audioBookSchema = new Schema<IBook>(
   {
     title: { type: String, required: true },
     author: [{ type: Schema.Types.ObjectId, ref: "authors" }],
-    descriptions: { type: String, required: true },
+    summary: { type: String, required: true },
     subgenre: [{ type: String, require: true }],
     language: { type: String, required: true },
     available: { type: Boolean, default: true },
