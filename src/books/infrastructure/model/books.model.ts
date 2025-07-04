@@ -29,6 +29,6 @@ const bookSchema = new Schema<IBook>(
   { timestamps: true }
 );
 
+// ? exportamos el modelo de libro para poder usarlo en otras partes de la aplicación
 const BookModel = model<IBook>("Books", bookSchema);
-
 export { BookModel };
