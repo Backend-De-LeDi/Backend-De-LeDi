@@ -2,7 +2,7 @@ import { CoverImage } from "../../types/bookTypes";
 import { ContentBook } from "../../types/contentBook";
 import type { Types } from "mongoose";
 
-// definimos el dominio ( como se van a recibir los libros para almacenarlos )
+// ? Clase que representa un libro en el dominio de la aplicación
 export class Books {
   constructor(
     public title: string,
