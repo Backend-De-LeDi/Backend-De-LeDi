@@ -10,8 +10,9 @@ import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 
+// ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
-  // ? método para crear libros
+  // * método para procesar y almacenar los libros que se proporcionan
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
       const {
@@ -26,33 +27,35 @@ export class BookController {
         theme,
       }: PropBooks = req.body;
 
+      // * recibimos los documento que son el contenido del libro
       const files = req.files as { [key: string]: Express.Multer.File[] };
 
+      // * portada del libro
       const img = files.img[0];
+
+      // * contenido del libro
       const file = files.file[0];
 
-      if (!file)
-        return res
-          .status(400)
-          .json({ msg: "Faltan archivos de texto con el contenido del libro" });
-      if (!img)
-        return res
-          .status(400)
-          .json({ msg: "Faltan archivos de la portada del libro " });
-
+      // * subimos a Cloudinary el contenido y la portada
       const coverImage = await uploadBookCoverImagen(img.path);
       const content = await uploadBook(file.path);
 
-      // console.log(coverImage);
-      // console.log(content);
-
+      // * verificamos que se hallan subido correctamente
       if (!coverImage || !content) {
+        // * si alguno de los dos no se subió los elidamos en local para no cargar el servidor
         await fileDelete(img.path);
         await fileDelete(file.path);
-        return res.status(400).json({
-          msg: "no se pudo almacenar el contenido o la portada del libro",
-        });
+
+        // * respondemos que no se pudo almacenar el libro
+        return res
+          .status(400)
+          .json({
+            msg: "no se pudo almacenar el contenido o la portada del libro",
+          });
       }
+
+      // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
+      // * que usan los métodos del repositorio de la base de datos
 
       serviceContainer.book.createBooks.run(
         title,
@@ -74,9 +77,11 @@ export class BookController {
         yearBook
       );
 
+      // * una ves subido todo correctamente eliminamos los archivos de portada y texto del libro en local
       await fileDelete(img.path);
       await fileDelete(file.path);
 
+      // * respondemos que se subió el libro correctamente
       return res.status(200).json({ msg: "libro subido correctamente" });
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: createBook"));
@@ -289,7 +294,6 @@ export class BookController {
   // ? método para obtener libros en base a su tema
   async getBookByTheme(req: Request, res: Response): Promise<Response> {
     try {
-
       // * Se obtiene el tema de la URL, que puede ser un string o un array de strings
       const theme = req.params.theme;
 
@@ -300,11 +304,13 @@ export class BookController {
       const books = await serviceContainer.book.getBookByTheme.run(themeArray);
 
       // * Si no se encuentran libros, se retorna un mensaje de error
-      if (books.length === 0) return res.status(404).json({ msg: "No se encontraron libros con ese tema" });
-      
+      if (books.length === 0)
+        return res
+          .status(404)
+          .json({ msg: "No se encontraron libros con ese tema" });
+
       // * Si se encuentran libros, se retornan
       return res.status(200).json(books);
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getBookByTheme"));
       console.log(chalk.yellow(separator()));
@@ -312,7 +318,9 @@ export class BookController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+      return res
+        .status(500)
+        .json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
 }
