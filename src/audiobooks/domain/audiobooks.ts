@@ -1,20 +1,4 @@
-import { CoverImage } from "../../types/bookTypes";
-import type { Types } from "mongoose";
-import { ContentAudioBook, ContentBook } from "../../types/contentBook";
+import { Books } from "../../books/domain/books";
 
 // definimos el dominio ( como se va almacenar los audiolibros )
-export class AudioBooks {
-  constructor(
-    public title: string,
-    public descriptions: string,
-    public author: Types.ObjectId[],
-    public subgenre: string[],
-    public language: string,
-    public available: boolean,
-    public content: ContentAudioBook,
-    public coverImage: CoverImage,
-    public summary: string,
-    public theme: string[],
-    public yearBook: Date
-  ) {}
-}
+export class AudioBooks extends Books {}
