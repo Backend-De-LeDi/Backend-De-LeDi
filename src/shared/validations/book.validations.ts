@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { Types } from "mongoose";
 
-const isObjectId = (val: unknown): val is Types.ObjectId =>
-  val instanceof Types.ObjectId;
+const isObjectId = (val: unknown): val is Types.ObjectId => val instanceof Types.ObjectId;
 
 export const bookSchema = z.object({
   // * validaciones para el titulo
@@ -16,13 +15,9 @@ export const bookSchema = z.object({
 
   // * validaciones para la descripción
 
-  descriptions: z
-    .string({ message: "la descripción no puede ser un numero" })
-    .min(1, { message: "La descripción es obligatoria" })
-    .max(4000, {
-      message:
-        "el limite de caracteres que puede tener una descripción es de 4000 caracteres",
-    }),
+  summary: z.string({ message: "la descripción no puede ser un numero" }).min(1, { message: "La descripción es obligatoria" }).max(4000, {
+    message: "el limite de caracteres que puede tener una descripción es de 4000 caracteres",
+  }),
 
   // * --------------------------------------------------------------------------------------------
 
@@ -30,11 +25,9 @@ export const bookSchema = z.object({
 
   subgenre: z
     .array(
-      z
-        .string({ message: "los subgénero no pueden ser de valores numérico" })
-        .max(50, {
-          message: "un subgénero solo puede tener 50 caracteres como máximo",
-        })
+      z.string({ message: "los subgénero no pueden ser de valores numérico" }).max(50, {
+        message: "un subgénero solo puede tener 50 caracteres como máximo",
+      })
     )
     .nonempty({ message: "Debe haber al menos un subgénero" }),
 
@@ -85,18 +78,13 @@ export const bookSchema = z.object({
       ])
     )
     .nonempty({
-      message:
-        "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
+      message: "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
     }),
 
   // * --------------------------------------------------------------------------------------------
 
   // * validación de sinopsis del libro
-  synopsis: z
-    .string({ message: "la sinopsis no puede ser un numero" })
-    .min(1, { message: "La sinopsis es obligatoria" })
-    .max(800, {
-      message:
-        "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
-    }),
+  synopsis: z.string({ message: "la sinopsis no puede ser un numero" }).min(1, { message: "La sinopsis es obligatoria" }).max(800, {
+    message: "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
+  }),
 });
