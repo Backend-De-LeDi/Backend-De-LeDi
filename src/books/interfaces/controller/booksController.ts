@@ -12,7 +12,8 @@ import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudi
 
 // ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
-  // * método para procesar y almacenar los libros que se proporcionan
+  
+  // ? método para procesar y almacenar los libros que se proporcionan
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
       const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme }: PropBooks = req.body;
