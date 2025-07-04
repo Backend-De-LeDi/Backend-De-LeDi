@@ -95,7 +95,7 @@ export const bookSchema = z.object({
   synopsis: z
     .string({ message: "la sinopsis no puede ser un numero" })
     .min(1, { message: "La sinopsis es obligatoria" })
-    .max(3000, {
+    .max(800, {
       message:
         "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
     }),
