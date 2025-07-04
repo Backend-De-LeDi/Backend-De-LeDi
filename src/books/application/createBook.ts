@@ -6,6 +6,7 @@ import { ContentBook } from "../../types/contentBook";
 
 // ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class BookCreate {
+
   constructor(private repository: BooksRepository) {}
 
   async run(
@@ -34,8 +35,6 @@ export class BookCreate {
       yearBook ?? new Date(),
       theme
     );
-
-    // console.log('datos ingresados al método run de la clase BookCreate:',book);
 
     await this.repository.createBook(book);
   }
