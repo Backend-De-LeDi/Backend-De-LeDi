@@ -1,9 +1,9 @@
 import { Schema, model } from "mongoose";
-import { IAudioBook } from "../../../types/bookTypes";
+import { IBook } from "../../../types/bookTypes";
 
 // * esquema de estructura de como se va almacenar los audio libros en la base de dato
 
-const audioBookSchema = new Schema<IAudioBook>(
+const audioBookSchema = new Schema<IBook>(
   {
     title: { type: String, required: true },
     author: [{ type: Schema.Types.ObjectId, ref: "authors" }],
@@ -13,7 +13,7 @@ const audioBookSchema = new Schema<IAudioBook>(
     available: { type: Boolean, default: true },
     content: {
       type: {
-        idAudio: { type: String, required: true },
+        idContentBook: { type: String, required: true },
         url_secura: { type: String, required: true },
       },
     },
@@ -23,7 +23,7 @@ const audioBookSchema = new Schema<IAudioBook>(
         url_secura: { type: String, required: true },
       },
     },
-    summary: { type: String, required: true },
+    synopsis: { type: String, required: true },
     yearBook: { type: Date, default: Date.now },
     theme: [{ type: String, required: true }],
   },
@@ -31,6 +31,6 @@ const audioBookSchema = new Schema<IAudioBook>(
 );
 
 // * modelo que se utiliza en el mongoAudiobooksRepository
-const AudioBookModel = model<IAudioBook>("AudioBooks", audioBookSchema);
+const AudioBookModel = model<IBook>("AudioBooks", audioBookSchema);
 
 export { AudioBookModel };
