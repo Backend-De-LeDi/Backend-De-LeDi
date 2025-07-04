@@ -12,21 +12,10 @@ import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudi
 
 // ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
-
   // * método para procesar y almacenar los libros que se proporcionan
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const {
-        title,
-        author,
-        descriptions,
-        subgenre,
-        available,
-        language,
-        yearBook,
-        synopsis,
-        theme,
-      }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme }: PropBooks = req.body;
 
       // * recibimos los documento que son el contenido del libro
       const files = req.files as { [key: string]: Express.Multer.File[] };
@@ -43,14 +32,12 @@ export class BookController {
 
       // * verificamos que se hallan subido correctamente
       if (!coverImage || !content) {
-  
         // * si alguno de los dos no se subió los elidamos en local para no cargar el servidor
         await fileDelete(img.path);
         await fileDelete(file.path);
 
         // * respondemos que no se pudo almacenar el libro
-        return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro",});
-
+        return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
       // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
@@ -58,7 +45,7 @@ export class BookController {
 
       serviceContainer.book.createBooks.run(
         title,
-        descriptions,
+        summary,
         author,
         subgenre,
         language,
@@ -82,7 +69,6 @@ export class BookController {
 
       // * respondemos que se subió el libro correctamente
       return res.status(200).json({ msg: "libro subido correctamente" });
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: createBook"));
       console.log(chalk.yellow(separator()));
@@ -90,22 +76,18 @@ export class BookController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res
-        .status(500)
-        .json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
+      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
     }
   }
 
   // ? método para obtener todo los libros
   async getAllBook(_req: Request, res: Response): Promise<Response> {
     try {
-
       // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
       const books = await serviceContainer.book.getAllBooks.run();
 
       // * si no hay libros, respondemos que no se encontraron
       return res.json(books).status(200);
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getAllBook"));
       console.log(chalk.yellow(separator()));
@@ -120,11 +102,10 @@ export class BookController {
   // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
-
       // * obtenemos el id del libro que se quiere eliminar
       const id = req.params.id;
 
-      // * verificamos que el id sea válido 
+      // * verificamos que el id sea válido
       if (!mongoose.Types.ObjectId.isValid(id)) return res.json({ msg: "id invalida" });
 
       // * convertimos el id a un objeto de tipo ObjectId de mongoose
@@ -132,7 +113,7 @@ export class BookController {
 
       // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
       const book: SearchedBook | null = await serviceContainer.book.getBooksById.run(idValid);
-      
+
       // * si no hay libro con el id proporcionado, respondemos que no se encontró
       if (!book) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
@@ -144,14 +125,12 @@ export class BookController {
 
       // * eliminamos el archivo del libro en local
       if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
-      
 
       // * eliminamos el libro de la base de datos
       await serviceContainer.book.deleteBook.run(idValid);
 
       // * respondemos que se eliminó el libro correctamente
       return res.status(200).json({ msg: "libro eliminado correctamente" });
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: deleteBook"));
       console.log(chalk.yellow(separator()));
@@ -183,7 +162,6 @@ export class BookController {
 
       // * si hay libro con el id proporcionado, lo retornamos
       return res.json(book);
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getBookById"));
       console.log(chalk.yellow(separator()));
@@ -198,7 +176,6 @@ export class BookController {
   // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro
   async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
     try {
-
       // * obtenemos la query de la URL, que puede ser un string o un array de strings
       const query = decodeURIComponent(req.params.query);
 
@@ -210,7 +187,6 @@ export class BookController {
 
       // * si hay libros, los retornamos
       return res.status(200).json(books);
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getIntelligenceBooks"));
       console.log(chalk.yellow(separator()));
@@ -225,20 +201,20 @@ export class BookController {
   // ? método para obtener un libros en la base de datos en base a su subgénero que recibe por parámetro
   async getBookBySubgenre(req: Request, res: Response): Promise<Response> {
     try {
-
       // * Obtener el parámetro 'subgenre' de la URL.
       const subgenreParam = req.params.subgenre;
 
       // * Validar que el parámetro no esté vacío.
       if (!subgenreParam || subgenreParam.trim() === "") return res.status(400).json({ msg: "El subgénero es requerido" });
-      
 
       // * Convertir el parámetro a un array de subgéneros (por si vienen separados por coma).
-      const subgenreArray = subgenreParam.split(",").map(s => s.trim()).filter(Boolean);
+      const subgenreArray = subgenreParam
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
 
       // * Validar que haya al menos un subgénero válido.
       if (subgenreArray.length === 0) return res.status(400).json({ msg: "Debe proporcionar al menos un subgénero válido" });
-      
 
       // * Consultar los libros que coincidan con los subgéneros.
       const books = await serviceContainer.book.getBooksBySubgenre.run(subgenreArray);
@@ -248,7 +224,6 @@ export class BookController {
 
       // * Retornar los libros encontrados.
       return res.status(200).json(books);
-    
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getBookBySubgenre"));
       console.log(chalk.yellow(separator()));
@@ -280,7 +255,6 @@ export class BookController {
 
       // * si hay libro con el id proporcionado, lo retornamos
       return res.status(200).json({ urlContentBook });
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getContentBookById"));
       console.log(chalk.yellow(separator()));
@@ -309,7 +283,6 @@ export class BookController {
 
       // * Si se encuentran libros, se retornan
       return res.status(200).json(books);
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getBookByTheme"));
       console.log(chalk.yellow(separator()));
