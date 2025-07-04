@@ -6,7 +6,7 @@ const bookSchema = new Schema<IBook>(
   {
     title: { type: String, required: true },
     author: [{ type: Schema.Types.ObjectId, ref: "authors" }],
-    descriptions: { type: String, required: true },
+    summary: { type: String, required: true },
     subgenre: [{ type: String, required: true }],
     language: { type: String, required: true },
     available: { type: Boolean, default: true },
