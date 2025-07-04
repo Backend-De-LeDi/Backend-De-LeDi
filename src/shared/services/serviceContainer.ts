@@ -7,16 +7,17 @@ import { GetIntelligenceBook } from "../../books/application/getIntelligenceBook
 import { MongoBookRepository } from "../../books/infrastructure/mongoBookRepository";
 import { GetContentBookById } from "../../books/application/getContentBookById";
 import { CreateAudioBooks } from "../../audiobooks/applications/createAudiobooks";
-import { MongoAudiobooksRepository } from "../../audiobooks/infrastructure/mongoAudioBooksRepository";
+import { MongoAudiobooksRepository } from "../../audiobooks/infrastructure/mongoAudiobooksRepository";
 import { GetAllAudiobooks } from "../../audiobooks/applications/getAllAudiobooks";
 import { DeleteAudiobook } from "../../audiobooks/applications/deleteAudiobook";
 import { GetAudiobooksById } from "../../audiobooks/applications/getAudiobookById";
+import { GetBookByTheme } from "../../books/application/getBooksByTheme";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const audiobooksRepository = new MongoAudiobooksRepository();
 
-// * contenedor que combina las aplicaciones de uso con los repositorios
+// ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
   
   // * métodos de solo libros
@@ -28,6 +29,7 @@ export const serviceContainer = {
     getIntelligenceBook: new GetIntelligenceBook(booksRepository),
     getBooksBySubgenre: new GetBooksBySubgenre(booksRepository),
     getContentById: new GetContentBookById(booksRepository),
+    getBookByTheme: new GetBookByTheme(booksRepository),
   },
 
   // * métodos de solo audiolibros
@@ -36,6 +38,5 @@ export const serviceContainer = {
     getAllAudioBooks: new GetAllAudiobooks(audiobooksRepository),
     deleteAudiobook: new DeleteAudiobook(audiobooksRepository),
     getAudiobookById: new GetAudiobooksById(audiobooksRepository),
-
   },
 };
