@@ -6,7 +6,6 @@ import { CoverImage } from "../../types/bookTypes";
 
 // * aplicación de uso para la creación de un audiolibro
 export class CreateAudioBooks {
-  
   constructor(private repository: AudiobookRepository) {}
 
   // * método para hacer uso de la clase
@@ -20,7 +19,7 @@ export class CreateAudioBooks {
     content: ContentAudioBook,
     coverImage: CoverImage,
     summary: string,
-    genreType: string,
+    theme: string[],
     yearBook: Date
   ): Promise<void> {
     const audiobook = new AudioBooks(
@@ -33,7 +32,7 @@ export class CreateAudioBooks {
       content,
       coverImage,
       summary,
-      genreType,
+      theme,
       yearBook ?? new Date()
     );
 
