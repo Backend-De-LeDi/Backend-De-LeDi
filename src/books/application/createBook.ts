@@ -4,7 +4,7 @@ import type { Types } from "mongoose";
 import { CoverImage } from "../../types/bookTypes";
 import { ContentBook } from "../../types/contentBook";
 
-//clase que limita al Repositorio a realizar el almacenamiento del libro
+// ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class BookCreate {
   constructor(private repository: BooksRepository) {}
 
@@ -17,8 +17,8 @@ export class BookCreate {
     available: boolean,
     content: ContentBook,
     coverImage: CoverImage,
-    genreType: string,
-    summary: string,
+    theme: string[],
+    synopsis: string,
     yearBook?: Date
   ): Promise<void> {
     const book = new Books(
@@ -30,9 +30,9 @@ export class BookCreate {
       available,
       content,
       coverImage,
-      summary,
+      synopsis,
       yearBook ?? new Date(),
-      genreType
+      theme
     );
 
     // console.log('datos ingresados al método run de la clase BookCreate:',book);
