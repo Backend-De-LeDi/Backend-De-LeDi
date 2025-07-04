@@ -6,6 +6,7 @@ import { UniqueUserName } from "../domain/ports/UniqueUserName";
 import { User } from "../domain/entities/UserTypes";
 import { UpdateUSerRepository } from "../domain/ports/UpdateUserRepository";
 import { FindAndDeleteRepo } from "../domain/ports/FindAndDeleteRepo";
+import { Types } from "mongoose";
 
 export class UserMongoRepository implements IRegisterRepository {
   async createUser(user: User): Promise<User> {
@@ -36,7 +37,7 @@ export class UniqueUsernameRepository implements UniqueUserName {
 }
 
 export class UpdateUSerMongo implements UpdateUSerRepository {
-  async updateUSer(id: string, User: Partial<User>): Promise<User | null> {
+  async updateUSer(id: Types.ObjectId, User: Partial<User>): Promise<User | null> {
     const newUser = await UserModel.findByIdAndUpdate(id, User, { new: true });
     if (newUser) {
       return newUser;
@@ -46,11 +47,11 @@ export class UpdateUSerMongo implements UpdateUSerRepository {
 }
 
 export class findAndDeleteMongo implements FindAndDeleteRepo {
-  async findByID(id: any): Promise<User | null> {
+  async findByID(id: Types.ObjectId): Promise<User | null> {
     const result = await UserModel.findById(id);
     return result;
   }
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: Types.ObjectId): Promise<void> {
     const result = await UserModel.findByIdAndDelete(id);
   }
   async findUser(): Promise<User[]> {

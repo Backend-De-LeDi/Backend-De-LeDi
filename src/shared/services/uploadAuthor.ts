@@ -1,5 +1,5 @@
 import { fileDelete } from "../utils/deleteFile";
-import { subirImagen } from "../utils/uploadCorverImage";
+import { subirImagen } from "../utils/author.photo";
 
 export class UploadService {
     async uploadImage(file: Express.Multer.File) {

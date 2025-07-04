@@ -17,6 +17,7 @@ const UserSchema = new Schema<User>({
     },
     birthDate: {
         type: Date,
+        required: true
 
     },
     email: {

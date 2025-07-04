@@ -6,7 +6,7 @@ import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts"
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { Register } from "../../application/service/Register.Service";
 import { ZodError } from "zod";
-import { UploadService } from "../../../shared/services/uploadImg.service";
+import { UploadService } from "../../../shared/services/uploadAvatar.service";
 
 
 // initialize the user service
@@ -22,24 +22,18 @@ const uploadService = new UploadService()
 export const registers = async (req: Request, res: Response) => {
   try {
     const user: User = req.body
-    // const usuarioValido = validarUsuario(user);
-
-    const file = req.file;
-    console.log(file)
-
-    const avatar = await uploadService.uploadImage(file as Express.Multer.File);
-
-    const newUser = { ...user, avatar }
+    const usuarioValido = validarUsuario(user)
+    const newUser = { ...user }
 
     const result = await userService.createUser(newUser)
     res.status(200).json({ msg: 'user creaded  successful', result })
   } catch (error) {
-    // if (error instanceof ZodError) {
-    //   res.status(422).json({
-    //     message: "Datos inválidos",
-    //     errors: error.flatten().fieldErrors,
-    //   });
-    // }
+    if (error instanceof ZodError) {
+      res.status(422).json({
+        message: "Datos inválidos",
+        errors: error.flatten().fieldErrors,
+      });
+    }
     console.error("internal server error", error);
     res.status(500).json({ message: "internal server error " });
   }

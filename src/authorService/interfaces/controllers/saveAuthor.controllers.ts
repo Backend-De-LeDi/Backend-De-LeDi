@@ -3,7 +3,7 @@ import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
 import { findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
-import { UploadService } from "../../../shared/services/uploadImg.service";
+import { UploadService } from "../../../shared/services/uploadAuthor"
 
 const saveAuthor: ISaveAuthorRepository = new SaveAuthorMongoRepo();
 const findAuthorRepo = new findAuthorMongoRepo()
