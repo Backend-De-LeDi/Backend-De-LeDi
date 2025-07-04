@@ -45,4 +45,9 @@ bookRouter.get("/booksBySubgenre/:subgenre", (req: Request, res: Response) => {
 bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
+
+bookRouter.get("/booksByTheme/:theme", (req: Request, res: Response) => {
+  controller.getBookByTheme(req, res);
+});
+
 export default bookRouter;
