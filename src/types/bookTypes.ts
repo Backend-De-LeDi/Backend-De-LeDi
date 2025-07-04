@@ -1,5 +1,5 @@
 import { Types, Document } from "mongoose";
-import { ContentAudioBook, ContentBook, FullContentBook } from "./contentBook";
+import { ContentBook, FullContentBook } from "./contentBook";
 
 export interface CoverImage {
   idCoverImage: string;
@@ -18,26 +18,12 @@ export interface PropBooks extends Document {
   theme: string[];
 }
 
-export interface PropAudiobooks extends PropBooks {
-  summary: string;
-}
-
 export interface IBook extends PropBooks {
   content: ContentBook;
   coverImage: CoverImage;
 }
 
 export interface SearchedBook extends IBook {
-  _id: string;
-  __v: number;
-}
-
-export interface IAudioBook extends Omit<IBook, "content"> {
-  summary: string;
-  content: ContentAudioBook;
-}
-
-export interface SearchedAudiobook extends IAudioBook {
   _id: string;
   __v: number;
 }
