@@ -14,7 +14,7 @@ export class AudioBooks {
     public content: ContentAudioBook,
     public coverImage: CoverImage,
     public summary: string,
-    public genreType: string,
+    public theme: string[],
     public yearBook: Date
   ) {}
 }
