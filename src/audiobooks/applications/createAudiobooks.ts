@@ -1,7 +1,7 @@
 import { AudioBooks } from "../domain/audiobooks";
 import { AudiobookRepository } from "../domain/audiobooksRepository";
+import { ContentBook } from "../../types/contentBook";
 import { Types } from "mongoose";
-import { ContentAudioBook, ContentBook } from "../../types/contentBook";
 import { CoverImage } from "../../types/bookTypes";
 
 // * aplicación de uso para la creación de un audiolibro
@@ -16,7 +16,7 @@ export class CreateAudioBooks {
     subgenre: string[],
     language: string,
     available: boolean,
-    content: ContentAudioBook,
+    content: ContentBook,
     coverImage: CoverImage,
     summary: string,
     theme: string[],
@@ -32,8 +32,8 @@ export class CreateAudioBooks {
       content,
       coverImage,
       summary,
-      theme,
-      yearBook ?? new Date()
+      yearBook,
+      theme
     );
 
     // * activación del método que existe en el repositorio AudiobooksRepository
