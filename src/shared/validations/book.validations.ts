@@ -5,7 +5,6 @@ const isObjectId = (val: unknown): val is Types.ObjectId =>
   val instanceof Types.ObjectId;
 
 export const bookSchema = z.object({
-  
   // * validaciones para el titulo
 
   title: z
@@ -46,6 +45,7 @@ export const bookSchema = z.object({
   available: z.boolean().refine((val) => typeof val === "boolean", {
     message: "El campo debe ser un valor de verdad si es valido o no",
   }),
+
   language: z
     .string()
     .min(1, { message: "El idioma es obligatorio" })
@@ -59,14 +59,16 @@ export const bookSchema = z.object({
 
   // * --------------------------------------------------------------------------------------------
 
-  // * validación de tipo de genero principal
+  // * validación de tipo de tema
 
-  genreType: z
-    .string()
-    .min(1, { message: "el genero principal es obligatorio " })
-    .max(50, {
-      message:
-        "el máximo de caracteres que puede tener el genero principal es de 50",
+  theme: z
+    .array(
+      z.string().max(50, {
+        message: "un tema solo puede tener 50 caracteres como máximo",
+      })
+    )
+    .nonempty({
+      message: "Debe haber al menos un tema",
     }),
 
   // * --------------------------------------------------------------------------------------------
@@ -85,8 +87,16 @@ export const bookSchema = z.object({
     .nonempty({
       message:
         "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
-    })
-    .min(24, { message: "debes ingresar una id valida" }),
+    }),
 
   // * --------------------------------------------------------------------------------------------
+
+  // * validación de sinopsis del libro
+  synopsis: z
+    .string({ message: "la sinopsis no puede ser un numero" })
+    .min(1, { message: "La sinopsis es obligatoria" })
+    .max(3000, {
+      message:
+        "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
+    }),
 });
