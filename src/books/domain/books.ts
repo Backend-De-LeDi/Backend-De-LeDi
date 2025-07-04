@@ -6,7 +6,7 @@ import type { Types } from "mongoose";
 export class Books {
   constructor(
     public title: string,
-    public descriptions: string,
+    public summary: string,
     public author: Types.ObjectId[],
     public subgenre: string[],
     public language: string,
