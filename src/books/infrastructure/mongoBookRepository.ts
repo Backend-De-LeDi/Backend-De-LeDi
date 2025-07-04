@@ -4,6 +4,8 @@ import { Books } from "../domain/books";
 import { Types } from "mongoose";
 import { SearchedBook } from "../../types/bookTypes";
 
+// ? clase que implementa el repositorio de libros para MongoDB
+
 export class MongoBookRepository implements BooksRepository {
   // * método de repositorio que es para crear o almacenar un nuevo libro
   async createBook(book: Books): Promise<void> {
@@ -62,6 +64,7 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  // * método que permite obtener el contenido de un libro en base a su id
   async getContentBookById(id: Types.ObjectId): Promise<string | null> {
     const book: SearchedBook | null = await BookModel.findById(id);
     if (!book) {
@@ -71,5 +74,9 @@ export class MongoBookRepository implements BooksRepository {
     return book.content.url_secura;
   }
 
-  async getBookByGenreTypes(genreType: string): Promise<Books[]> {}
+  // * método que permite obtener libros en base a su tema
+  async getBookByTheme(theme: string[]): Promise<Books[]> {
+    const books = await BookModel.find({ theme: { $in: theme } });
+    return books;
+  }
 }
