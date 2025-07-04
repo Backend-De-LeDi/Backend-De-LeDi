@@ -7,7 +7,6 @@ import { deleteAudiobookInCloudinary } from "../../shared/utils/deleteAudiobookI
 
 // * Repositorio de mongo que implementa todos los usos que tiene el repositorio principal AudiobookRepository
 export class MongoAudiobooksRepository implements AudiobookRepository {
-  
   // * método para que se pueda crear un audio libro
   async createAudiobooks(audioBook: AudioBooks): Promise<void> {
     const newAudioBook = new AudioBookModel(audioBook);
@@ -28,8 +27,10 @@ export class MongoAudiobooksRepository implements AudiobookRepository {
 
     if (!audioBookToDelete) return false;
 
-    await deleteCoverImageInCloudinary(audioBookToDelete.coverImage.idCoverImage);
-    await deleteAudiobookInCloudinary(audioBookToDelete.content.idAudio);
+    await deleteCoverImageInCloudinary(
+      audioBookToDelete.coverImage.idCoverImage
+    );
+    await deleteAudiobookInCloudinary(audioBookToDelete.content.idContentBook);
 
     const audiobookDeleted = await AudioBookModel.findByIdAndDelete(id);
 
