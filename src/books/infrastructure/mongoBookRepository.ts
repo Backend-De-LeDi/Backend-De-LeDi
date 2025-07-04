@@ -6,32 +6,40 @@ import { SearchedBook } from "../../types/bookTypes";
 
 // ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoBookRepository implements BooksRepository {
+
   // ? método de repositorio que es para crear o almacenar un nuevo libro
   async createBook(book: Books): Promise<void> {
+
     // * almacenamos el libro que se recibió en el argumento en un modelo de mongoose
     const newBook = new BookModel(book);
 
     // * guardamos en la base de datos
     await newBook.save();
+
   }
 
   // ? método para obtener todo los libros en la base de datos
   async getAllBooks(): Promise<Books[]> {
+
     // * realizamos la consulta find que es buscar sin ningún parámetro que es todo
     const books = await BookModel.find();
 
     // * retornamos el array de libros
     return books;
+
   }
 
   // ? método para eliminar libro en la base de datos en base a su id
   async deleteBook(id: Types.ObjectId): Promise<void> {
+
     // * hacemos eliminación del libro en la base de datos en base a la id del argumento del método
     await BookModel.findOneAndDelete(id);
+  
   }
 
   // ? método para obtener un libro en la base de datos en base a su id
   async getBookById(id: Types.ObjectId): Promise<SearchedBook | null> {
+
     // * buscamos el libro en base a id proporcionada en el argumentos
     const book: SearchedBook | null = await BookModel.findById(id);
 
@@ -44,10 +52,9 @@ export class MongoBookRepository implements BooksRepository {
 
   // ? método para obtener libros en la base de datos en base a una o varias palabras clave
   async getIntelligenceBook(query: string): Promise<Books[]> {
+
     //* búsqueda principal por autores
-    let resBooks = await BookModel.find({
-      title: { $regex: query, $options: "i" },
-    });
+    let resBooks = await BookModel.find({title: { $regex: query, $options: "i" },});
 
     //!realizar la lógica mas adelante una ves que Jaqui termine el de el dominio de autores
     // if (resBooks.length === 0) {
@@ -70,15 +77,18 @@ export class MongoBookRepository implements BooksRepository {
 
   // ? método que permite obtener libros en base a sus subgéneros
   async getBooksBySubgenre(subgenre: string[]): Promise<Books[]> {
+
     // * buscamos en los libros los subgéneros que se recibieron
     const books = await BookModel.find({ subgenre: { $in: subgenre } });
 
     // * retornamos lo que se hallo
     return books;
+
   }
 
   // ? método que permite obtener el contenido del libro en base a su id
   async getContentBookById(id: Types.ObjectId): Promise<string | null> {
+
     // * buscamos el libro con la id proporcionada
     const book: SearchedBook | null = await BookModel.findById(id);
 
@@ -87,17 +97,16 @@ export class MongoBookRepository implements BooksRepository {
 
     // * sino retornara la url del libro
     return book.content.url_secura;
+  
   }
 
   // ? método que permite obtener libros en base a si genero principal
   async getBookByTheme(theme: string[]): Promise<Books[]> {
+
+    // * buscamos en la base de datos los libros que tengan el tema que se recibió en el argumento
     const books = await BookModel.find({ theme: { $in: theme } });
-    return books;
 
-    // * buscamos en la base de datos el genero principal que se recibió en el argumento
-    const books = await BookModel.find({ genreType: genreType });
-
-    // * retornamos lo que se encontró
     return books;
+  
   }
 }
