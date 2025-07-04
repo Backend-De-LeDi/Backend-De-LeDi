@@ -14,8 +14,8 @@ export interface PropBooks extends Document {
   language: string;
   available: boolean;
   yearBook: Date;
-  summary: string;
-  genreType: string;
+  synopsis: string;
+  theme: string[];
 }
 
 export interface PropAudiobooks extends PropBooks {
