@@ -59,11 +59,17 @@ export const parseFormData = (
         // * -------------------------------------------
 
         // * validamos si es un array, si no lo transformamos y trasformamos en id de mongodb
-        const ids = Array.isArray(val) ? val : [val];
-        req.body[key] = ids.map((id) => Types.ObjectId.createFromHexString(id));
-      }
 
-      // * -------------------------------------------
+        const ids = Array.isArray(val) ? val : [val];
+
+        req.body[key] = ids.map((id) => Types.ObjectId.createFromHexString(id));
+      } else if (key === "theme") {
+        // * si es un array dejamos como esta, si no lo convertimos en array
+
+        req.body[key] = Array.isArray(req.body[key])
+          ? req.body[key]
+          : [req.body[key]];
+      }
     } catch {
       // * Si hay un error, mantener el valor original
     }
