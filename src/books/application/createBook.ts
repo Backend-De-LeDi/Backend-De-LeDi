@@ -6,12 +6,11 @@ import { ContentBook } from "../../types/contentBook";
 
 // ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class BookCreate {
-
   constructor(private repository: BooksRepository) {}
 
   async run(
     title: string,
-    descriptions: string,
+    summary: string,
     author: Types.ObjectId[],
     subgenre: string[],
     language: string,
@@ -22,19 +21,7 @@ export class BookCreate {
     synopsis: string,
     yearBook?: Date
   ): Promise<void> {
-    const book = new Books(
-      title,
-      descriptions,
-      author,
-      subgenre,
-      language,
-      available,
-      content,
-      coverImage,
-      synopsis,
-      yearBook ?? new Date(),
-      theme
-    );
+    const book = new Books(title, summary, author, subgenre, language, available, content, coverImage, synopsis, yearBook ?? new Date(), theme);
 
     await this.repository.createBook(book);
   }
