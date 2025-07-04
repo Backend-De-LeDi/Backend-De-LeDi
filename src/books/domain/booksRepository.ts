@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { Books } from "./books";
 import { SearchedBook } from "../../types/bookTypes";
 
+// ? Interfaz que define las operaciones del repositorio de libros
 export interface BooksRepository {
   createBook(book: Books): Promise<void>;
   getAllBooks(): Promise<Books[]>;
