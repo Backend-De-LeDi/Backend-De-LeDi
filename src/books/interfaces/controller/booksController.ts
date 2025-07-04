@@ -124,7 +124,8 @@ export class BookController {
       const isDeletingBook: boolean = await deleteBookInCloudinary(book.content.idContentBook);
 
       // * eliminamos el archivo del libro en local
-      if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
+      if (!isDeletingCoverImage || !isDeletingBook)
+        console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
 
       // * eliminamos el libro de la base de datos
       await serviceContainer.book.deleteBook.run(idValid);

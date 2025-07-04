@@ -1,8 +1,8 @@
 import { Books } from "../domain/books";
 import { BooksRepository } from "../domain/booksRepository";
 import type { Types } from "mongoose";
-import { CoverImage } from "../../types/bookTypes";
-import { ContentBook } from "../../types/contentBook";
+import { CoverImage } from "../types/bookTypes";
+import { ContentBook } from "../types/contentBook";
 
 // ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class BookCreate {

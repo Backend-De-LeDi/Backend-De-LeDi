@@ -9,20 +9,21 @@ interface UserRequestParams {
 }
 
 // initialize the user service
-const userRespositoryMongo: IRegisterRepository = new UserMongoRepository();
-const authRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory();
+const userRespositoryMongo: IRegisterRepository = new UserMongoRepository()
+const authRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory()
 const uniqueUsername = new UniqueUsernameRepository();
-const userService: IRegisterRepository = new Register(userRespositoryMongo, authRepositoryMongo, uniqueUsername);
+const userService: IRegisterRepository = new Register(userRespositoryMongo, authRepositoryMongo, uniqueUsername)
 
-//register
+//register 
 export const registers = async (req: Request<UserRequestParams>, res: Response) => {
   try {
     const users: User = req.body;
-    const result = await userService.createUser(users);
+    const result = await userService.createUser(users)
+    res.status(200).json({ msg: 'user creaded  successful', result })
 
-    res.status(200).json(result);
   } catch (error) {
-    console.log(error);
+    console.log(error)
     res.status(500).json({ message: "internal server error", error });
   }
-};
+}
+

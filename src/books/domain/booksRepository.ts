@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Books } from "./books";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../types/bookTypes";
 
 // ? Interfaz que define las operaciones del repositorio de libros
 export interface BooksRepository {
