@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, text } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { PropBooks, SearchedBook } from "../../../types/bookTypes";
 import { uploadBookCoverImagen } from "../../../shared/utils/uploadBookCoverImagen";
@@ -11,7 +11,7 @@ import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 
 export class BookController {
-  //método para crear libros
+  // ? método para crear libros
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
       const {
@@ -22,8 +22,8 @@ export class BookController {
         available,
         language,
         yearBook,
-        summary,
-        genreType,
+        synopsis,
+        theme,
       }: PropBooks = req.body;
 
       const files = req.files as { [key: string]: Express.Multer.File[] };
@@ -49,11 +49,9 @@ export class BookController {
       if (!coverImage || !content) {
         await fileDelete(img.path);
         await fileDelete(file.path);
-        return res
-          .status(400)
-          .json({
-            msg: "no se pudo almacenar el contenido o la portada del libro",
-          });
+        return res.status(400).json({
+          msg: "no se pudo almacenar el contenido o la portada del libro",
+        });
       }
 
       serviceContainer.book.createBooks.run(
@@ -71,8 +69,8 @@ export class BookController {
           url_secura: coverImage.secure_url,
           idCoverImage: coverImage.public_id,
         },
-        genreType,
-        summary,
+        theme,
+        synopsis,
         yearBook
       );
 
@@ -93,7 +91,7 @@ export class BookController {
     }
   }
 
-  // método para obtener todo los libros
+  // ? método para obtener todo los libros
   async getAllBook(_req: Request, res: Response): Promise<Response> {
     try {
       const books = await serviceContainer.book.getAllBooks.run();
@@ -111,7 +109,7 @@ export class BookController {
     }
   }
 
-  // método para eliminar libro en la base de datos en base a su id que recibe por parámetro
+  // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
@@ -165,7 +163,7 @@ export class BookController {
     }
   }
 
-  // método para obtener un libro en la base de datos en base a su id que recibe por parámetro
+  // ? método para obtener un libro en la base de datos en base a su id que recibe por parámetro
   async getBookById(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
@@ -193,7 +191,7 @@ export class BookController {
     }
   }
 
-  // método para obtener un libros en la base de datos en base a la query que venga por parámetro
+  // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro
   async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
     try {
       const query = decodeURIComponent(req.params.query);
@@ -221,7 +219,7 @@ export class BookController {
     }
   }
 
-  // método para obtener un libros en la base de datos en base a su categoría que recibe por parámetro
+  // ? método para obtener un libros en la base de datos en base a su categoría que recibe por parámetro
   async getBookBySubgenre(req: Request, res: Response): Promise<Response> {
     try {
       const subgenre = req.params.subgenre;
@@ -255,7 +253,7 @@ export class BookController {
     }
   }
 
-  // método para obtener una url para visualizar el contenido del libro buscado por id
+  // ? método para obtener una url para visualizar el contenido del libro buscado por id
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
@@ -285,6 +283,36 @@ export class BookController {
       return res
         .status(500)
         .json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    }
+  }
+
+  // ? método para obtener libros en base a su tema
+  async getBookByTheme(req: Request, res: Response): Promise<Response> {
+    try {
+
+      // * Se obtiene el tema de la URL, que puede ser un string o un array de strings
+      const theme = req.params.theme;
+
+      // * Se divide el string en un array de temas
+      const themeArray = theme.split(",");
+
+      // * Se llama al servicio para obtener los libros por tema
+      const books = await serviceContainer.book.getBookByTheme.run(themeArray);
+
+      // * Si no se encuentran libros, se retorna un mensaje de error
+      if (books.length === 0) return res.status(404).json({ msg: "No se encontraron libros con ese tema" });
+      
+      // * Si se encuentran libros, se retornan
+      return res.status(200).json(books);
+
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getBookByTheme"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
 }
