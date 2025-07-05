@@ -16,7 +16,7 @@ export class AudiobookControllers {
   async createAudioBook(req: Request, res: Response): Promise<Response> {
     try {
       // * validación de que se suba un archivo de imagen y audio
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level }: PropBooks = req.body;
 
       // * validación de que se suba un archivo de imagen y audio
       const files = req.files as { [key: string]: Express.Multer.File[] };
@@ -53,7 +53,7 @@ export class AudiobookControllers {
       };
 
       // * usa el método que existe en el repositorio AudiobooksRepository para crear un audiolibro
-      await serviceContainer.audiobooks.createAudioBooks.run(title, summary, author, subgenre, language, available, content, coverImage, synopsis, theme, yearBook);
+      await serviceContainer.audiobooks.createAudioBooks.run(title, summary, author, subgenre, language, available, content, coverImage, synopsis, theme, yearBook, genre, level);
 
       // * elimina la imagen y el audio del nuestro directorio temporal
       await fileDelete(img.path);

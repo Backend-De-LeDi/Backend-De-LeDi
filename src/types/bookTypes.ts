@@ -16,6 +16,8 @@ export interface PropBooks extends Document {
   yearBook: Date;
   synopsis: string;
   theme: string[];
+  genre: string;
+  level: string;
 }
 
 export interface IBook extends PropBooks {

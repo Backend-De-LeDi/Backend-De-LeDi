@@ -15,6 +15,8 @@ export class Books {
     public coverImage: CoverImage,
     public synopsis: string,
     public yearBook: Date,
-    public theme: string[]
+    public theme: string[],
+    public genre: string,
+    public level: string
   ) {}
 }

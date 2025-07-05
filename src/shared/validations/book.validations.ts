@@ -15,7 +15,7 @@ export const bookSchema = z.object({
 
   // * validaciones para la descripción
 
-  summary: z.string({ message: "la descripción no puede ser un numero" }).min(1, { message: "La descripción es obligatoria" }).max(4000, {
+  summary: z.string({ message: "la descripción no puede ser un numero" }).min(1, { message: "La descripción es obligatoria" }).max(2500, {
     message: "el limite de caracteres que puede tener una descripción es de 4000 caracteres",
   }),
 
@@ -39,6 +39,9 @@ export const bookSchema = z.object({
     message: "El campo debe ser un valor de verdad si es valido o no",
   }),
 
+  // * --------------------------------------------------------------------------------------------
+
+  // * validación de idioma del libro
   language: z
     .string()
     .min(1, { message: "El idioma es obligatorio" })
@@ -87,4 +90,20 @@ export const bookSchema = z.object({
   synopsis: z.string({ message: "la sinopsis no puede ser un numero" }).min(1, { message: "La sinopsis es obligatoria" }).max(800, {
     message: "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
   }),
-});
+  // * --------------------------------------------------------------------------------------------
+
+  // * validación de genero del libro
+  genre: z
+    .string({ message: "el genero no puede ser un numero" })
+    .min(1, { message: "El género es obligatorio" })
+    .max(50, { message: "un genero solo puede tener 50 caracteres como máximo" }),
+  // * --------------------------------------------------------------------------------------------
+
+  // * validación de nivel del libro
+  level: z
+    .string({ message: "el nivel no puede ser un numero" })
+    .min(1, { message: "El nivel es obligatorio" })
+    .max(50, { message: "un nivel solo puede tener 50 caracteres como máximo" }),
+
+  // * --------------------------------------------------------------------------------------------
+  });

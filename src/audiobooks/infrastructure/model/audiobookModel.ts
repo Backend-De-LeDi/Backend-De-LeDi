@@ -26,6 +26,8 @@ const audioBookSchema = new Schema<IBook>(
     synopsis: { type: String, required: true },
     yearBook: { type: Date, default: Date.now },
     theme: [{ type: String, required: true }],
+    genre: { type: String, required: true },
+    level: { type: String, required: true },
   },
   { timestamps: true } // * campo que almacena el tiempo de carga en la base de datos y cuando se actualiza en la bases de datos
 );

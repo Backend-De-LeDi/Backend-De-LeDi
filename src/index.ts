@@ -52,7 +52,7 @@ app.use(
   })
 );
 
-// ? configuracion de rutas
+// ? configuración de rutas
 app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);

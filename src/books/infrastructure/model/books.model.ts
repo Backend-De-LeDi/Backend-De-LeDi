@@ -5,7 +5,7 @@ import { Schema, model } from "mongoose";
 const bookSchema = new Schema<IBook>(
   {
     title: { type: String, required: true },
-    author: [{ type: Schema.Types.ObjectId, ref: "authors" }],
+    author: [{ type: Schema.Types.ObjectId, ref: "AuthorModel" }],
     summary: { type: String, required: true },
     subgenre: [{ type: String, required: true }],
     language: { type: String, required: true },
@@ -25,6 +25,8 @@ const bookSchema = new Schema<IBook>(
       },
     },
     theme: [{ type: String, require: true }],
+    genre: { type: String, required: true },
+    level: { type: String, required: true },
   },
   { timestamps: true }
 );

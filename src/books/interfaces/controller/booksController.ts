@@ -15,7 +15,7 @@ export class BookController {
   // ? método para procesar y almacenar los libros que se proporcionan
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level }: PropBooks = req.body;
 
       // * recibimos los documento que son el contenido del libro
       const files = req.files as { [key: string]: Express.Multer.File[] };
@@ -60,6 +60,8 @@ export class BookController {
         },
         theme,
         synopsis,
+        genre,
+        level,
         yearBook
       );
 
@@ -124,8 +126,7 @@ export class BookController {
       const isDeletingBook: boolean = await deleteBookInCloudinary(book.content.idContentBook);
 
       // * eliminamos el archivo del libro en local
-      if (!isDeletingCoverImage || !isDeletingBook)
-        console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
+      if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
 
       // * eliminamos el libro de la base de datos
       await serviceContainer.book.deleteBook.run(idValid);

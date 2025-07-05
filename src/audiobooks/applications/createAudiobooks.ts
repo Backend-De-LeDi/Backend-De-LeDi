@@ -20,21 +20,11 @@ export class CreateAudioBooks {
     coverImage: CoverImage,
     summary: string,
     theme: string[],
-    yearBook: Date
+    yearBook: Date,
+    genre: string,
+    level: string
   ): Promise<void> {
-    const audiobook = new AudioBooks(
-      title,
-      descriptions,
-      author,
-      subgenre,
-      language,
-      available,
-      content,
-      coverImage,
-      summary,
-      yearBook,
-      theme
-    );
+    const audiobook = new AudioBooks(title, descriptions, author, subgenre, language, available, content, coverImage, summary, yearBook, theme, genre, level);
 
     // * activación del método que existe en el repositorio AudiobooksRepository
     await this.repository.createAudiobooks(audiobook);

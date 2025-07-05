@@ -33,15 +33,17 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
         // * validamos si alguno de los dos esta mal
         if (!files?.file?.[0] || !files.img?.[0]) {
           // * respondemos si falta alguno en especifico
-          res.status(400).json({
-            msg: `${
-              !files?.file?.[0] && !files.img?.[0]
-                ? "Debes subir el contenido y la portada del libro"
-                : !files?.file?.[0]
-                ? "Debes subir el contenido de texto del libro"
-                : !files.img?.[0] && "Debes subir la portada del libro "
-            }`,
-          });
+          res
+            .status(400)
+            .json({
+              msg: `${
+                !files?.file?.[0] && !files.img?.[0]
+                  ? "Debes subir el contenido y la portada del libro"
+                  : !files?.file?.[0]
+                  ? "Debes subir el contenido de texto del libro"
+                  : !files.img?.[0] && "Debes subir la portada del libro "
+              }`,
+            });
 
           // * hacemos la eliminación para limpiar localmente
           if (files.img?.[0]) await fileDelete(files.img?.[0].path);
