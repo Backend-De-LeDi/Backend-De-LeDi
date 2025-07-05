@@ -10,7 +10,7 @@ import chalk from "chalk";
 import ENV from "./shared/config/configEnv";
 import connections from "./shared/config/db/database";
 import { userRoutes } from "./userService/interfaces/routes/userService.routes";
-import autorRoutes from "./authors/interfaces/routes/autor.routes";
+import { autorRoutes } from "./authorService/interfaces/routes/authores.routes";
 import bookRouter from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
