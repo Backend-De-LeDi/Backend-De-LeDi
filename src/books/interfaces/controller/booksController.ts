@@ -1,7 +1,7 @@
 import { Request, Response, text } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { PropBooks, SearchedBook } from "../../../types/bookTypes";
-import { uploadBookCoverImagen } from "../../../shared/utils/uploadBookCoverImagen";
+import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
@@ -27,7 +27,7 @@ export class BookController {
       const file = files.file[0];
 
       // * subimos a Cloudinary el contenido y la portada
-      const coverImage = await uploadBookCoverImagen(img.path);
+      const coverImage = await uploadCoverImage(img.path);
       const content = await uploadBook(file.path);
 
       // * verificamos que se hallan subido correctamente

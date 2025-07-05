@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: ENV.API_SECRET,
 });
 
-export async function uploadBookCoverImagen(filePhat: string) {
+export async function uploadCoverImage(filePhat: string) {
   try {
     const result = await cloudinary.uploader.upload(filePhat, { folder: "BooksCovers" });
 
