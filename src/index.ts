@@ -10,7 +10,7 @@ import chalk from "chalk";
 import ENV from "./shared/config/configEnv";
 import connections from "./shared/config/db/database";
 import { userRoutes } from "./userService/interfaces/routes/userService.routes";
-import { autorRoutes } from "./authorService/interfaces/routes/authores.routes";
+import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
 import bookRouter from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
@@ -19,7 +19,6 @@ import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress
 
 // ? creación de la aplicación Express
 const app = express();
-connections();
 
 // ? configuración del directorio de subida de archivos
 const fileUpload = path.join(__dirname, "./uploads");
@@ -31,7 +30,6 @@ if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
 app.use(
   cors({
     origin: ["http://localhost:5500", "http://localhost:3000", "http://localhost:5173"],
-
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -54,12 +52,10 @@ app.use(
   })
 );
 
+// ? configuracion de rutas
 app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);
-app.use(progressRouter);
-// ? configuracion de rutas
-
 app.use(progressRouter);
 app.use(bookRouter);
 app.use(audiobookRouter);
