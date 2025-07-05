@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../types/bookTypes";
 import { BooksRepository } from "../domain/booksRepository";
 
 // ? Clase que guía al Repositorio a realizar la obtención de un libro por su ID

@@ -6,7 +6,7 @@ import { ContentBook } from "../../types/contentBook";
 
 // ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class BookCreate {
-  constructor(private repository: BooksRepository) {}
+  constructor(private repository: BooksRepository) { }
 
   async run(
     title: string,

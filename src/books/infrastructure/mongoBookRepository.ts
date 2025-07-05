@@ -2,7 +2,7 @@ import { BookModel } from "./model/books.model";
 import { BooksRepository } from "../domain/booksRepository";
 import { Books } from "../domain/books";
 import { Types } from "mongoose";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../types/bookTypes";
 
 // ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoBookRepository implements BooksRepository {

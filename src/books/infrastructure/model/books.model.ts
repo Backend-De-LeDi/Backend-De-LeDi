@@ -1,4 +1,4 @@
-import { IBook } from "../../../types/bookTypes";
+import { IBook } from "../../types/bookTypes";
 import { Schema, model } from "mongoose";
 
 // ? definimos el modelo de estructura para almacenar los datos

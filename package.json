@@ -1,25 +1,28 @@
 {
   "name": "backend-de-ledi",
   "version": "1.0.0",
-  "description": "Backend-De-LeDi",
-  "homepage": "https://github.com/Backend-De-LeDi/Backend-De-LeDi#readme",
+  "description": "\"# Backend-de-Ledi\"",
+  "homepage": "https://github.com/LediBackend/Backend-de-Ledi#readme",
   "bugs": {
-    "url": "https://github.com/Backend-De-LeDi/Backend-De-LeDi/issues"
+    "url": "https://github.com/LediBackend/Backend-de-Ledi/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Backend-De-LeDi/Backend-De-LeDi.git"
+    "url": "git+https://github.com/LediBackend/Backend-de-Ledi.git"
   },
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
-    "start": "tsc && nodemon ./dist/src/index.js",
-    "build": "tsc"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/chalk": "^0.4.31",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/nodemon": "^1.19.6",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^6.0.0",
