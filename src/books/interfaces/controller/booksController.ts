@@ -83,8 +83,12 @@ export class BookController {
   }
 
   // ? método para obtener todo los libros
-  async getAllBook(_req: Request, res: Response): Promise<Response> {
+  async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const token = req.user;
+      console.log(chalk.blue("Token del usuario autenticado: "), token);
+
       // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
       const books = await serviceContainer.book.getAllBooks.run();
 
