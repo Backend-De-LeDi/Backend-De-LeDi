@@ -5,6 +5,7 @@ import morgan from "morgan";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
+import cookies from "cookie-parser";
 
 // ? importación de módulos locales
 import ENV from "./shared/config/configEnv";
@@ -34,6 +35,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookies());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
