@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { parseFormData } from "../../../shared/utils/parseFormData";
 import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
+import { validateJWT } from "../../../shared/middlewares/validateJWT";
 
 const bookRouter = Router();
 const controller = new BookController();
