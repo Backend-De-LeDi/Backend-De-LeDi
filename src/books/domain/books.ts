@@ -1,5 +1,5 @@
-import { CoverImage } from "../../types/bookTypes";
-import { ContentBook } from "../../types/contentBook";
+import { BookCoverImage } from "../../types/bookTypes";
+import { ContentBook } from "../../types/contentBookTypes";
 import type { Types } from "mongoose";
 
 // ? Clase que representa un libro en el dominio de la aplicación
@@ -11,8 +11,8 @@ export class Books {
     public subgenre: string[],
     public language: string,
     public available: boolean,
-    public content: ContentBook,
-    public coverImage: CoverImage,
+    public bookCoverImage: BookCoverImage,
+    public contentBook: ContentBook,
     public synopsis: string,
     public yearBook: Date,
     public theme: string[],
