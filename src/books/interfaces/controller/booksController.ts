@@ -9,12 +9,15 @@ import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverI
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
+import { UserModel } from "../../../userService/infrastructure/models/userModels";
 
 // ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
   // ? método para procesar y almacenar los libros que se proporcionan
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
+      const idUser = req.user.id;
+
       const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level }: PropBooks = req.body;
 
       // * recibimos los documento que son el contenido del libro
@@ -26,9 +29,35 @@ export class BookController {
       // * contenido del libro
       const file = files.file[0];
 
+      // ! ------------------------------------------------------------------------------
+      // ! cambiara manero de obtener el rol del usuario por la de jaqui
+      const user = await UserModel.findById(idUser);
+      if (!user) {
+        // * si no se encuentra el usuario, eliminamos los archivos de portada y texto del libro en local
+        await fileDelete(img.path);
+        await fileDelete(file.path);
+
+        // * respondemos que no se necesita acceso para realizar esta acción
+        return res.status(404).json({ msg: "necesitas acceso para realizar esta acción" });
+      }
+
+      // ! convertimos el usuario a un objeto plano para poder acceder a sus propiedades
+      const plainUser = user?.toObject();
+
+      // ! verificamos que el usuario tenga el rol de administrador
+      if (plainUser.rol !== "admin") {
+        // * si el usuario no es administrador, eliminamos los archivos de portada y texto del libro en local
+        await fileDelete(img.path);
+        await fileDelete(file.path);
+
+        // * respondemos que no tiene permisos para realizar esta acción
+        return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+      }
+      // ! ------------------------------------------------------------------------------
+
       // * subimos a Cloudinary el contenido y la portada
-      const coverImage = await uploadCoverImage(img.path);
       const content = await uploadBook(file.path);
+      const coverImage = await uploadCoverImage(img.path);
 
       // * verificamos que se hallan subido correctamente
       if (!coverImage || !content) {
@@ -40,30 +69,28 @@ export class BookController {
         return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
-      // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
-      // * que usan los métodos del repositorio de la base de datos
-
-      serviceContainer.book.createBooks.run(
+      // ejecutamos el método run del contenedor que combina el caso de uso del repositorio guía
+      serviceContainer.book.createBooks.run({
         title,
         summary,
         author,
         subgenre,
         language,
         available,
-        {
+        contentBook: {
           idContentBook: content.public_id,
           url_secura: content.secure_url,
         },
-        {
+        bookCoverImage: {
           url_secura: coverImage.secure_url,
-          idCoverImage: coverImage.public_id,
+          idBookCoverImage: coverImage.public_id,
         },
-        theme,
         synopsis,
+        yearBook,
+        theme,
         genre,
         level,
-        yearBook
-      );
+      });
 
       // * una ves subido todo correctamente eliminamos los archivos de portada y texto del libro en local
       await fileDelete(img.path);
@@ -86,14 +113,35 @@ export class BookController {
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
       // * verificamos que el usuario esté autenticado
-      const token = req.user;
-      console.log(chalk.blue("Token del usuario autenticado: "), token);
+      const reqUser = req.user;
 
-      // * activamos el método run de contenedor que combina el caso de uso del repositorio guía
-      const books = await serviceContainer.book.getAllBooks.run();
+      if (!reqUser) {
+        console.log("usuario sin autenticación se le proporcionara todos el contendió para ver pero no para leer");
+        const books = await serviceContainer.book.getAllBooks.run();
+        return res.status(200).json(books);
+      }
 
-      // * si no hay libros, respondemos que no se encontraron
-      return res.json(books).status(200);
+      const user = await UserModel.findById(reqUser.id);
+
+      if (!user) {
+        console.log("usuario con autenticación invalida se le proporcionara todos los libros para ver pero no para leer");
+        const books = await serviceContainer.book.getAllBooks.run();
+        return res.status(200).json(books);
+      }
+
+      console.log("usuario autenticado en la plataforma se le proporcionara los libros en base a su nivel de lectura y para leer");
+
+      const plainUser = user?.toObject();
+
+      let books;
+      try {
+        books = await serviceContainer.book.getAllBooksByLevel.run(plainUser.nivel);
+      } catch (err) {
+        console.log("Error al obtener libros por nivel:", err);
+        return res.status(500).json({ msg: "Error al obtener libros por nivel" });
+      }
+
+      return res.status(200).json(books);
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getAllBook"));
       console.log(chalk.yellow(separator()));
@@ -124,10 +172,13 @@ export class BookController {
       if (!book) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
       // * eliminamos el archivo de la portada del libro en local
-      const isDeletingCoverImage: boolean = await deleteCoverImageInCloudinary(book.coverImage.idCoverImage);
+      const isDeletingCoverImage: boolean = await deleteCoverImageInCloudinary(book.bookCoverImage.idBookCoverImage);
 
       // * eliminamos el archivo del contenido del libro en local
-      const isDeletingBook: boolean = await deleteBookInCloudinary(book.content.idContentBook);
+      const isDeletingBook: boolean = await deleteBookInCloudinary(book.contentBook.idContentBook);
+
+      console.log({ isDeletingBook });
+      console.log({ isDeletingCoverImage });
 
       // * eliminamos el archivo del libro en local
       if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
