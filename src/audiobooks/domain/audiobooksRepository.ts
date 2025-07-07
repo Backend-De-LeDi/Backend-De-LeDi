@@ -1,11 +1,15 @@
-import { AudioBooks } from "./audiobooks";
-import type { Types } from "mongoose";
+import { Types } from "mongoose";
+import { Audiobook } from "./Audiobooks";
+import { SearchedAudiobook } from "../../types/audiobookTypes";
 
-// * Repositorio que especifica las aplicaciones de uso para el almacenamiento de los datos
-
-export interface AudiobookRepository {
-  createAudiobooks: (audioBook: AudioBooks) => Promise<void>;
-  getAllAudiobooks: () => Promise<AudioBooks[]>;
-  getAudiobooksById: (id: Types.ObjectId) => Promise<AudioBooks | boolean>;
-  deleteAudiobook: (id: Types.ObjectId) => Promise<boolean>;
+// ? Interfaz que define las operaciones del repositorio de Audiolibros
+export interface AudiobooksRepository {
+  createAudiobook(audiobook: Audiobook): Promise<void>;
+  getAllAudiobooks(): Promise<SearchedAudiobook[]>;
+  deleteAudiobook(id: Types.ObjectId): Promise<void>;
+  getAudiobookById(id: Types.ObjectId): Promise<SearchedAudiobook | null>;
+  getIntelligenceAudiobook(query: string): Promise<SearchedAudiobook[]>;
+  getAudiobooksBySubgenre(subgenre: string[]): Promise<SearchedAudiobook[]>;
+  getContentAudiobookById(id: Types.ObjectId): Promise<string | null>;
+  getAudiobookByTheme(theme: string[]): Promise<SearchedAudiobook[]>;
 }
