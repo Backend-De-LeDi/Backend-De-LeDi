@@ -1,8 +1,8 @@
 import { Types, Document } from "mongoose";
-import { ContentBook, FullContentBook } from "./contentBook";
+import { ContentBook, FullContentBook } from "./contentBookTypes";
 
-export interface CoverImage {
-  idCoverImage: string;
+export interface BookCoverImage {
+  idBookCoverImage: string;
   url_secura: string;
 }
 
@@ -21,12 +21,12 @@ export interface PropBooks extends Document {
 }
 
 export interface IBook extends PropBooks {
-  content: ContentBook;
-  coverImage: CoverImage;
+  contentBook: ContentBook;
+  bookCoverImage: BookCoverImage;
 }
 
 export interface SearchedBook extends IBook {
-  _id: string;
+  _id: unknown;
   __v: number;
 }
 
