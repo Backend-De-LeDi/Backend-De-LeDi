@@ -5,13 +5,15 @@ import { Request, Response } from "express";
 import { parseFormData } from "../../../shared/utils/parseFormData";
 import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
-import { validateJWT } from "../../../shared/middlewares/validateJWT";
+import { validateBooksJWT } from "../../../shared/middlewares/validateBookJWT";
+import { validateLevel } from "../../../shared/middlewares/validateLevel";
 
 const bookRouter = Router();
 const controller = new BookController();
 
 bookRouter.post(
   "/books",
+  validateBooksJWT,
   upload.fields([
     { name: "file", maxCount: 1 },
     { name: "img", maxCount: 1 },
@@ -23,7 +25,7 @@ bookRouter.post(
   }
 );
 
-bookRouter.get("/books", (req: Request, res: Response) => {
+bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
