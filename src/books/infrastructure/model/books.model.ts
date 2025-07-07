@@ -12,15 +12,15 @@ const bookSchema = new Schema<IBook>(
     available: { type: Boolean, default: true },
     yearBook: { type: Date, default: Date.now },
     synopsis: { type: String, required: true },
-    content: {
+    contentBook: {
       type: {
         idContentBook: { type: String, required: true },
         url_secura: { type: String, required: true },
       },
     },
-    coverImage: {
+    bookCoverImage: {
       type: {
-        idCoverImage: { type: String, required: true },
+        idBookCoverImage: { type: String, required: true },
         url_secura: { type: String, required: true },
       },
     },
