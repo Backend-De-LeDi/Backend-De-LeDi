@@ -21,29 +21,24 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
 
         // * validamos si recibimos los contenidos
         if (files == null) {
-          // * damos ra respuesta si no hay nada
           res.status(400).json({
             msg: `Debes subir el contenido y la portada del libro`,
           });
-
-          // * paramos el código
           return;
         }
 
         // * validamos si alguno de los dos esta mal
         if (!files?.file?.[0] || !files.img?.[0]) {
           // * respondemos si falta alguno en especifico
-          res
-            .status(400)
-            .json({
-              msg: `${
-                !files?.file?.[0] && !files.img?.[0]
-                  ? "Debes subir el contenido y la portada del libro"
-                  : !files?.file?.[0]
-                  ? "Debes subir el contenido de texto del libro"
-                  : !files.img?.[0] && "Debes subir la portada del libro "
-              }`,
-            });
+          res.status(400).json({
+            msg: `${
+              !files?.file?.[0] && !files.img?.[0]
+                ? "Debes subir el contenido y la portada del libro"
+                : !files?.file?.[0]
+                ? "Debes subir el contenido de texto del libro"
+                : !files.img?.[0] && "Debes subir la portada del libro "
+            }`,
+          });
 
           // * hacemos la eliminación para limpiar localmente
           if (files.img?.[0]) await fileDelete(files.img?.[0].path);
@@ -53,7 +48,6 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
           return;
         }
 
-        // * respondemos con los campos que estén mal
         res.status(400).json({
           errors: result.error.errors.map((err) => ({
             path: err.path.length ? err.path.join(".") : "general",
@@ -61,14 +55,13 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
           })),
         });
 
+        // * hacemos la eliminación para limpiar localmente
         if (files.img?.[0]) await fileDelete(files.img?.[0].path);
         if (files.file?.[0]) await fileDelete(files.file?.[0].path);
 
-        // * detenemos el código
         return;
       }
 
-      // * si todo los campos están bien pasa a la ejecución principal que hace el servidor
       next();
     } catch (error) {
       console.log(chalk.yellow("Error en el middleware: validatorBooks"));
