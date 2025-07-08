@@ -156,6 +156,15 @@ export class BookController {
   // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const idUser = req.user.id;
+
+      // * buscamos al usuario en la base de datos
+      const user = await UserModel.findById(idUser);
+
+      // * si no se encuentra el usuario, respondemos que no se encontró
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
       // * obtenemos el id del libro que se quiere eliminar
       const id = req.params.id;
 
