@@ -5,48 +5,51 @@ import { Request, Response } from "express";
 import { parseFormData } from "../../../shared/utils/parseFormData";
 import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
+import { validateBooksJWT } from "../../../shared/middlewares/validateBookJWT";
+import { validatorAudiobooks } from "../../../shared/middlewares/validatorAudiobooks";
 
 const audiobookRouter = Router();
 const controller = new AudiobookController();
 
 audiobookRouter.post(
-  "/books",
+  "/audiobooks",
+  validateBooksJWT,
   upload.fields([
-    { name: "file", maxCount: 1 },
+    { name: "audio", maxCount: 1 },
     { name: "img", maxCount: 1 },
   ]),
   parseFormData,
-  validatorBooks(bookSchema),
+  validatorAudiobooks(bookSchema),
   (req: Request, res: Response) => {
     controller.createBook(req, res);
   }
 );
 
-audiobookRouter.get("/books", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobooks", (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
-audiobookRouter.get("/book/:id", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobook/:id", (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
-audiobookRouter.delete("/book/:id", (req: Request, res: Response) => {
+audiobookRouter.delete("/audiobook/:id", (req: Request, res: Response) => {
   controller.deleteAudiobook(req, res);
 });
 
-audiobookRouter.get("/books/:query", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobooks/:query", (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-audiobookRouter.get("/booksBySubgenre/:subgenre", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobooksBySubgenre/:subgenre", (req: Request, res: Response) => {
   controller.getBookBySubgenre(req, res);
 });
 
-audiobookRouter.get("/book/content/:id", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobook/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
 
-audiobookRouter.get("/booksByTheme/:theme", (req: Request, res: Response) => {
+audiobookRouter.get("/audiobooksByTheme/:theme", (req: Request, res: Response) => {
   controller.getBookByTheme(req, res);
 });
 
