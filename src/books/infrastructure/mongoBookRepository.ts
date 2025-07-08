@@ -110,6 +110,6 @@ export class MongoBookRepository implements BooksRepository {
       return books;
     }
 
-    return await BookModel.find(); // Si el nivel no coincide, devuelve todos
+    return await BookModel.find();
   }
 }
