@@ -1,6 +1,6 @@
 import { BooksRepository } from "../domain/booksRepository";
 import { Books } from "../domain/books";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../../types/bookTypes/bookTypes";
 
 // ? Clase que guía al Repositorio a realizar la obtención de libros por inteligencia
 export class GetIntelligenceBook {

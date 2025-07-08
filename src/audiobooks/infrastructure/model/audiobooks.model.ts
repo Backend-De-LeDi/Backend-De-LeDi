@@ -1,5 +1,4 @@
-import { IAudiobook } from "../../../types/audiobookTypes";
-import { IBook } from "../../../types/bookTypes";
+import { IAudiobook } from "../../../types/audiobookTypes/audiobookTypes";
 import { Schema, model } from "mongoose";
 
 // ? definimos el modelo de estructura para almacenar los datos

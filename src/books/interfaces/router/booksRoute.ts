@@ -29,27 +29,27 @@ bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
-bookRouter.get("/book/:id", validateBooksJWT, (req: Request, res: Response) => {
+bookRouter.get("/book/:id", (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
-bookRouter.delete("/book/:id", (req: Request, res: Response) => {
+bookRouter.delete("/book/:id", validateBooksJWT, (req: Request, res: Response) => {
   controller.deleteBook(req, res);
 });
 
-bookRouter.get("/books/:query", (req: Request, res: Response) => {
+bookRouter.get("/books/:query", validateBooksJWT, (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-bookRouter.get("/booksBySubgenre/:subgenre", (req: Request, res: Response) => {
+bookRouter.get("/booksBySubgenre/:subgenre", validateBooksJWT, (req: Request, res: Response) => {
   controller.getBookBySubgenre(req, res);
 });
 
-bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/content/:id", validateBooksJWT, (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
 
-bookRouter.get("/booksByTheme/:theme", (req: Request, res: Response) => {
+bookRouter.get("/booksByTheme/:theme", validateBooksJWT, (req: Request, res: Response) => {
   controller.getBookByTheme(req, res);
 });
 

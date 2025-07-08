@@ -2,7 +2,7 @@ import { BookModel } from "./model/books.model";
 import { BooksRepository } from "../domain/booksRepository";
 import { Books } from "../domain/books";
 import { Types } from "mongoose";
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../../types/bookTypes/bookTypes";
 
 // ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoBookRepository implements BooksRepository {
@@ -76,8 +76,6 @@ export class MongoBookRepository implements BooksRepository {
   async getContentBookById(id: Types.ObjectId): Promise<string | null> {
     // * buscamos el libro con la id proporcionada
     const book: SearchedBook | null = await BookModel.findById(id);
-
-    console.log(book);
 
     // * si no encuentra libro retornara null
     if (!book) return null;

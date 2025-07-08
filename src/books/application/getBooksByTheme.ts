@@ -1,4 +1,4 @@
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../../types/bookTypes/bookTypes";
 import { Books } from "../domain/books";
 import { BooksRepository } from "../domain/booksRepository";
 

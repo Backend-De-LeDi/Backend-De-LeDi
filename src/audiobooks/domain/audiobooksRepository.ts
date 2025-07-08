@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { Audiobook } from "./Audiobooks";
-import { SearchedAudiobook } from "../../types/audiobookTypes";
+import { Audiobook } from "./audiobooks";
+import { SearchedAudiobook } from "../../types/audiobookTypes/audiobookTypes";
 
 // ? Interfaz que define las operaciones del repositorio de Audiolibros
 export interface AudiobooksRepository {

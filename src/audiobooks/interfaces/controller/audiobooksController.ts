@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
-import { PropAudiobooks, SearchedAudiobook } from "../../../types/audiobookTypes";
+import { PropAudiobooks, SearchedAudiobook } from "../../../types/audiobookTypes/audiobookTypes";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
@@ -9,7 +9,7 @@ import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverI
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
-import { Audiobook } from "../../domain/Audiobooks";
+import { Audiobook } from "../../domain/audiobooks";
 
 // ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class AudiobookController {

@@ -1,5 +1,5 @@
-import { BookCoverImage } from "../../types/bookTypes";
-import { ContentBook } from "../../types/contentBookTypes";
+import { BookCoverImage } from "../../types/bookTypes/bookTypes";
+import { ContentBook } from "../../types/bookTypes/contentBookTypes";
 import type { Types } from "mongoose";
 
 // ? Clase que representa un libro en el dominio de la aplicación

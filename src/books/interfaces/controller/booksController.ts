@@ -1,6 +1,6 @@
 import { Request, Response, text } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
-import { PropBooks, SearchedBook } from "../../../types/bookTypes";
+import { PropBooks, SearchedBook } from "../../../types/bookTypes/bookTypes";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
@@ -165,6 +165,12 @@ export class BookController {
       // * si no se encuentra el usuario, respondemos que no se encontró
       if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
 
+      // * convertimos el usuario a un objeto plano para poder acceder a sus propiedades
+      const plainUser = user?.toObject();
+
+      // * verificamos que el usuario tenga el rol de administrador
+      if (plainUser.rol !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+
       // * obtenemos el id del libro que se quiere eliminar
       const id = req.params.id;
 
@@ -185,9 +191,6 @@ export class BookController {
 
       // * eliminamos el archivo del contenido del libro en local
       const isDeletingBook: boolean = await deleteBookInCloudinary(book.contentBook.idContentBook);
-
-      console.log({ isDeletingBook });
-      console.log({ isDeletingCoverImage });
 
       // * eliminamos el archivo del libro en local
       if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
@@ -242,6 +245,15 @@ export class BookController {
   // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro
   async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const idUser = req.user.id;
+
+      // * buscamos al usuario en la base de datos
+      const user = await UserModel.findById(idUser);
+
+      // * si no se encuentra el usuario, respondemos que no se encontró
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
       // * obtenemos la query de la URL, que puede ser un string o un array de strings
       const query = decodeURIComponent(req.params.query);
 
@@ -267,6 +279,15 @@ export class BookController {
   // ? método para obtener un libros en la base de datos en base a su subgénero que recibe por parámetro
   async getBookBySubgenre(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const idUser = req.user.id;
+
+      // * buscamos al usuario en la base de datos
+      const user = await UserModel.findById(idUser);
+
+      // * si no se encuentra el usuario, respondemos que no se encontró
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
       // * Obtener el parámetro 'subgenre' de la URL.
       const subgenreParam = req.params.subgenre;
 
@@ -304,6 +325,15 @@ export class BookController {
   // ? método para obtener una url para visualizar el contenido del libro buscado por id
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const idUser = req.user.id;
+
+      // * buscamos al usuario en la base de datos
+      const user = await UserModel.findById(idUser);
+
+      // * si no se encuentra el usuario, respondemos que no se encontró
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
       // * obtenemos el id del libro que se quiere buscar
       const id = req.params.id;
 
@@ -335,6 +365,15 @@ export class BookController {
   // ? método para obtener libros en base a su tema
   async getBookByTheme(req: Request, res: Response): Promise<Response> {
     try {
+      // * verificamos que el usuario esté autenticado
+      const idUser = req.user.id;
+
+      // * buscamos al usuario en la base de datos
+      const user = await UserModel.findById(idUser);
+
+      // * si no se encuentra el usuario, respondemos que no se encontró
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
       // * Se obtiene el tema de la URL, que puede ser un string o un array de strings
       const theme = req.params.theme;
 

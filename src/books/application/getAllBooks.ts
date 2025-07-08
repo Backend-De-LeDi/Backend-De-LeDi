@@ -1,4 +1,4 @@
-import { SearchedBook } from "../../types/bookTypes";
+import { SearchedBook } from "../../types/bookTypes/bookTypes";
 import { BooksRepository } from "../domain/booksRepository";
 
 // ? Clase que guía al Repositorio a realizar la obtención de todos los libros

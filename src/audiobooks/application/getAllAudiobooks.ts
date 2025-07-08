@@ -1,5 +1,5 @@
-import { SearchedAudiobook } from "../../types/audiobookTypes";
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
+import { SearchedAudiobook } from "../../types/audiobookTypes/audiobookTypes";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
 // ? Clase que guía al Repositorio a realizar la obtención de todos los libros
 export class GetAllAudiobooks {
   // * Constructor que recibe el repositorio de libros
