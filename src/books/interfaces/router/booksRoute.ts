@@ -29,7 +29,7 @@ bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
-bookRouter.get("/book/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/:id", validateBooksJWT, (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
