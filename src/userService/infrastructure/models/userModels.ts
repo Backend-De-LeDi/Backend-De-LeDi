@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/UserTypes";
 import { Schema } from "mongoose";
+import { string } from "zod";
 
 const UserSchema = new Schema<User>({
     name: {
@@ -41,6 +42,9 @@ const UserSchema = new Schema<User>({
                 category: {
                     type: [String],
                 },
+                format: {
+                    type: [String]
+                }
 
             },
         ),
