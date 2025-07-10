@@ -17,32 +17,57 @@ const avatarControllers = new AvatarsService(iAvatar)
 interface MulterRequest extends Request {
     file?: Express.Multer.File;
 }
-
 export const saveAvatar = async (req: MulterRequest, res: Response) => {
     try {
-        const gender = req.body;
+        const gender = req.body.gender;
         const file = req.file;
 
-        const avatars = await UploadService.uploadAvatar(file as Express.Multer.File)
+        const avatarUploaded = await UploadService.uploadAvatar(file as Express.Multer.File);
 
-        const date: AvatarType = { gender, avatars }
-        const result = await avatarControllers.saveAvatar(date)
+        const date: AvatarType = {
+            gender,
+            avatars: {
+                url_secura: avatarUploaded.url_secura,
+                id_image: avatarUploaded.id_image
+            }
+        };
+
+        const result = await avatarControllers.saveAvatar(date);
+
         if (!result) {
-            res.status(304).json({ msg: 'the avatar not save' })
+            res.status(304).json({ msg: 'The avatar was not saved' });
         }
-        res.status(201).json({ msg: 'the avatar successfull' })
+
+        res.status(201).json({ msg: 'The avatar was saved successfully' });
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ msg: 'the internal server error ' })
+        console.log(error);
+        res.status(500).json({ msg: 'Internal server error' });
     }
-}
+};
+
 
 
 export const deleteAvatar = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const idValid = new mongoose.Types.ObjectId(id);
-    // const isDeletingCoverImage: boolean = await deleteCoverImage();
-    //   if (!isDeletingCoverImage)
-    //     return res.status(500).json({ msg: "Ocurrió un error al eliminar la imagen en Cloudinary. Verifica si sigue existiendo." });
-}
+    try {
+        const id = req.params.id;
+        const idValid = new mongoose.Types.ObjectId(id);
+
+        const isDeletingCoverImage: boolean = await deleteCoverImage(id);
+        if (!isDeletingCoverImage) {
+            res.status(500).json({
+                msg: "Ocurrió un error al eliminar la imagen en Cloudinary. Verifica si sigue existiendo."
+            });
+        }
+
+        // Si llegó hasta acá, eliminamos el avatar de la base de datos
+        const repo = new AvatarMongoRepository();
+        await repo.deleteAvatar(idValid);
+
+        res.status(200).json({ msg: 'Avatar eliminado exitosamente' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error interno del servidor' });
+    }
+};

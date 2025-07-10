@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
-import chalk from "chalk";
 import morgan from "morgan";
 import connections from './shared/config/db/database'
 import * as dotenv from "dotenv";
@@ -15,6 +14,7 @@ import { authRoutes } from "./authService/interfaces/routes/auth.routes"
 import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { autorRoutes } from "./authorService/interfaces/routes/authores.routes";
+import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 
 const app = express();
 connections()
@@ -45,7 +45,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // poner true solo si usas HTTPS
+    secure: false,
     maxAge: 3600000,
   }
 }));
@@ -55,6 +55,7 @@ app.use(authRoutes)
 app.use(autorRoutes)
 app.use(progressRouter)
 app.use(route);
+app.use(avaRoutes)
 
 
 app.listen(Number(ENV.PORT), () => {

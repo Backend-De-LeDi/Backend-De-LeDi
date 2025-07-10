@@ -2,8 +2,8 @@ import { Types } from "mongoose";
 import { User } from "../entities/UserTypes";
 
 export interface FindAndDeleteRepo {
-    deleteUser(id: Types.ObjectId): Promise<void>
+    deleteUser(id: any): Promise<void>
     findUser(): Promise<User[]>
-    findByID(id: Types.ObjectId): Promise<User | null>
+    findByID(id: any): Promise<User | null>
 
 }

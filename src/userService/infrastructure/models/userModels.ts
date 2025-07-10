@@ -33,14 +33,13 @@ const UserSchema = new Schema<User>({
         required: true
     },
     avatar: {
-        type: String,
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Avatars",
     }, preference: {
         type: new Schema(
             {
                 category: {
                     type: [String],
-                    required: true,
                 },
 
             },

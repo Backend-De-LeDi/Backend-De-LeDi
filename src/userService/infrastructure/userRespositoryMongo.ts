@@ -48,14 +48,15 @@ export class UpdateUSerMongo implements UpdateUSerRepository {
 
 export class findAndDeleteMongo implements FindAndDeleteRepo {
   async findByID(id: Types.ObjectId): Promise<User | null> {
-    const result = await UserModel.findById(id);
+    const result = await UserModel.findById(id).populate("avatar");
     return result;
   }
+
   async deleteUser(id: Types.ObjectId): Promise<void> {
     const result = await UserModel.findByIdAndDelete(id);
   }
   async findUser(): Promise<User[]> {
-    const result = await UserModel.find();
+    const result = await UserModel.find().populate("avatar");
     return result;
   }
 }
