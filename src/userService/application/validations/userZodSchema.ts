@@ -9,9 +9,7 @@ export const UserZodSchema = z.object({
     email: z.string().email("Email no válido"),
     password: z.string().min(8, "La contraseña debe tener al menos 6 caracteres"),
     nivel: z.string().min(1, "El nivel es obligatorio").optional(),
-    avatar: z.string().url("Debe ser una URL válida").optional(),
     preference: z.object({
         category: z.array(z.string()).min(1, "Debe haber al menos una categoría"),
-        language: z.string().min(1, "El idioma es obligatorio")
     }).optional(),
 });

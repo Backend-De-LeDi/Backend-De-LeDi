@@ -10,7 +10,7 @@ export class User {
         public readonly birthDate: Date,
         public readonly rol: string,
         public readonly nivel: string,
-        public readonly avatar: string,
+        public readonly avatar: any,
         public readonly preference: {
             category: string[]
         }
