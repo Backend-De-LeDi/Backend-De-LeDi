@@ -17,6 +17,7 @@ export class Books {
     public yearBook: Date,
     public theme: string[],
     public genre: string,
-    public level: string
+    public level: string,
+    public format: string[]
   ) {}
 }
