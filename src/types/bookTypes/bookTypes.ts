@@ -18,6 +18,7 @@ export interface PropBooks extends Document {
   theme: string[];
   genre: string;
   level: string;
+  format: string[];
 }
 
 export interface IBook extends PropBooks {
