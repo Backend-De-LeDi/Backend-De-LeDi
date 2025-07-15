@@ -5,7 +5,7 @@ import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
-import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImageInCloudinary";
+import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImage";
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
