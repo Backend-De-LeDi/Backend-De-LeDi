@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/UserTypes";
 import { Schema } from "mongoose";
+import { string } from "zod";
 
 const UserSchema = new Schema<User>({
     name: {
@@ -17,6 +18,7 @@ const UserSchema = new Schema<User>({
     },
     birthDate: {
         type: Date,
+        required: true
 
     },
     email: {
@@ -32,15 +34,17 @@ const UserSchema = new Schema<User>({
         required: true
     },
     avatar: {
-        type: String,
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Avatars",
     }, preference: {
         type: new Schema(
             {
                 category: {
                     type: [String],
-                    required: true,
                 },
+                format: {
+                    type: [String]
+                }
 
             },
         ),

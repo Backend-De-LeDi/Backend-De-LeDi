@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import { FindAndDeleteUser } from "../../application/service/FindAndDelete.service";
 import { FindAndDeleteRepo } from "../../domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo } from "../../infrastructure/userRespositoryMongo";
+import { ObjectId } from "mongodb";
 
 const findAndDeleteUser: FindAndDeleteRepo = new findAndDeleteMongo();
-const findAndDelService: FindAndDeleteRepo = new FindAndDeleteUser(findAndDeleteUser);
+const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDeleteUser);
+
 
 export const findUser = async (req: Request, res: Response) => {
   try {
@@ -17,25 +19,22 @@ export const findUser = async (req: Request, res: Response) => {
   }
 };
 
-//delete User
 export const deleteUser = async (req: Request, res: Response) => {
   const id = req.user?.id;
-  if (!id) {
-    res.status(400).json({ message: "No user ID found" });
-  }
-  const result = await findAndDelService.deleteUser(id);
+
+  const objectId = typeof id === "string" ? new ObjectId(id) : id;
+  await findAndDelService.deleteUser(objectId);
 
   res.status(200).json({ msg: "user delete successful" });
 };
-
 export const findById = async (req: Request, res: Response) => {
   const id = req.user?.id;
-  if (!id) {
-    res.status(400).json({ message: "No user ID found" });
-  }
-  const result = await findAndDelService.findByID(id);
+
+  const objectId = typeof id === "string" ? new ObjectId(id) : id;
+  const result = await findAndDelService.findByID(objectId);
   if (!result) {
     res.status(302).json({ msg: "user not found   " });
   }
   res.status(200).json({ msg: "user", result });
 };
+
