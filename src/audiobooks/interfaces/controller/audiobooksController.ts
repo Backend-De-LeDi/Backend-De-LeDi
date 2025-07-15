@@ -5,7 +5,7 @@ import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
-import { deleteCoverImageInCloudinary } from "../../../shared/utils/deleteCoverImage";
+import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
@@ -127,7 +127,7 @@ export class AudiobookController {
       if (!audiobook) return res.status(404).json({ msg: "no se encontró el libro para eliminar" });
 
       // * eliminamos el archivo de la portada del libro en local
-      const isDeletingCoverImage: boolean = await deleteCoverImageInCloudinary(audiobook.audiobookCoverImage.idAudiobookCoverImage);
+      const isDeletingCoverImage: boolean = await deleteCoverImage(audiobook.audiobookCoverImage.idAudiobookCoverImage);
 
       // * eliminamos el archivo del contenido del libro en local
       const isDeletingBook: boolean = await deleteBookInCloudinary(audiobook.audiobookContent.idContentAudiobook);
