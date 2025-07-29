@@ -1,5 +1,5 @@
-import { AudiobookCoverImage } from "../../types/audiobookTypes/audiobookTypes";
-import { ContentAudiobook } from "../../types/audiobookTypes/contentAudiobookTypes";
+import { AudiobookCoverImage } from "../../shared/types/audiobookTypes/audiobookTypes";
+import { ContentAudiobook } from "../../shared/types/audiobookTypes/contentAudiobookTypes";
 import type { Types } from "mongoose";
 
 // ? Clase que representa un libro en el dominio de la aplicación
@@ -14,9 +14,10 @@ export class Audiobook {
     public contentAudiobook: ContentAudiobook,
     public audiobookCoverImage: AudiobookCoverImage,
     public theme: string[],
-    public genre: string,
     public synopsis: string,
+    public genre: string,
     public level: string,
-    public yearBook: Date
+    public yearBook: Date,
+    public format: string
   ) {}
 }
