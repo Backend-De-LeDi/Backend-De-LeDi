@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { SearchedAudiobook } from "../../types/audiobookTypes/audiobookTypes";
+import { SearchedAudiobook } from "../../shared/types/audiobookTypes/audiobookTypes";
 import { AudiobooksRepository } from "../domain/audiobooksRepository";
 // ? Clase que guía al Repositorio a realizar la obtención de un libro por su ID
 export class GetAudiobooksById {

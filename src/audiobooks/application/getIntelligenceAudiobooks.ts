@@ -1,6 +1,6 @@
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
-import { Audiobook } from "../domain/Audiobooks";
-import { SearchedAudiobook } from "../../types/audiobookTypes";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
+import { Audiobook } from "../domain/audiobooks";
+import { SearchedAudiobook } from "../../shared/types/audiobookTypes/audiobookTypes";
 
 // ? Clase que guía al Repositorio a realizar la obtención de libros por inteligencia
 export class GetIntelligenceAudiobook {
