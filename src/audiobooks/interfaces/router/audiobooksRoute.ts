@@ -41,16 +41,8 @@ audiobookRouter.get("/audiobooks/:query", (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-audiobookRouter.get("/audiobooksBySubgenre/:subgenre", (req: Request, res: Response) => {
-  controller.getBookBySubgenre(req, res);
-});
-
 audiobookRouter.get("/audiobook/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
-});
-
-audiobookRouter.get("/audiobooksByTheme/:theme", (req: Request, res: Response) => {
-  controller.getBookByTheme(req, res);
 });
 
 export default audiobookRouter;
