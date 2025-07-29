@@ -1,6 +1,6 @@
 import { Request, Response, text } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
-import { PropBooks, SearchedBook } from "../../../types/bookTypes/bookTypes";
+import { PropBooks, SearchedBook } from "../../../shared/types/bookTypes/bookTypes";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
 import mongoose from "mongoose";
 import chalk from "chalk";
@@ -13,12 +13,12 @@ import { UserModel } from "../../../userService/infrastructure/models/userModels
 
 // ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
-  // ? método para procesar y almacenar los libros que se proporcionan
+  // ? método para procesar y almacenar los libros que se proporcionan ✅
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level }: PropBooks = req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -27,8 +27,6 @@ export class BookController {
       const img = files.img[0];
       const file = files.file[0];
 
-      // ! ------------------------------------------------------------------------------
-      // ! cambiara manero de obtener el rol del usuario por la de jaqui
       const user = await UserModel.findById(idUser);
       if (!user) {
         await fileDelete(img.path);
@@ -37,17 +35,14 @@ export class BookController {
         return res.status(404).json({ msg: "necesitas acceso para realizar esta acción" });
       }
 
-      // ! convertimos el usuario a un objeto plano para poder acceder a sus propiedades
-      const plainUser = user?.toObject();
+      const plainUser = user.toObject();
 
-      // ! verificamos que el usuario tenga el rol de administrador
       if (plainUser.rol !== "admin") {
         await fileDelete(img.path);
         await fileDelete(file.path);
 
         return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
       }
-      // ! ------------------------------------------------------------------------------
 
       const content = await uploadBook(file.path);
       const coverImage = await uploadCoverImage(img.path);
@@ -55,13 +50,10 @@ export class BookController {
       if (!coverImage || !content) {
         await fileDelete(img.path);
         await fileDelete(file.path);
-
-        return res.status(400).json({
-          msg: "no se pudo almacenar el contenido o la portada del libro",
-        });
+        return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
-      serviceContainer.book.createBooks.run({
+      const newBook = {
         title,
         summary,
         author,
@@ -81,15 +73,14 @@ export class BookController {
         theme,
         genre,
         level,
-        format,
-      });
+        format: "ebook",
+      };
+
+      serviceContainer.book.createBooks.run(newBook);
 
       await fileDelete(img.path);
       await fileDelete(file.path);
-
-      return res.status(200).json({
-        msg: "libro subido correctamente",
-      });
+      return res.status(200).json({ msg: "libro subido correctamente" });
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: createBook"));
       console.log(chalk.yellow(separator()));
@@ -103,7 +94,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener todo los libros
+  // ? método para obtener todo los libros ✅
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
       const reqUser = req.user;
@@ -150,7 +141,7 @@ export class BookController {
     }
   }
 
-  // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro
+  // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro ✅
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -196,28 +187,18 @@ export class BookController {
     }
   }
 
-  // ? método para obtener un libro en la base de datos en base a su id que recibe por parámetro
+  // ? método para obtener un libro en la base de datos en base a su id que recibe por parámetro ✅
   async getBookById(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
 
-      if (!mongoose.Types.ObjectId.isValid(id))
-        return res
-          .json({
-            msg: "id invalida",
-          })
-          .status(404);
+      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "id invalida" });
 
       const idValid = new mongoose.Types.ObjectId(id);
 
       const book = await serviceContainer.book.getBooksById.run(idValid);
 
-      if (!book)
-        return res
-          .json({
-            msg: "libro no encontrado",
-          })
-          .status(200);
+      if (!book) return res.status(200).json({ msg: "libro no encontrado" });
 
       return res.json(book);
     } catch (error) {
@@ -233,23 +214,22 @@ export class BookController {
     }
   }
 
-  // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro
+  // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro ✅
   async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
 
       const user = await UserModel.findById(idUser);
 
-      if (!user)
-        return res.status(404).json({
-          msg: "debes iniciar session en la plataforma para obtener acceso a esta acción",
-        });
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
 
       const query = decodeURIComponent(req.params.query);
 
-      const books = await serviceContainer.book.getIntelligenceBook.run(query);
+      console.log(query);
 
-      if (books.length === 0) return res.status(404).json({ msg: "no se encontró ningún libro en la búsqueda" });
+      const { ids }: { ids: string[] } = await serviceContainer.connectionAI.sendQuery(query);
+
+      const books = await serviceContainer.book.getIntelligenceBook.run(ids);
 
       return res.status(200).json(books);
     } catch (error) {
@@ -259,52 +239,11 @@ export class BookController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.status(500).json({
-        msg: "Erro inesperado por favor intente de nuevo mas tarde",
-      });
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
     }
   }
 
-  // ? método para obtener un libros en la base de datos en base a su subgénero que recibe por parámetro
-  async getBookBySubgenre(req: Request, res: Response): Promise<Response> {
-    try {
-      const idUser = req.user.id;
-
-      const user = await UserModel.findById(idUser);
-
-      if (!user)
-        return res.status(404).json({
-          msg: "debes iniciar session en la plataforma para obtener acceso a esta acción",
-        });
-
-      const subgenreParam = req.params.subgenre;
-
-      if (!subgenreParam || subgenreParam.trim() === "") return res.status(400).json({ msg: "El subgénero es requerido" });
-
-      const subgenreArray = subgenreParam
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-
-      if (subgenreArray.length === 0) return res.status(400).json({ msg: "Debe proporcionar al menos un subgénero válido" });
-
-      const books = await serviceContainer.book.getBooksBySubgenre.run(subgenreArray);
-
-      if (!books || books.length === 0) return res.status(404).json({ msg: "No se encontró ningún libro con esos subgéneros" });
-
-      return res.status(200).json(books);
-    } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getBookBySubgenre"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Error inesperado, por favor intente de nuevo más tarde" });
-    }
-  }
-
-  // ? método para obtener una url para visualizar el contenido del libro buscado por id
+  // ? método para obtener una url para visualizar el contenido del libro buscado por id ✅
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -335,32 +274,10 @@ export class BookController {
     }
   }
 
-  // ? método para obtener libros en base a su tema
-  async getBookByTheme(req: Request, res: Response): Promise<Response> {
-    try {
-      const idUser = req.user.id;
-
-      const user = await UserModel.findById(idUser);
-
-      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
-
-      const theme = req.params.theme;
-
-      const themeArray = theme.split(",");
-
-      const books = await serviceContainer.book.getBookByTheme.run(themeArray);
-
-      if (books.length === 0) return res.status(404).json({ msg: "No se encontraron libros con ese tema" });
-
-      return res.status(200).json(books);
-    } catch (error) {
-      console.log(chalk.yellow("Error en el controlador: getBookByTheme"));
-      console.log(chalk.yellow(separator()));
-      console.log();
-      console.log(error);
-      console.log();
-      console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
-    }
+  // ? método para obtener libro en la base de datos en base a los tema y subgénero proporcionados ✅
+  async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
+    const { theme, subgenre, yearBook, genre }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[] } = req.body;
+    const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre);
+    return res.status(200).json(books);
   }
 }
