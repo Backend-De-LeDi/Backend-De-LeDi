@@ -23,6 +23,7 @@ export interface PropBooks extends Document {
 export interface IBook extends PropBooks {
   contentBook: ContentBook;
   bookCoverImage: BookCoverImage;
+  format: string;
 }
 
 export interface SearchedBook extends IBook {

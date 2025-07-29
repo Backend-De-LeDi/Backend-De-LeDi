@@ -17,6 +17,7 @@ import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
 import audiobookRouter from "./audiobooks/interfaces/router/audiobooksRoute";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
+import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
 
 // ? creación de la aplicación Express
 const app = express();
@@ -61,6 +62,7 @@ app.use(autorRoutes);
 app.use(progressRouter);
 app.use(bookRouter);
 app.use(audiobookRouter);
+app.use(recommendationsRouter);
 
 // ? configuración de puerto
 app.listen(Number(ENV.PORT), async () => {

@@ -1,5 +1,5 @@
-import { Audiobook } from "../domain/Audiobooks";
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
+import { Audiobook } from "../domain/audiobooks";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
 
 // ? clase que guía al Repositorio a realizar el almacenamiento del libro
 export class CreateAudiobook {

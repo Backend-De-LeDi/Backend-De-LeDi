@@ -1,4 +1,4 @@
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
 import { Types } from "mongoose";
 
 // ? Clase que guía al Repositorio a realizar la eliminación del libro

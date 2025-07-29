@@ -1,18 +1,16 @@
 import { AudiobookModel } from "./model/audiobooks.model";
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
-import { Audiobook } from "../domain/Audiobooks";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
+import { Audiobook } from "../domain/audiobooks";
 import { Types } from "mongoose";
-import { SearchedBook } from "../../types/bookTypes";
-import { SearchedAudiobook } from "../../types/audiobookTypes";
+import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
+import { SearchedAudiobook } from "../../shared/types/audiobookTypes/audiobookTypes";
 
 // ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoAudiobookRepository implements AudiobooksRepository {
   // ? método de repositorio que es para crear o almacenar un nuevo libro
   async createAudiobook(book: Audiobook): Promise<void> {
-    // * almacenamos el libro que se recibió en el argumento en un modelo de mongoose
     const newBook = new AudiobookModel(book);
 
-    // * guardamos en la base de datos
     await newBook.save();
   }
 

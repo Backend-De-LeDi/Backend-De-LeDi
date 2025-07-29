@@ -7,7 +7,7 @@ import { separator } from "../utils/consoleSeparator";
 // ? función que recibe los campos desde el cliente,
 // ? los valida si se cumple correctamente con los campos pasa sin avisar de errores del campo
 
-export const validatorBooks = <T>(schema: ZodSchema<T>) => {
+export const validatorAudiobooks = <T>(schema: ZodSchema<T>) => {
   // * retorna la ejecución de un middleware anónimo que tiene como parámetro req,res,next
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -21,20 +21,19 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
 
         // * validamos si recibimos los contenidos
         if (files == null) {
-          res.status(400).json({
-            msg: `Debes subir el contenido y la portada del libro`,
-          });
+          res.status(400).json({ msg: `Debes subir el contenido y la portada del libro` });
           return;
         }
 
         // * validamos si alguno de los dos esta mal
-        if (!files?.file?.[0] || !files.img?.[0]) {
+        if (!files?.audio?.[0] || !files.img?.[0]) {
           // * respondemos si falta alguno en especifico
+
           res.status(400).json({
             msg: `${
-              !files?.file?.[0] && !files.img?.[0]
+              !files?.audio?.[0] && !files.img?.[0]
                 ? "Debes subir el contenido y la portada del libro"
-                : !files?.file?.[0]
+                : !files?.audio?.[0]
                 ? "Debes subir el contenido de texto del libro"
                 : !files.img?.[0] && "Debes subir la portada del libro "
             }`,
@@ -42,9 +41,8 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
 
           // * hacemos la eliminación para limpiar localmente
           if (files.img?.[0]) await fileDelete(files.img?.[0].path);
-          if (files.file?.[0]) await fileDelete(files.file?.[0].path);
+          if (files.audio?.[0]) await fileDelete(files.file?.[0].path);
 
-          // * paramos el código
           return;
         }
 
@@ -55,11 +53,8 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
           })),
         });
 
-        // * hacemos la eliminación para limpiar localmente
         if (files.img?.[0]) await fileDelete(files.img?.[0].path);
-        if (files.file?.[0]) await fileDelete(files.file?.[0].path);
-
-        return;
+        if (files.audio?.[0]) await fileDelete(files.file?.[0].path);
       }
 
       next();

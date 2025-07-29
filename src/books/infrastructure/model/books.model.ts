@@ -1,4 +1,4 @@
-import { IBook } from "../../../types/bookTypes";
+import { IBook } from "../../../shared/types/bookTypes/bookTypes";
 import { Schema, model } from "mongoose";
 
 // ? definimos el modelo de estructura para almacenar los datos
@@ -27,6 +27,7 @@ const bookSchema = new Schema<IBook>(
     theme: [{ type: String, require: true }],
     genre: { type: String, required: true },
     level: { type: String, required: true },
+    format: { type: String, require: true },
   },
   { timestamps: true }
 );

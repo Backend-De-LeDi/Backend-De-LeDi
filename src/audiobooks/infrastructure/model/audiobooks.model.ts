@@ -1,5 +1,4 @@
-import { IAudiobook } from "../../../types/audiobookTypes";
-import { IBook } from "../../../types/bookTypes";
+import { IAudiobook } from "../../../shared/types/audiobookTypes/audiobookTypes";
 import { Schema, model } from "mongoose";
 
 // ? definimos el modelo de estructura para almacenar los datos
@@ -28,6 +27,7 @@ const audiobookSchema = new Schema<IAudiobook>(
     theme: [{ type: String, require: true }],
     genre: { type: String, required: true },
     level: { type: String, required: true },
+    format: { type: String, require: true },
   },
   { timestamps: true }
 );

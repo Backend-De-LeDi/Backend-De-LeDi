@@ -11,6 +11,7 @@ import { validateLevel } from "../../../shared/middlewares/validateLevel";
 const bookRouter = Router();
 const controller = new BookController();
 
+// ? ruta para crear libros ✅
 bookRouter.post(
   "/books",
   validateBooksJWT,
@@ -25,32 +26,33 @@ bookRouter.post(
   }
 );
 
+// ? ruta para obtener todo los libros ✅
 bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
   controller.getAllBook(req, res);
 });
 
+// ? ruta para obtener libro por ID ✅
 bookRouter.get("/book/:id", (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
-bookRouter.delete("/book/:id", (req: Request, res: Response) => {
+// ? ruta para eliminar libro por ID 🔄️
+bookRouter.delete("/book/:id", validateBooksJWT, (req: Request, res: Response) => {
   controller.deleteBook(req, res);
 });
 
-bookRouter.get("/books/:query", (req: Request, res: Response) => {
+// ? ruta para obtener libro en base a una consulta ✅
+bookRouter.get("/books/:query", validateBooksJWT, (req: Request, res: Response) => {
   controller.getIntelligenceBooks(req, res);
 });
 
-bookRouter.get("/booksBySubgenre/:subgenre", (req: Request, res: Response) => {
-  controller.getBookBySubgenre(req, res);
-});
-
-bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
+// ? ruta para obtener el contenido del libro por ID ✅
+bookRouter.get("/book/content/:id", validateBooksJWT, (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
 
-bookRouter.get("/booksByTheme/:theme", (req: Request, res: Response) => {
-  controller.getBookByTheme(req, res);
+// ? ruta para obtener libro en base a filtros y ordenarlos por cual cumple mas las condiciones ✅
+bookRouter.post("/booksByFiltering", validateBooksJWT, (req: Request, res: Response) => {
+  controller.getBooksByFiltering(req, res);
 });
-
 export default bookRouter;

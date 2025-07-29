@@ -1,6 +1,6 @@
-import { Audiobook } from "../domain/Audiobooks";
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
-import { SearchedAudiobook } from "../../types/audiobookTypes";
+import { Audiobook } from "../domain/audiobooks";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
+import { SearchedAudiobook } from "../../shared/types/audiobookTypes/audiobookTypes";
 
 // ? clase que guía al Repositorio a realizar la obtención de libros por tema
 export class GetAudiobookByTheme {

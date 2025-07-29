@@ -1,5 +1,5 @@
-import { AudiobooksRepository } from "../domain/AudiobooksRepository";
-import { SearchedAudiobook } from "../../types/audiobookTypes";
+import { AudiobooksRepository } from "../domain/audiobooksRepository";
+import { SearchedAudiobook } from "../../shared/types/audiobookTypes/audiobookTypes";
 
 // ? Clase que guía al Repositorio a realizar la obtención de libros por subgénero
 export class GetAudiobooksBySubgenre {

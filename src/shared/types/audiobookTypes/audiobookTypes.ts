@@ -26,6 +26,7 @@ export interface PropAudiobooks extends Document {
 export interface IAudiobook extends PropAudiobooks {
   audiobookContent: ContentAudiobook;
   audiobookCoverImage: AudiobookCoverImage;
+  format: string;
 }
 
 // ? interfaz para el audiolibro que se busca en la base de datos
