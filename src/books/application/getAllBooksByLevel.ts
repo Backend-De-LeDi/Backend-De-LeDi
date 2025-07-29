@@ -1,5 +1,5 @@
 import { BooksRepository } from "../domain/booksRepository";
-import { SearchedBook } from "../../types/bookTypes/bookTypes";
+import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 
 // ? Clase que implementa la lógica para obtener todos los libros por nivel
 export class GetAllBooksByLevel {
