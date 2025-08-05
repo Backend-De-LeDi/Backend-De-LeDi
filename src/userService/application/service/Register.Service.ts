@@ -1,9 +1,9 @@
-import { calcularEdad } from "../../../shared/utils/calcularNivel";
 import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
 import bcrypt from 'bcrypt-ts';
+import { calcularEdad } from "../../../shared/utils/calcularNivel";
 
 export class Register {
     constructor(
