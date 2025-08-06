@@ -12,7 +12,7 @@ import { GetAudiobooksById } from "../../audiobooks/application/getAudiobookById
 import { MongoBookRepository } from "../../books/infrastructure/mongoBookRepository";
 import { GetAllBooksByLevel } from "../../books/application/getAllBooksByLevel";
 import { GetBooksByFiltering } from "../../books/application/getBooksByFiltering";
-import { GetRecommendations } from "../../recommendations/applications/getRecommendations";
+import { GetBasicRecommendations } from "../../recommendations/applications/getBasicRecommendations";
 import { MongoRecommendationsRepository } from "../../recommendations/infrastructure/mongoRecommendationsRepository";
 import { ConnectionAI } from "../apis/connectionAi";
 
@@ -45,7 +45,7 @@ export const serviceContainer = {
 
   // * método de solo recomendaciones
   recommendations: {
-    getRecommendations: new GetRecommendations(recommendationRepository),
+    getBasicRecommendations: new GetBasicRecommendations(recommendationRepository),
   },
   // * métodos de solo comunicación con la IA
   connectionAI: new ConnectionAI(),
