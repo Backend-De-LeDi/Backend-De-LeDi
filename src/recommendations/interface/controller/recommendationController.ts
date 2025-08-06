@@ -3,7 +3,6 @@ import type { Request, Response } from "express";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { BookProgressModel } from "../../../userPogressBooks/infrastructure/models/BookProgressModel";
 import { BookModel } from "../../../books/infrastructure/model/books.model";
-import mongoose from "mongoose";
 import { PreferenceTypes } from "../../../shared/types/preferenceTypes";
 
 export class RecommendationsController {
@@ -18,8 +17,9 @@ export class RecommendationsController {
 
     if (userProgrese.length === 0) {
       const plainUser = user.toObject();
-      const { category }: PreferenceTypes = plainUser.preference;
-      console.log(category);
+      const { category, format } = plainUser.preference as PreferenceTypes;
+      const recommendations = await serviceContainer.recommendations.getBasicRecommendations.run(category, format);
+      return res.status(200).json(recommendations);
     }
 
     // const idsBooks = userProgrese
