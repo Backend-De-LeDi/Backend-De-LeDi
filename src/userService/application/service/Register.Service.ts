@@ -31,8 +31,8 @@ export class Register {
         if (!user.avatar) {
             const avatars = await getAllAvatars()
             const avatarAssignment = await avatarsAssignment(avatars)
-
-            const newUser = { ...user, nivel, avatarAssignment, password: hashedPassword };
+            console.log(avatarAssignment)
+            const newUser = { ...user, nivel, avatar: avatarAssignment, password: hashedPassword };
             console.log(newUser)
             return await this.userRepo.createUser(newUser);
 

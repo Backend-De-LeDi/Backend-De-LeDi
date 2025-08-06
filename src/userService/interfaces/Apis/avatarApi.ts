@@ -8,6 +8,7 @@ export async function getAllAvatars(): Promise<AvatarType[]> {
 
 
         const data: AvatarType[] = await response.json();
+        console.log(data)
         return data
 
     } catch (error) {
