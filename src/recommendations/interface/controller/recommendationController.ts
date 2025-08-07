@@ -4,6 +4,7 @@ import { UserModel } from "../../../userService/infrastructure/models/userModels
 import { BookProgressModel } from "../../../userPogressBooks/infrastructure/models/BookProgressModel";
 import { BookModel } from "../../../books/infrastructure/model/books.model";
 import { PreferenceTypes } from "../../../shared/types/preferenceTypes";
+import mongoose from "mongoose";
 
 export class RecommendationsController {
   async getRecommendations(req: Request, res: Response): Promise<Response> {
@@ -22,24 +23,15 @@ export class RecommendationsController {
       return res.status(200).json(recommendations);
     }
 
-    // const idsBooks = userProgrese
-    //   .map((book) => {
-    //     const id = book.idBook?._id;
-    //     return mongoose.Types.ObjectId.isValid(id) ? id : null;
-    //   })
-    //   .filter(Boolean);
+    const idsBooks = userProgrese
+      .map((book) => {
+        const id = book.idBook?._id;
+        return mongoose.Types.ObjectId.isValid(id) ? id : null;
+      })
+      .filter(Boolean);
 
-    // const recommendationBase = await BookModel.find({ _id: { $in: idsBooks } });
+    console.log(idsBooks);
 
-    // const idsRecommendation = await sendBooks(recommendationBase);
-
-    // const idsValid = idsRecommendation.ids.map((id: string) => {
-    //   return new mongoose.Types.ObjectId(id);
-    // });
-
-    // const RecommendedBooks = await BookModel.find({ _id: { $in: idsValid } });
-
-    // return res.status(200).json(RecommendedBooks);
     return res.status(200).json("usuario residido");
   }
 }
