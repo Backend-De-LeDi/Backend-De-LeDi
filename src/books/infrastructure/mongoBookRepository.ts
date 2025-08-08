@@ -9,7 +9,6 @@ import mongoose from "mongoose";
 
 // ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoBookRepository implements BooksRepository {
-  
   // ? método de repositorio que es para crear o almacenar un nuevo libro ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
@@ -114,5 +113,12 @@ export class MongoBookRepository implements BooksRepository {
     const sorted = scored.sort((a, b) => b.score - a.score);
 
     return sorted.map((book) => book as SearchedBook & { score: number });
+  }
+
+  // ? método que permite obtener libros en base a una lista de ids proporcionados ✅
+  async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {
+    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+    const books = await BookModel.find({ _id: { $in: objectIds } });
+    return books;
   }
 }
