@@ -5,7 +5,7 @@ import { Schema } from "mongoose";
 const BookProgresSchema = new Schema<BookUserProgresRepo>({
   idUser: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Users",
     required: true,
   },
   idBook: {
