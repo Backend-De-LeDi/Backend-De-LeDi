@@ -13,7 +13,7 @@ export class MongoBookRepository implements BooksRepository {
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
 
-    await serviceContainer.connectionAI.uploadBookForIA(newBook);
+    await serviceContainer.ConnectionAI.uploadBookForIA(newBook);
 
     await newBook.save();
   }
