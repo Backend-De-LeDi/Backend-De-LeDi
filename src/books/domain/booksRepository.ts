@@ -12,4 +12,5 @@ export interface BooksRepository {
   getContentBookById(id: Types.ObjectId): Promise<string | null>;
   getAllBooksByLevel(nivel?: string): Promise<SearchedBook[]>;
   getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[]): Promise<SearchedBook[]>;
+  getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]>;
 }
