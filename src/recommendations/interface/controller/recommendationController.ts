@@ -5,8 +5,12 @@ import { BookProgressModel } from "../../../userPogressBooks/infrastructure/mode
 import { BookModel } from "../../../books/infrastructure/model/books.model";
 import { PreferenceTypes } from "../../../shared/types/preferenceTypes";
 import mongoose from "mongoose";
+import { SearchedBook } from "../../../shared/types/bookTypes/bookTypes";
+import { sendBooksContent } from "../../../shared/utils/sendContentBooks";
 
+// ? controlador que maneja las solicitudes de recomendaciones de libros
 export class RecommendationsController {
+  // ? maneja la solicitud para obtener recomendaciones de libros basadas en el progreso del usuario y sus preferencias ✅
   async getRecommendations(req: Request, res: Response): Promise<Response> {
     const userId = req.user.id;
 
@@ -23,15 +27,22 @@ export class RecommendationsController {
       return res.status(200).json(recommendations);
     }
 
-    const idsBooks = userProgrese
-      .map((book) => {
-        const id = book.idBook?._id;
-        return mongoose.Types.ObjectId.isValid(id) ? id : null;
-      })
-      .filter(Boolean);
+    const idsBooks = userProgrese.map((book) => {
+      return book.idBook._id;
+    });
 
-    console.log(idsBooks);
+    const books: SearchedBook[] = await serviceContainer.book.getBooksByIds.run(idsBooks);
 
-    return res.status(200).json("usuario residido");
+    const plainBooks: SearchedBook[] = books.map((book) => book.toObject());
+
+    const textsContent = plainBooks.map((book: SearchedBook) => {
+      return [book.title, book.summary, book.subgenre.join(", "), book.language, book.synopsis, book.theme.join(", "), book.genre].join("\n");
+    });
+
+    const allBook = await sendBooksContent(textsContent);
+
+    const recommendation = await serviceContainer.recommendations.getAdvancedRecommendations.run(idsBooks, allBook.ids);
+
+    return res.status(200).json(recommendation);
   }
 }
