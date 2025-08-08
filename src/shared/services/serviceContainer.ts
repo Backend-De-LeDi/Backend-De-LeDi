@@ -11,6 +11,8 @@ import { GetBasicRecommendations } from "../../recommendations/applications/getB
 import { MongoRecommendationsRepository } from "../../recommendations/infrastructure/mongoRecommendationsRepository";
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
 import { GetAdvancedRecommendations } from "../../recommendations/applications/getAdvancedRecommendations";
+import { ConnectionAI } from "../../shared/apis/connectionAi";
+import { connection } from "mongoose";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -36,4 +38,7 @@ export const serviceContainer = {
     getBasicRecommendations: new GetBasicRecommendations(recommendationRepository),
     getAdvancedRecommendations: new GetAdvancedRecommendations(recommendationRepository),
   },
+
+  // * método de IA
+  ConnectionAI: new ConnectionAI(),
 };
