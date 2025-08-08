@@ -1,10 +1,9 @@
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { RecommendationsRepository } from "../domain/recommendationsRepository";
 import { BookModel } from "../../books/infrastructure/model/books.model";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import { PipelineStage } from "mongoose";
-import { format } from "morgan";
-import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
+import mongoose from "mongoose";
 
 // ? repositorio que permite la comunicación con la base de datos MongoDB para obtener recomendaciones de libros
 export class MongoRecommendationsRepository implements RecommendationsRepository {
@@ -36,9 +35,12 @@ export class MongoRecommendationsRepository implements RecommendationsRepository
     return recommendations;
   }
 
-  async getAdvancedRecommendations(id: mongoose.Types.ObjectId): Promise<SearchedBook[]> {
-    const recommendations = await BookProgressModel.find({ idUser: id }).populate("idBook");
-    console.log(recommendations);
-    return recommendations as any;
+  // ? obtiene recomendaciones avanzadas de libros excluyendo ciertos IDs y basándose en una lista de todos los IDs proporcionados ✅
+  async getAdvancedRecommendations(idToExclude: Types.ObjectId[], AllIds: Types.ObjectId[]): Promise<SearchedBook[]> {
+    const filteredIds = AllIds.filter((id) => !idToExclude.some((excluded) => excluded.equals(id)));
+
+    const recommendations = await BookModel.find({ _id: { $in: filteredIds } });
+
+    return recommendations;
   }
 }
