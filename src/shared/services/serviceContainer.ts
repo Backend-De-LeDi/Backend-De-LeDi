@@ -12,7 +12,6 @@ import { MongoRecommendationsRepository } from "../../recommendations/infrastruc
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
 import { GetAdvancedRecommendations } from "../../recommendations/applications/getAdvancedRecommendations";
 import { ConnectionAI } from "../../shared/apis/connectionAi";
-import { connection } from "mongoose";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();

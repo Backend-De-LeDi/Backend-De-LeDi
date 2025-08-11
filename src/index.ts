@@ -15,7 +15,6 @@ import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
 import bookRouter from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
-import audiobookRouter from "./audiobooks/interfaces/router/audiobooksRoute";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
 
@@ -61,7 +60,6 @@ app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
 app.use(bookRouter);
-app.use(audiobookRouter);
 app.use(recommendationsRouter);
 
 // ? configuración de puerto
