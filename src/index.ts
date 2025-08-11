@@ -18,8 +18,8 @@ import session from "express-session";
 import audiobookRouter from "./audiobooks/interfaces/router/audiobooksRoute";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
-import { getAllAvatars } from "./userService/interfaces/Apis/avatarApi";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
+import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
 
 // ? creación de la aplicación Express
 const app = express();
@@ -51,7 +51,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // poner true solo si usas HTTPS
+      secure: false,
       maxAge: 3600000,
     },
   })
@@ -66,6 +66,7 @@ app.use(avaRoutes)
 app.use(bookRouter);
 app.use(audiobookRouter);
 app.use(recommendationsRouter);
+app.use(forosRoutes)
 
 
 // ? configuración de puerto
