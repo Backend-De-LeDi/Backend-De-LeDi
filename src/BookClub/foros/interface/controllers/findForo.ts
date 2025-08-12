@@ -8,17 +8,57 @@ import { FindForoMongo } from "../../infraestructure/foros.repo.mongo";
 const findForoMongo = new FindForoMongo();
 const foroService = new FindForoService(findForoMongo)
 
-
+export const findForosLogic = async () => {
+    return await foroService.findForos();
+};
 export const findForoControllers = async (req: Request, res: Response) => {
-    const result = foroService.findForos();
-    res.json(result)
+    try {
+
+        const result = await foroService.findForos();
+        console.log(result)
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.log("error en foros", error)
+
+        res.status(500).json({ msg: 'the internal server error' })
+
+
+
+    }
 }
 
-export const findForoById = async (req: Request, res: Response) => {
-    const id = req.params
-    const result = foroService.findForoById(id)
-    if (!result) {
-        res.json({ msg: 'the foro not exited' })
+export const findForoById = async (reqId: Request | string, res?: Response) => {
+    let id: string
+
+    try {
+        if (typeof reqId !== "string") {
+            id = reqId.params.id
+        } else {
+            id = reqId
+        }
+        const result = foroService.findForoById(id)
+
+        if (!result) {
+            if (res) {
+                res.status(404).json({ msg: "The foro not exists" });
+            }
+            null;
+        }
+
+        if (res) {
+            res.json(result)
+        }
+
+        return result
+
+    } catch (error) {
+        console.log(error)
+        if (res) {
+            res.status(500).json({ msg: 'the internal server error' })
+
+        }
     }
-    res.json(result)
+
+
 }

@@ -17,6 +17,12 @@ const ComentarioSchema: Schema = new Schema<ComentTypes>(
             type: Schema.Types.ObjectId,
             ref: "Coments",
         },
+        idForo: {
+            type: Schema.Types.ObjectId,
+            ref: "Foros",
+            required: true,
+        }
+
     },
     {
         timestamps: { createdAt: true, updatedAt: false },

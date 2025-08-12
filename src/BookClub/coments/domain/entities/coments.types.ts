@@ -2,9 +2,10 @@
 
 export class ComentTypes {
     constructor(
-        private readonly idUser: any,
-        private readonly content: string,
-        private readonly idComent?: any,
+        public readonly idForo: any,
+        public readonly idUser: any,
+        public readonly content: string,
+        public readonly idComent?: any,
     ) {
 
     }

@@ -7,5 +7,5 @@ export const forosRoutes = Router();
 
 forosRoutes.post("/createForo", createForoController);
 forosRoutes.get("/foros", findForoControllers);
-forosRoutes.get("/foro/:id", findForoById);
+// forosRoutes.get("/foro/:id", findForoById);
 forosRoutes.delete("/foro/:id", deleteForo)

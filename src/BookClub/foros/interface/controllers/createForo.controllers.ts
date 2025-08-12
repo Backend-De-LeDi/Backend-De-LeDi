@@ -11,10 +11,10 @@ const foroService = new CreateForoService(createForoMongo);
 //create foro
 export const createForoController = async (req: Request, res: Response) => {
     try {
-        const foro: Foro = req.body as Foro;
+        const foro: Foro = req.body;
 
         const result = await foroService.createForo(foro);
-
+        console.log(result)
         res.status(201).json({
             msg: 'foro creaded successful', result
         });

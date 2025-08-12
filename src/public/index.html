@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Foro en Tiempo Real</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+        background-color: #f5f5f5;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      input,
+      textarea {
+        display: block;
+        width: 300px;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      li {
+        background-color: white;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Foro en Tiempo Real</h1>
+
+    <input id="autor" placeholder="Tu nombre" />
+    <input id="foroId" placeholder="ID del foro" />
+    <textarea id="contenido" placeholder="Escribí tu publicación..."></textarea>
+    <button id="btnPublicar">Publicar</button>
+
+    <h2>Comentarios</h2>
+    <ul id="publicaciones"></ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      document
+        .getElementById("btnPublicar")
+        .addEventListener("click", publicar);
+
+      function publicar() {
+        const autor = document.getElementById("autor").value.trim();
+        const foroId = document.getElementById("foroId").value.trim();
+        const contenido = document.getElementById("contenido").value.trim();
+
+        if (!autor || !foroId || !contenido) {
+          alert("Por favor completá todos los campos.");
+          return;
+        }
+
+        const mensaje = { foroId, autor, contenido };
+        socket.emit("new-public", mensaje);
+
+        document.getElementById("contenido").value = "";
+      }
+
+      socket.on("coment-created", (data) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+        <strong>Foro:</strong> ${data.foroId} - 
+        <em>${data.autor}</em>:
+        <br>
+        ${data.contenido}
+      `;
+        document.getElementById("publicaciones").prepend(li);
+      });
+    </script>
+  </body>
+</html>

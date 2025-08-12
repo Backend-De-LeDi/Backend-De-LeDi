@@ -7,14 +7,6 @@ const createComentMongo = new CreateComentMongo();
 const createComent = new CreateComentService(createComentMongo);
 
 
-export const createComentControllet = async (req: Request, res: Response) => {
-    try {
-        const coment: ComentTypes = req.body;
-
-        const result = await createComent.createComent(coment)
-
-        res.status(201).json(result)
-    } catch (error) {
-        res.status(500).json({ msg: "the internal server error" })
-    }
-}
+export const createComentLogic = async (coment: ComentTypes) => {
+    return await createComent.createComent(coment);
+};
