@@ -5,9 +5,8 @@ import { Types } from "mongoose";
 import { PipelineStage } from "mongoose";
 import mongoose from "mongoose";
 
-// ? repositorio que permite la comunicación con la base de datos MongoDB para obtener recomendaciones de libros
 export class MongoRecommendationsRepository implements RecommendationsRepository {
-  // ? obtiene recomendaciones básicas de libros basadas en temas y formatos ✅
+  // ✅
   async getBasicRecommendations(themes: string[], format: string[]): Promise<SearchedBook[]> {
     const pipeline: PipelineStage[] = [];
 
@@ -35,7 +34,7 @@ export class MongoRecommendationsRepository implements RecommendationsRepository
     return recommendations;
   }
 
-  // ? obtiene recomendaciones avanzadas de libros excluyendo ciertos IDs y basándose en una lista de todos los IDs proporcionados ✅
+  // ✅
   async getAdvancedRecommendations(idToExclude: Types.ObjectId[], AllIds: Types.ObjectId[]): Promise<SearchedBook[]> {
     const filteredIds = AllIds.filter((id) => !idToExclude.some((excluded) => excluded.equals(id)));
 
