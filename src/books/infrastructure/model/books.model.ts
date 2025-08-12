@@ -1,7 +1,6 @@
 import { IBook } from "../../../shared/types/bookTypes/bookTypes";
 import { Schema, model } from "mongoose";
 
-// ? definimos el modelo de estructura para almacenar los datos
 const bookSchema = new Schema<IBook>(
   {
     title: { type: String, required: true },
@@ -32,6 +31,5 @@ const bookSchema = new Schema<IBook>(
   { timestamps: true }
 );
 
-// ? exportamos el modelo de libro para poder usarlo en otras partes de la aplicación
 const BookModel = model<IBook>("Books", bookSchema);
 export { BookModel };
