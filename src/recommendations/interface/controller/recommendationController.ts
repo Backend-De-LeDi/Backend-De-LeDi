@@ -2,15 +2,11 @@ import { serviceContainer } from "../../../shared/services/serviceContainer";
 import type { Request, Response } from "express";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { BookProgressModel } from "../../../userPogressBooks/infrastructure/models/BookProgressModel";
-import { BookModel } from "../../../books/infrastructure/model/books.model";
 import { PreferenceTypes } from "../../../shared/types/preferenceTypes";
-import mongoose from "mongoose";
 import { SearchedBook } from "../../../shared/types/bookTypes/bookTypes";
-import { sendBooksContent } from "../../../shared/utils/sendContentBooks";
 
-// ? controlador que maneja las solicitudes de recomendaciones de libros
 export class RecommendationsController {
-  // ? maneja la solicitud para obtener recomendaciones de libros basadas en el progreso del usuario y sus preferencias ✅
+  // ✅
   async getRecommendations(req: Request, res: Response): Promise<Response> {
     const userId = req.user.id;
 
@@ -39,7 +35,7 @@ export class RecommendationsController {
       return [book.title, book.summary, book.subgenre.join(", "), book.language, book.synopsis, book.theme.join(", "), book.genre].join("\n");
     });
 
-    const allBook = await sendBooksContent(textsContent);
+    const allBook = await serviceContainer.ConnectionAI.sendBooksContent(textsContent);
 
     const recommendation = await serviceContainer.recommendations.getAdvancedRecommendations.run(idsBooks, allBook.ids);
 
