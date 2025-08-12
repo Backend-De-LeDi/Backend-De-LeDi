@@ -11,9 +11,8 @@ import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 
-// ? clase que se utiliza en las rutas con los métodos y caso de uso que se juntaron en contenedor de servicio
 export class BookController {
-  // ? método para procesar y almacenar los libros que se proporcionan 🔄️
+  // ✅
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -94,7 +93,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener todo los libros ✅
+  // ✅
   async getAllBook(req: Request, res: Response): Promise<Response> {
     try {
       const reqUser = req.user;
@@ -141,7 +140,7 @@ export class BookController {
     }
   }
 
-  // ? método para eliminar libro en la base de datos en base a su id que recibe por parámetro 🔄️
+  // 🔄️
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -186,7 +185,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener un libro en la base de datos en base a su id que recibe por parámetro ✅
+  // ✅
   async getBookById(req: Request, res: Response): Promise<Response> {
     try {
       const id = req.params.id;
@@ -213,7 +212,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener un libros en la base de datos en base a la query que venga por parámetro ✅
+  // ✅
   async getIntelligenceBooks(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -242,7 +241,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener una url para visualizar el contenido del libro buscado por id ✅
+  // ✅
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -273,7 +272,7 @@ export class BookController {
     }
   }
 
-  // ? método para obtener libro en la base de datos en base a los tema y subgénero proporcionados ✅
+  // ✅
   async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
     const { theme, subgenre, yearBook, genre }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[] } = req.body;
     const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre);
