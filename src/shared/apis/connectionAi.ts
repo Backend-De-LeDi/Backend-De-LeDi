@@ -4,9 +4,7 @@ import chalk from "chalk";
 import { Books } from "../../books/domain/books";
 import { PreferenceTypes } from "../types/preferenceTypes";
 
-// ? clase que se comunica con la IA
 export class ConnectionAI {
-  // ? método para enviar los libros de los usuario a la IA
   async sendBooksToAI(books: SearchedBook[]) {
     try {
       const req = await fetch("http://127.0.0.1:4590/recommendations", {
@@ -25,14 +23,12 @@ export class ConnectionAI {
     }
   }
 
-  // ? método para enviar consultas a las IA
   async sendQuery(query: string) {
     const req = await fetch(`http://127.0.0.1:4590/books?query=${query}`);
     const res = await req.json();
     return res;
   }
 
-  // ? método para subir libros a la IA libros as la IA
   async uploadBookForIA(book: Books) {
     try {
       const req = await fetch("http://127.0.0.1:4590/books/upload", {
@@ -71,7 +67,6 @@ export class ConnectionAI {
     }
   }
 
-  // ? método para enviar solo las preferencia del usuario
   async sendPreference(preference: PreferenceTypes) {
     const req = await fetch("http://127.0.0.1:4590/preferenceRecipient", {
       method: "POST",
@@ -81,5 +76,42 @@ export class ConnectionAI {
 
     const res = await req.json();
     return res;
+  }
+
+  async sendBooksContent(textsContent: string[]) {
+    const req = await fetch("http://127.0.0.1:4590/recommendations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(textsContent),
+    });
+
+    const res = await req.json();
+    return res;
+  }
+
+  async deleteBookFromIA(id: string) {
+    try {
+      const req = await fetch(`http://127.0.0.1:4590/books/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!req.ok) {
+        const errorRes = await req.json();
+        separator();
+        console.log(chalk.red(`⛔ Error ${req.status} - ${req.statusText}`));
+        console.log(errorRes);
+        separator();
+        return;
+      }
+      console.log(chalk.green("✅ Libro eliminado de la IA"));
+    } catch (error) {
+      separator();
+      console.log(chalk.yellow("⚠️ Error en la API: deleteBookFromIA"));
+      separator();
+      console.error(error);
+      separator();
+    }
   }
 }
