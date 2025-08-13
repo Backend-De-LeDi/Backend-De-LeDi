@@ -10,14 +10,19 @@ import { findForoById, findForosLogic } from "./BookClub/foros/interface/control
 import { createComentLogic } from "./BookClub/coments/interface/controllers/createComentControllers";
 import chalk from "chalk";
 import { app } from "./app";
+import { getAllComents } from "./BookClub/coments/interface/controllers/findComentControllers";
 
 const server = createServer(app)
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE']
+    }
+});
 
 
+io.on("connection", (socket: Socket) => {
 
-io.on("connction", (socket: Socket) => {
-    console.log('conect client', socket.id)
     socket.on("get-all-foros", async () => {
         try {
             const foros = await findForosLogic()
@@ -27,7 +32,7 @@ io.on("connction", (socket: Socket) => {
         }
     });
 
-    socket.on("get-all-foros   ", async (foroId: string) => {
+    socket.on("get-foro-id", async (foroId: string) => {
         try {
             const foro = await findForoById(foroId)
             if (!foro) {
@@ -43,12 +48,25 @@ io.on("connction", (socket: Socket) => {
     socket.on("new-public", async (data: ComentTypes) => {
         try {
             const result = await createComentLogic(data);
+            io.emit("coment-created", result);
+        } catch (error) {
+            console.error("Error en new-public:", error);
+            socket.emit("error", { msg: "Error al crear el comentario" });
+        }
+    });
+    socket.on("new-public", async (data: ComentTypes) => {
+        try {
+            const result = await createComentLogic(data);
 
             io.emit("coment-created", result);
         } catch (error) {
             socket.emit("error", { msg: "Error al crear el comentario" });
         }
     });
+    socket.on("all-public", async () => {
+        const result = await getAllComents()
+        io.emit("coments", result)
+    })
 
 })
 // ? configuración de puerto

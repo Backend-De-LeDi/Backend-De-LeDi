@@ -8,12 +8,12 @@ const findComentsMongo = new FindComentsMongo();
 const findComent = new FindComentService(findComentsMongo)
 
 
-export const getAllComents = async (req: Request, res: Response) => {
+export const getAllComents = async () => {
     try {
         const result = await findComent.findComents()
-        res.status(200).json({ msg: 'the coments', result })
+        return result
     } catch (error) {
-        res.status(500).json({ msg: 'the internal server error ' })
+
     }
 }
 export const getComentById = async (req: Request, res: Response) => {

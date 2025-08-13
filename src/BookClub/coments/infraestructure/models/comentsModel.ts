@@ -6,11 +6,11 @@ const ComentarioSchema: Schema = new Schema<ComentTypes>(
         idUser: {
             type: Schema.Types.ObjectId,
             ref: "Users",
-            required: true,
+            // required: true,
         },
         content: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
         idComent: {
@@ -20,7 +20,7 @@ const ComentarioSchema: Schema = new Schema<ComentTypes>(
         idForo: {
             type: Schema.Types.ObjectId,
             ref: "Foros",
-            required: true,
+            // required: true,
         }
 
     },
