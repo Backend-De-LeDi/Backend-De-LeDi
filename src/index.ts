@@ -1,75 +1,83 @@
-// ? importación de módulos necesarios
 import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import fs from "fs";
+import { createServer } from "http";
 import path from "path";
-import chalk from "chalk";
-import cookies from "cookie-parser";
-
-// ? importación de módulos locales
+import { Server, Socket } from "socket.io";
 import ENV from "./shared/config/configEnv";
 import connections from "./shared/config/db/database";
-import { userRoutes } from "./userService/interfaces/routes/userService.routes";
-import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
-import bookRouter from "./books/interfaces/router/booksRoute";
-import { authRoutes } from "./authService/interfaces/routes/auth.routes";
-import session from "express-session";
-import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
-import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
-import { getAllAvatars } from "./userService/interfaces/Apis/avatarApi";
-import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 
-// ? creación de la aplicación Express
-const app = express();
+import { ComentTypes } from "./BookClub/coments/domain/entities/coments.types";
+import { findForoById, findForosLogic } from "./BookClub/foros/interface/controllers/findForo";
+import { createComentLogic } from "./BookClub/coments/interface/controllers/createComentControllers";
+import chalk from "chalk";
+import { app } from "./app";
+import { getAllComents } from "./BookClub/coments/interface/controllers/findComentControllers";
 
-// ? configuración del directorio de subida de archivos
-const fileUpload = path.join(__dirname, "./uploads");
-
-// ? verificación de la existencia del directorio de subida de archivos
-if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
-
-// ? configuración de middlewares
-app.use(
-  cors({
-    origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-app.use(cookies());
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("./src/uploads"));
-
-// ? configuración de sesiones
-app.use(
-  session({
-    secret: "tu_clave_secreta",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // poner true solo si usas HTTPS
-      maxAge: 3600000,
-    },
-  })
-);
-
-// ? configuración de rutas
-app.use(userRoutes);
-app.use(authRoutes);
-app.use(autorRoutes);
-app.use(progressRouter);
-app.use(avaRoutes)
-app.use(bookRouter);
-app.use(recommendationsRouter);
-
-
-// ? configuración de puerto
-app.listen(Number(ENV.PORT), async () => {
-  console.log();
-  console.log(chalk.green(`server is Running on http://localhost:${ENV.PORT}`));
-  console.log();
-  await connections();
+const server = createServer(app)
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE']
+    }
 });
+
+
+io.on("connection", (socket: Socket) => {
+
+    socket.on("get-all-foros", async () => {
+        try {
+            const foros = await findForosLogic()
+            socket.emit("all-foros", foros);
+        } catch (error) {
+            socket.emit("error", { msg: "No se pudo obtener la lista de foros" });
+        }
+    });
+
+    socket.on("get-foro-id", async (foroId: string) => {
+        try {
+            const foro = await findForoById(foroId)
+            if (!foro) {
+                socket.emit("foro-not-found", { msg: "Foro no encontrado" });
+            } else {
+                socket.emit("foro-data", foro);
+            }
+        } catch (error) {
+            socket.emit("error", { msg: "Error al obtener foro por ID" });
+        }
+    })
+
+    socket.on("new-public", async (data: ComentTypes) => {
+        try {
+            const result = await createComentLogic(data);
+            io.emit("coment-created", result);
+        } catch (error) {
+            console.error("Error en new-public:", error);
+            socket.emit("error", { msg: "Error al crear el comentario" });
+        }
+    });
+    socket.on("new-public", async (data: ComentTypes) => {
+        try {
+            const result = await createComentLogic(data);
+
+            io.emit("coment-created", result);
+        } catch (error) {
+            socket.emit("error", { msg: "Error al crear el comentario" });
+        }
+    });
+    socket.on("all-public", async () => {
+        const result = await getAllComents()
+        io.emit("coments", result)
+    })
+
+})
+// ? configuración de puerto
+
+server.listen(Number(ENV.PORT), async () => {
+    console.log();
+    console.log(chalk.green(`server is Running on http://localhost:${ENV.PORT}`));
+    console.log();
+    await connections();
+});
+
+
+
+
