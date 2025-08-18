@@ -167,7 +167,8 @@ export class BookController {
 
       const isDeletingBook: boolean = await deleteBookInCloudinary(book.contentBook.idContentBook);
 
-      if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
+      if (!isDeletingCoverImage || !isDeletingBook)
+        console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
 
       await serviceContainer.book.deleteBook.run(idValid);
 
@@ -277,5 +278,27 @@ export class BookController {
     const { theme, subgenre, yearBook, genre }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[] } = req.body;
     const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre);
     return res.status(200).json(books);
+  }
+
+  // ✅
+  async getAllThemes(req: Request, res: Response): Promise<Response> {
+    const themes = await serviceContainer.book.getAllThemes.run();
+    return res.status(200).json(themes);
+  }
+  // ✅
+  async getAllSubgenres(req: Request, res: Response): Promise<Response> {
+    const subgenres = await serviceContainer.book.getAllSubgenres.run();
+    return res.status(200).json(subgenres);
+  }
+
+  // ✅
+  async getAllGenres(req: Request, res: Response): Promise<Response> {
+    const genres = await serviceContainer.book.getAllGenres.run();
+    return res.status(200).json(genres);
+  }
+  // ✅
+  async getAllYears(req: Request, res: Response): Promise<Response> {
+    const years = await serviceContainer.book.getAllYears.run();
+    return res.status(200).json(years);
   }
 }

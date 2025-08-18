@@ -55,4 +55,24 @@ bookRouter.get("/book/content/:id", validateBooksJWT, (req: Request, res: Respon
 bookRouter.post("/booksByFiltering", validateBooksJWT, (req: Request, res: Response) => {
   controller.getBooksByFiltering(req, res);
 });
+
+// ✅
+bookRouter.get("/booksThemes", (req: Request, res: Response) => {
+  controller.getAllThemes(req, res);
+});
+
+// ✅
+bookRouter.get("/booksSubgenres", (req: Request, res: Response) => {
+  controller.getAllSubgenres(req, res);
+});
+// ✅
+bookRouter.get("/booksGenres", (req: Request, res: Response) => {
+  controller.getAllGenres(req, res);
+});
+
+// ✅
+bookRouter.get("/booksYears", (req: Request, res: Response) => {
+  controller.getAllYears(req, res);
+});
+
 export default bookRouter;
