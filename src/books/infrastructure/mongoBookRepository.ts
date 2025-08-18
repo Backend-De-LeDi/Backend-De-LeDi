@@ -17,7 +17,7 @@ export class MongoBookRepository implements BooksRepository {
     await newBook.save();
   }
 
-  //  ✅
+  // ? método para obtener todo los libros en la base de datos ✅
   async getAllBooks(): Promise<SearchedBook[]> {
     const books = await BookModel.find();
 
@@ -120,5 +120,62 @@ export class MongoBookRepository implements BooksRepository {
     const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
     const books = await BookModel.find({ _id: { $in: objectIds } });
     return books;
+  }
+
+  async getAllThemes(): Promise<string[]> {
+    const books = await BookModel.find({}, { theme: 1, _id: 0 });
+    const themes = new Set<string>();
+
+    books.forEach((book) => {
+      book.theme.forEach((t) => themes.add(t));
+    });
+
+    return Array.from(themes);
+  }
+
+  async getAllSubgenres(): Promise<string[]> {
+    const books = await BookModel.find({}, { subgenre: 1, _id: 0 });
+    const subgenres = new Set<string>();
+
+    books.forEach((book) => {
+      book.subgenre.forEach((s) => subgenres.add(s));
+    });
+
+    return Array.from(subgenres);
+  }
+
+  async getAllGenres(): Promise<string[]> {
+    const books = await BookModel.find({}, { genre: 1, _id: 0 });
+
+    const genres = new Set<string>();
+
+    books.forEach((book) => {
+      if (book.genre) {
+        genres.add(book.genre);
+      }
+    });
+
+    return Array.from(genres);
+  }
+
+  async getAllYears(): Promise<number[]> {
+    const books = await BookModel.find({}, { yearBook: 1, _id: 0 });
+
+    const years = new Set<number>();
+
+    books.forEach((book) => {
+      if (book.yearBook) {
+        const year = new Date(book.yearBook).getFullYear();
+        if (!isNaN(year)) {
+          years.add(year);
+        }
+      }
+    });
+
+    return Array.from(years).sort((a, b) => a - b); // opcional: orden ascendente
+  }
+
+  async getAllFormats(): Promise<string[]> {
+    return BookModel.distinct("format").exec();
   }
 }

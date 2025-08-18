@@ -12,6 +12,11 @@ import { MongoRecommendationsRepository } from "../../recommendations/infrastruc
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
 import { GetAdvancedRecommendations } from "../../recommendations/applications/getAdvancedRecommendations";
 import { ConnectionAI } from "../../shared/apis/connectionAi";
+import { GetAllThemes } from "../../books/application/getAllThemes";
+import { GetAllSubgenres } from "../../books/application/getAllSubgenres";
+import { GetAllGenres } from "../../books/application/getAllGenres";
+import { GetAllYearsBooks } from "../../books/application/getAllYearBooks";
+import { getAllFormats } from "../../books/application/getAllFormats";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -30,6 +35,11 @@ export const serviceContainer = {
     getAllBooksByLevel: new GetAllBooksByLevel(booksRepository),
     getBooksByFiltering: new GetBooksByFiltering(booksRepository),
     getBooksByIds: new GetBooksByIds(booksRepository),
+    getAllThemes: new GetAllThemes(booksRepository),
+    getAllSubgenres: new GetAllSubgenres(booksRepository),
+    getAllGenres: new GetAllGenres(booksRepository),
+    getAllYears: new GetAllYearsBooks(booksRepository),
+    getAllFormats: new getAllFormats(booksRepository),
   },
 
   // * método de solo recomendaciones
