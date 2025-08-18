@@ -174,4 +174,8 @@ export class MongoBookRepository implements BooksRepository {
 
     return Array.from(years).sort((a, b) => a - b); // opcional: orden ascendente
   }
+
+  async getAllFormats(): Promise<string[]> {
+    return BookModel.distinct("format").exec();
+  }
 }

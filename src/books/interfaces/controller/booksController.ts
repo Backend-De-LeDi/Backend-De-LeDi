@@ -301,4 +301,10 @@ export class BookController {
     const years = await serviceContainer.book.getAllYears.run();
     return res.status(200).json(years);
   }
+
+  // ✅
+  async getAllFormats(req: Request, res: Response): Promise<Response> {
+    const formats = await serviceContainer.book.getAllFormats.run();
+    return res.status(200).json(formats);
+  }
 }

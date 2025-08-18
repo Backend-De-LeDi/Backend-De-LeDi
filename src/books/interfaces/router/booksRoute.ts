@@ -75,4 +75,9 @@ bookRouter.get("/booksYears", (req: Request, res: Response) => {
   controller.getAllYears(req, res);
 });
 
+// ✅
+bookRouter.get("/booksFormats", (req: Request, res: Response) => {
+  controller.getAllFormats(req, res);
+});
+
 export default bookRouter;

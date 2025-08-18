@@ -16,4 +16,5 @@ export interface BooksRepository {
   getAllSubgenres(): Promise<string[]>;
   getAllYears(): Promise<number[]>;
   getAllGenres(): Promise<string[]>;
+  getAllFormats(): Promise<string[]>;
 }
