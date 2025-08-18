@@ -21,24 +21,14 @@ export const validateBooksJWT = (req: Request, res: Response, next: NextFunction
     return;
   }
 
-  if (tokenCookie && typeof tokenCookie === "string") {
-    jwt.verify(tokenCookie, SECRET_KEY, (err, decoded) => {
+  const token = tokenHeader || tokenCookie;
+
+  if (token && typeof token === "string") {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
       if (err) {
         res.status(401).json({ message: "Token inválido" });
         return;
       }
-      req.user = decoded;
-      next();
-    });
-  }
-
-  if (tokenHeader && typeof tokenHeader === "string") {
-    jwt.verify(tokenHeader, SECRET_KEY, (err, decoded) => {
-      if (err) {
-        res.status(401).json({ message: "Token inválido" });
-        return;
-      }
-
       req.user = decoded;
       next();
     });

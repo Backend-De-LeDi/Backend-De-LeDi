@@ -1,9 +1,11 @@
-import { calcularEdad } from "../../../shared/utils/calcularNivel";
 import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
 import bcrypt from 'bcrypt-ts';
+import { calcularEdad } from "../../../shared/utils/calcularNivel";
+import { getAllAvatars } from "../../interfaces/Apis/avatarApi";
+import { avatarsAssignment } from "../../domain/utils/avatarAssignment";
 
 export class Register {
     constructor(
@@ -25,6 +27,16 @@ export class Register {
 
         const nivel = calcularEdad(user.birthDate);
         const hashedPassword = await bcrypt.hash(user.password, 10);
+
+        if (!user.avatar) {
+            const avatars = await getAllAvatars()
+            const avatarAssignment = await avatarsAssignment(avatars)
+            console.log(avatarAssignment)
+            const newUser = { ...user, nivel, avatar: avatarAssignment, password: hashedPassword };
+            console.log(newUser)
+            return await this.userRepo.createUser(newUser);
+
+        }
 
         const newUser = { ...user, nivel, password: hashedPassword };
         return await this.userRepo.createUser(newUser);

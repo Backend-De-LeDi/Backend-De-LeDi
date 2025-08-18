@@ -15,9 +15,10 @@ import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
 import bookRouter from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
-import audiobookRouter from "./audiobooks/interfaces/router/audiobooksRoute";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
+import { getAllAvatars } from "./userService/interfaces/Apis/avatarApi";
+import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 
 // ? creación de la aplicación Express
 const app = express();
@@ -31,7 +32,7 @@ if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
 // ? configuración de middlewares
 app.use(
   cors({
-    origin: ["http://localhost:5500", "http://localhost:3000", "http://localhost:5173"],
+    origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -60,9 +61,10 @@ app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
+app.use(avaRoutes)
 app.use(bookRouter);
-app.use(audiobookRouter);
 app.use(recommendationsRouter);
+
 
 // ? configuración de puerto
 app.listen(Number(ENV.PORT), async () => {

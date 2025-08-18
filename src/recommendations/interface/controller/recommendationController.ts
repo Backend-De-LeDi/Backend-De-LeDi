@@ -2,10 +2,11 @@ import { serviceContainer } from "../../../shared/services/serviceContainer";
 import type { Request, Response } from "express";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { BookProgressModel } from "../../../userPogressBooks/infrastructure/models/BookProgressModel";
-import { BookModel } from "../../../books/infrastructure/model/books.model";
 import { PreferenceTypes } from "../../../shared/types/preferenceTypes";
+import { SearchedBook } from "../../../shared/types/bookTypes/bookTypes";
 
 export class RecommendationsController {
+  // ✅
   async getRecommendations(req: Request, res: Response): Promise<Response> {
     const userId = req.user.id;
 
@@ -22,24 +23,22 @@ export class RecommendationsController {
       return res.status(200).json(recommendations);
     }
 
-    // const idsBooks = userProgrese
-    //   .map((book) => {
-    //     const id = book.idBook?._id;
-    //     return mongoose.Types.ObjectId.isValid(id) ? id : null;
-    //   })
-    //   .filter(Boolean);
+    const idsBooks = userProgrese.map((book) => {
+      return book.idBook._id;
+    });
 
-    // const recommendationBase = await BookModel.find({ _id: { $in: idsBooks } });
+    const books: SearchedBook[] = await serviceContainer.book.getBooksByIds.run(idsBooks);
 
-    // const idsRecommendation = await sendBooks(recommendationBase);
+    const plainBooks: SearchedBook[] = books.map((book) => book.toObject());
 
-    // const idsValid = idsRecommendation.ids.map((id: string) => {
-    //   return new mongoose.Types.ObjectId(id);
-    // });
+    const textsContent = plainBooks.map((book: SearchedBook) => {
+      return [book.title, book.summary, book.subgenre.join(", "), book.language, book.synopsis, book.theme.join(", "), book.genre].join("\n");
+    });
 
-    // const RecommendedBooks = await BookModel.find({ _id: { $in: idsValid } });
+    const allBook = await serviceContainer.ConnectionAI.sendBooksContent(textsContent);
 
-    // return res.status(200).json(RecommendedBooks);
-    return res.status(200).json("usuario residido");
+    const recommendation = await serviceContainer.recommendations.getAdvancedRecommendations.run(idsBooks, allBook.ids);
+
+    return res.status(200).json(recommendation);
   }
 }

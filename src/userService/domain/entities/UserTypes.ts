@@ -13,6 +13,7 @@ export class User {
     public readonly avatar: any,
     public readonly preference: {
       category: string[];
+      format: string[];
     }
-  ) {}
+  ) { }
 }

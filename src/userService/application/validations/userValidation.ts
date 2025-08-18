@@ -5,6 +5,8 @@ export function validarUsuario(data: any) {
     const parsed = UserZodSchema.safeParse(data);
 
     if (!parsed.success) {
+        console.log(parsed.error)
+
         throw parsed.error;
     }
 

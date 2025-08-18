@@ -3,22 +3,18 @@ import { DeleteBook } from "../../books/application/deleteBook";
 import { GetAllBooks } from "../../books/application/getAllBooks";
 import { GetBooksById } from "../../books/application/getBookById";
 import { GetIntelligenceBook } from "../../books/application/getIntelligenceBooks";
-import { MongoAudiobookRepository } from "../../audiobooks/infrastructure/mongoAudiobookRepository";
 import { GetContentBookById } from "../../books/application/getContentBookById";
-import { CreateAudiobook } from "../../audiobooks/application/createAudiobook";
-import { GetAllAudiobooks } from "../../audiobooks/application/getAllAudiobooks";
-import { DeleteAudiobook } from "../../audiobooks/application/deleteAudiobook";
-import { GetAudiobooksById } from "../../audiobooks/application/getAudiobookById";
 import { MongoBookRepository } from "../../books/infrastructure/mongoBookRepository";
 import { GetAllBooksByLevel } from "../../books/application/getAllBooksByLevel";
 import { GetBooksByFiltering } from "../../books/application/getBooksByFiltering";
 import { GetBasicRecommendations } from "../../recommendations/applications/getBasicRecommendations";
 import { MongoRecommendationsRepository } from "../../recommendations/infrastructure/mongoRecommendationsRepository";
-import { ConnectionAI } from "../apis/connectionAi";
+import { GetBooksByIds } from "../../books/application/getBooksByIds";
+import { GetAdvancedRecommendations } from "../../recommendations/applications/getAdvancedRecommendations";
+import { ConnectionAI } from "../../shared/apis/connectionAi";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
-const audiobooksRepository = new MongoAudiobookRepository();
 const recommendationRepository = new MongoRecommendationsRepository();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
@@ -33,20 +29,15 @@ export const serviceContainer = {
     getContentById: new GetContentBookById(booksRepository),
     getAllBooksByLevel: new GetAllBooksByLevel(booksRepository),
     getBooksByFiltering: new GetBooksByFiltering(booksRepository),
-  },
-
-  // * métodos de solo audiolibros
-  audiobooks: {
-    createAudioBooks: new CreateAudiobook(audiobooksRepository),
-    getAllAudioBooks: new GetAllAudiobooks(audiobooksRepository),
-    deleteAudiobook: new DeleteAudiobook(audiobooksRepository),
-    getAudiobookById: new GetAudiobooksById(audiobooksRepository),
+    getBooksByIds: new GetBooksByIds(booksRepository),
   },
 
   // * método de solo recomendaciones
   recommendations: {
     getBasicRecommendations: new GetBasicRecommendations(recommendationRepository),
+    getAdvancedRecommendations: new GetAdvancedRecommendations(recommendationRepository),
   },
-  // * métodos de solo comunicación con la IA
-  connectionAI: new ConnectionAI(),
+
+  // * método de IA
+  ConnectionAI: new ConnectionAI(),
 };

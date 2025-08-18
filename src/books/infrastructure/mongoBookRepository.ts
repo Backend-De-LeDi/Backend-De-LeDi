@@ -7,30 +7,30 @@ import { FilterCondition } from "../../shared/types/filterType";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import mongoose from "mongoose";
 
-// ? repositorio de mongo que implementa los métodos del repositorio guía: BooksRepository
 export class MongoBookRepository implements BooksRepository {
-  // ? método de repositorio que es para crear o almacenar un nuevo libro ✅
+  //  ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
 
-    await serviceContainer.connectionAI.uploadBookForIA(newBook);
+    await serviceContainer.ConnectionAI.uploadBookForIA(newBook);
 
     await newBook.save();
   }
 
-  // ? método para obtener todo los libros en la base de datos 🔄️
+  // ? método para obtener todo los libros en la base de datos ✅
   async getAllBooks(): Promise<SearchedBook[]> {
     const books = await BookModel.find();
 
     return books;
   }
 
-  // ? método para eliminar libro en la base de datos en base a su id 🔄️
+  //  🔄️
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
+    await serviceContainer.ConnectionAI.deleteBookFromIA(id.toString());
   }
 
-  // ? método para obtener un libro en la base de datos en base a su id ✅
+  //  ✅
   async getBookById(id: Types.ObjectId): Promise<SearchedBook | null> {
     const book: SearchedBook | null = await BookModel.findById(id);
 
@@ -39,7 +39,7 @@ export class MongoBookRepository implements BooksRepository {
     return book;
   }
 
-  // ? método para obtener libros en la base de datos en base a una o varias palabras clave ✅
+  //  ✅
   async getIntelligenceBook(id: string[]): Promise<SearchedBook[]> {
     const ids = id.map((x) => new mongoose.Types.ObjectId(x));
     const orderedBooks = await BookModel.aggregate([
@@ -55,7 +55,7 @@ export class MongoBookRepository implements BooksRepository {
     return orderedBooks;
   }
 
-  // ? método que permite obtener el contenido del libro en base a su id ✅
+  //  ✅
   async getContentBookById(id: Types.ObjectId): Promise<string | null> {
     const book: SearchedBook | null = await BookModel.findById(id);
 
@@ -64,7 +64,7 @@ export class MongoBookRepository implements BooksRepository {
     return book.contentBook.url_secura;
   }
 
-  // ? método que permite obtener todos los libro en base al nivel de lectura del usuario ✅
+  //  ✅
   async getAllBooksByLevel(nivel: string): Promise<SearchedBook[]> {
     if (nivel === "inicial") {
       const books = await BookModel.find({ level: { $in: ["inicial"] } });
@@ -83,7 +83,7 @@ export class MongoBookRepository implements BooksRepository {
     return await BookModel.find();
   }
 
-  // ? método que permite obtener libros en base a los filtros proporcionados de tema, subgénero, año del libro y genero ✅
+  //  ✅
   async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[]): Promise<SearchedBook[]> {
     const conditions: FilterCondition[] = [];
 
@@ -113,5 +113,12 @@ export class MongoBookRepository implements BooksRepository {
     const sorted = scored.sort((a, b) => b.score - a.score);
 
     return sorted.map((book) => book as SearchedBook & { score: number });
+  }
+
+  //  ✅
+  async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {
+    const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+    const books = await BookModel.find({ _id: { $in: objectIds } });
+    return books;
   }
 }
