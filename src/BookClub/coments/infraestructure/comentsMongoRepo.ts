@@ -13,10 +13,12 @@ export class CreateComentMongo implements ICreateComent {
 }
 export class FindComentsMongo implements IfindComents {
     async findComents(): Promise<ComentTypes[]> {
-        return await comentsModel.find()
+        return await comentsModel.find().populate("users", "userName email")
     }
     async findComentById(id: any): Promise<ComentTypes | null> {
         return await comentsModel.findById(id)
+            .populate("users", "userName email")
+            .exec();
     }
 }
 
