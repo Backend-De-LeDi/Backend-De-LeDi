@@ -17,14 +17,14 @@ export class MongoBookRepository implements BooksRepository {
     await newBook.save();
   }
 
-  // ? método para obtener todo los libros en la base de datos ✅
+  //  ✅
   async getAllBooks(): Promise<SearchedBook[]> {
     const books = await BookModel.find();
 
     return books;
   }
 
-  //  🔄️
+  //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
     await serviceContainer.ConnectionAI.deleteBookFromIA(id.toString());
@@ -122,6 +122,7 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  //  ✅
   async getAllThemes(): Promise<string[]> {
     const books = await BookModel.find({}, { theme: 1, _id: 0 });
     const themes = new Set<string>();
@@ -133,6 +134,7 @@ export class MongoBookRepository implements BooksRepository {
     return Array.from(themes);
   }
 
+  //  ✅
   async getAllSubgenres(): Promise<string[]> {
     const books = await BookModel.find({}, { subgenre: 1, _id: 0 });
     const subgenres = new Set<string>();
@@ -144,6 +146,7 @@ export class MongoBookRepository implements BooksRepository {
     return Array.from(subgenres);
   }
 
+  //  ✅
   async getAllGenres(): Promise<string[]> {
     const books = await BookModel.find({}, { genre: 1, _id: 0 });
 
@@ -158,6 +161,7 @@ export class MongoBookRepository implements BooksRepository {
     return Array.from(genres);
   }
 
+  //  ✅
   async getAllYears(): Promise<number[]> {
     const books = await BookModel.find({}, { yearBook: 1, _id: 0 });
 
@@ -175,6 +179,7 @@ export class MongoBookRepository implements BooksRepository {
     return Array.from(years).sort((a, b) => a - b); // opcional: orden ascendente
   }
 
+  //  ✅
   async getAllFormats(): Promise<string[]> {
     return BookModel.distinct("format").exec();
   }
