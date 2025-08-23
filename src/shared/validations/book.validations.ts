@@ -37,15 +37,9 @@ export const bookSchema = z.object({
     'en': ingles`,
     }),
 
-  theme: z
-    .array(
-      z.string().max(50, {
-        message: "un tema solo puede tener 50 caracteres como máximo",
-      })
-    )
-    .nonempty({
-      message: "Debe haber al menos un tema",
-    }),
+  theme: z.array(z.string().max(50, { message: "un tema solo puede tener 50 caracteres como máximo" })).nonempty({
+    message: "Debe haber al menos un tema",
+  }),
 
   author: z
     .array(
@@ -60,9 +54,10 @@ export const bookSchema = z.object({
       message: "Este campo requiere uno o más autores o autoras. No puede quedar vacío.",
     }),
 
-  synopsis: z.string({ message: "la sinopsis no puede ser un numero" }).min(1, { message: "La sinopsis es obligatoria" }).max(800, {
-    message: "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres",
-  }),
+  synopsis: z
+    .string({ message: "la sinopsis no puede ser un numero" })
+    .min(1, { message: "La sinopsis es obligatoria" })
+    .max(800, { message: "el limite de caracteres que puede tener una sinopsis es de 4000 caracteres" }),
 
   genre: z
     .string({ message: "el genero no puede ser un numero" })
@@ -73,4 +68,14 @@ export const bookSchema = z.object({
     .string({ message: "el nivel no puede ser un numero" })
     .min(1, { message: "El nivel es obligatorio" })
     .max(50, { message: "un nivel solo puede tener 50 caracteres como máximo" }),
+
+  format: z
+    .string({ message: "el formato no puede ser un numero" })
+    .min(1, { message: "El formato es obligatorio" })
+    .max(20, { message: "un formato solo puede tener 20 caracteres como máximo" }),
+
+  totalPages: z
+    .number({ message: "La cantidad de páginas debe ser un número válido" })
+    .int({ message: "Debe ser un número entero" })
+    .min(1, { message: "Debe ser al menos 1 página" }),
 });

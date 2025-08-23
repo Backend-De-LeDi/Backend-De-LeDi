@@ -1,28 +1,41 @@
 import type { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 
-// * función que formatea los datos en estado de desarrollo
-// * permite hacer las validaciones correctamente y temporalmente para el validador
-
 export const parseFormData = (req: Request, res: Response, next: NextFunction): void => {
   req.body = req.body || {};
 
-  for (const key in req.body) {
-    try {
-      if (key === "available") {
-        req.body[key] = req.body[key] === "true";
-      } else if (key === "subgenre") {
-        req.body[key] = Array.isArray(req.body[key]) ? req.body[key] : [req.body[key]];
-      } else if (key === "author") {
-        const val = req.body[key];
-        const ids = Array.isArray(val) ? val : [val];
+  const parseBoolean = (value: any): boolean => value === "true" || value === true;
+  const parseArray = (value: any): string[] => (Array.isArray(value) ? value : [value]);
+  const parseObjectIds = (value: any): Types.ObjectId[] => {
+    const ids = Array.isArray(value) ? value : [value];
+    return ids.filter((id) => Types.ObjectId.isValid(id)).map((id) => new Types.ObjectId(id));
+  };
+  const parseNumber = (value: any): number | undefined => {
+    const num = Number(value);
+    return isNaN(num) ? undefined : num;
+  };
 
-        req.body[key] = ids.map((id) => Types.ObjectId.createFromHexString(id));
-      } else if (key === "theme") {
-        req.body[key] = Array.isArray(req.body[key]) ? req.body[key] : [req.body[key]];
-      }
-    } catch {}
-  }
+  try {
+    if ("available" in req.body) {
+      req.body.available = parseBoolean(req.body.available);
+    }
+
+    if ("subgenre" in req.body) {
+      req.body.subgenre = parseArray(req.body.subgenre);
+    }
+
+    if ("author" in req.body) {
+      req.body.author = parseObjectIds(req.body.author);
+    }
+
+    if ("theme" in req.body) {
+      req.body.theme = parseArray(req.body.theme);
+    }
+
+    if ("totalPages" in req.body) {
+      req.body.totalPages = parseNumber(req.body.totalPages);
+    }
+  } catch (err) {}
 
   next();
 };
