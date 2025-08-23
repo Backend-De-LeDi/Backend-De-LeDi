@@ -17,7 +17,8 @@ export class BookController {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages }: PropBooks =
+        req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -73,6 +74,7 @@ export class BookController {
         genre,
         level,
         format,
+        totalPages,
       };
 
       serviceContainer.book.createBooks.run(newBook);
@@ -296,6 +298,7 @@ export class BookController {
     const genres = await serviceContainer.book.getAllGenres.run();
     return res.status(200).json(genres);
   }
+
   // ✅
   async getAllYears(req: Request, res: Response): Promise<Response> {
     const years = await serviceContainer.book.getAllYears.run();

@@ -17,6 +17,7 @@ export class Books {
     public theme: string[],
     public genre: string,
     public level: string,
-    public format: string
+    public format: string,
+    public totalPages: number
   ) {}
 }

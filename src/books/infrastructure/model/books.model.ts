@@ -27,6 +27,7 @@ const bookSchema = new Schema<IBook>(
     genre: { type: String, required: true },
     level: { type: String, required: true },
     format: { type: String, require: true },
+    totalPages: { type: Number, require: true },
   },
   { timestamps: true }
 );

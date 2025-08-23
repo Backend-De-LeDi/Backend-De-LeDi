@@ -1,4 +1,4 @@
-import { Types, Document } from "mongoose";
+import { Types, Document, NumberExpression } from "mongoose";
 import { ContentBook, FullContentBook } from "./contentBookTypes";
 
 export interface BookCoverImage {
@@ -19,6 +19,7 @@ export interface PropBooks extends Document {
   genre: string;
   level: string;
   format: string;
+  totalPages: number;
 }
 
 export interface IBook extends PropBooks {
