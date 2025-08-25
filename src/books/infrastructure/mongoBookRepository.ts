@@ -6,6 +6,7 @@ import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { FilterCondition } from "../../shared/types/filterType";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import mongoose from "mongoose";
+import { populate } from "dotenv";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
@@ -19,8 +20,7 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getAllBooks(): Promise<SearchedBook[]> {
-    const books = await BookModel.find();
-
+    const books = await BookModel.find().populate("author", "name");
     return books;
   }
 
@@ -32,7 +32,7 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getBookById(id: Types.ObjectId): Promise<SearchedBook | null> {
-    const book: SearchedBook | null = await BookModel.findById(id);
+    const book: SearchedBook | null = await BookModel.findById(id).populate("author", "name");
 
     if (!book) return null;
 
@@ -42,6 +42,7 @@ export class MongoBookRepository implements BooksRepository {
   //  ✅
   async getIntelligenceBook(id: string[]): Promise<SearchedBook[]> {
     const ids = id.map((x) => new mongoose.Types.ObjectId(x));
+
     const orderedBooks = await BookModel.aggregate([
       { $match: { _id: { $in: ids } } },
       {
@@ -50,6 +51,31 @@ export class MongoBookRepository implements BooksRepository {
         },
       },
       { $sort: { __order: 1 } },
+      {
+        $lookup: {
+          from: "authormodels", // nombre real de la colección
+          localField: "author", // campo en BookModel con los ObjectId
+          foreignField: "_id", // campo en Author que se matchea
+          as: "authorData", // resultado del join
+        },
+      },
+      {
+        $addFields: {
+          author: {
+            $map: {
+              input: "$authorData",
+              as: "a",
+              in: "$$a.name",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          authorData: 0,
+          __order: 0,
+        },
+      },
     ]);
 
     return orderedBooks;
@@ -67,20 +93,20 @@ export class MongoBookRepository implements BooksRepository {
   //  ✅
   async getAllBooksByLevel(nivel: string): Promise<SearchedBook[]> {
     if (nivel === "inicial") {
-      const books = await BookModel.find({ level: { $in: ["inicial"] } });
+      const books = await BookModel.find({ level: { $in: ["inicial"] } }).populate("author", "name");
       return books;
     } else if (nivel === "secundario") {
-      const books = await BookModel.find({ level: { $in: ["secundario", "inicial"] } });
+      const books = await BookModel.find({ level: { $in: ["secundario", "inicial"] } }).populate("author", "name");
       return books;
     } else if (nivel === "joven adulto") {
-      const books = await BookModel.find({ level: { $in: ["joven adulto", "secundario", "inicial"] } });
+      const books = await BookModel.find({ level: { $in: ["joven adulto", "secundario", "inicial"] } }).populate("author", "name");
       return books;
     } else if (nivel === "adulto Mayor") {
-      const books = await BookModel.find({ level: { $in: ["adulto Mayor", "joven adulto", "secundario", "inicial"] } });
+      const books = await BookModel.find({ level: { $in: ["adulto Mayor", "joven adulto", "secundario", "inicial"] } }).populate("author", "name");
       return books;
     }
 
-    return await BookModel.find();
+    return await BookModel.find().populate("author", "name");
   }
 
   //  ✅
@@ -94,7 +120,7 @@ export class MongoBookRepository implements BooksRepository {
 
     if (conditions.length === 0) return await BookModel.find().exec();
 
-    const books = await BookModel.find({ $or: conditions }).lean().exec();
+    const books = await BookModel.find({ $or: conditions }).populate("author", "name").lean().exec();
 
     const scored = books.map((book) => {
       let score = 0;
