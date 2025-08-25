@@ -3,6 +3,7 @@ import { BookProgresPort } from '../domain/ports/saveProgres.Ports'
 import { BookUserProgresRepo } from "../domain/entities/BookPogress.types";
 import { UpdateProgresPort } from "../domain/ports/updateProgressPort";
 import { deleteProgress } from "../domain/ports/deleteProgress.Ports";
+import { FindProgressPort } from "../domain/ports/findProgres";
 
 
 export class BookProgresMongo implements BookProgresPort {
@@ -25,5 +26,12 @@ export class UpdateProgressMongo implements UpdateProgresPort {
 export class DeleteRepo implements deleteProgress {
     async deleteProgres(id: string): Promise<void> {
         await BookProgressModel.findByIdAndDelete(id)
+    }
+}
+
+export class FindProgress implements FindProgressPort {
+    async findByUser(id: any): Promise<BookUserProgresRepo[]> {
+        const result = await BookProgressModel.find({ userId: id });
+        return result;
     }
 }
