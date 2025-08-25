@@ -47,7 +47,7 @@ bookRouter.get("/books/:query", validateBooksJWT, (req: Request, res: Response) 
 });
 
 // ✅
-bookRouter.get("/book/content/:id", validateBooksJWT, (req: Request, res: Response) => {
+bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
 

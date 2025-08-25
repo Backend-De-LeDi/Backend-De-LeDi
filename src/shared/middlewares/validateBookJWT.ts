@@ -4,9 +4,7 @@ import dotenv from "dotenv";
 import chalk from "chalk";
 
 dotenv.config();
-// const SECRET_KEY = process.env.CLAVE_SECRETA;
 const SECRET_KEY = "clave_secreta";
-// Middleware para validar JWT
 
 export const validateBooksJWT = (req: Request, res: Response, next: NextFunction): void => {
   const tokenHeader = req.headers["authorization"]?.split(" ")[1];

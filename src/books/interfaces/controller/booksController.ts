@@ -247,12 +247,6 @@ export class BookController {
   // ✅
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
-      const idUser = req.user.id;
-
-      const user = await UserModel.findById(idUser);
-
-      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
-
       const id = req.params.id;
 
       if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "ID inválida" });
