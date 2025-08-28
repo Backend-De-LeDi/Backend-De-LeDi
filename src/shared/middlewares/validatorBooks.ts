@@ -10,7 +10,8 @@ export const validatorBooks = <T>(schema: ZodSchema<T>) => {
       const result = schema.safeParse(req.body);
 
       if (result.success) {
-        return next();
+        next();
+        return;
       }
 
       const files = req.files as { [key: string]: Express.Multer.File[] } | undefined;
