@@ -73,9 +73,4 @@ export const bookSchema = z.object({
     .string({ message: "el formato no puede ser un numero" })
     .min(1, { message: "El formato es obligatorio" })
     .max(20, { message: "un formato solo puede tener 20 caracteres como máximo" }),
-
-  totalPages: z
-    .number({ message: "La cantidad de páginas debe ser un número válido" })
-    .int({ message: "Debe ser un número entero" })
-    .min(1, { message: "Debe ser al menos 1 página" }),
 });
