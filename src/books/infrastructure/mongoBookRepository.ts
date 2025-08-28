@@ -6,7 +6,6 @@ import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { FilterCondition } from "../../shared/types/filterType";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import mongoose from "mongoose";
-import { populate } from "dotenv";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
