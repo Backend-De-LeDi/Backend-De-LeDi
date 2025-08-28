@@ -17,8 +17,22 @@ export class BookController {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages }: PropBooks =
-        req.body;
+      const {
+        title,
+        author,
+        summary,
+        subgenre,
+        available,
+        language,
+        yearBook,
+        synopsis,
+        theme,
+        genre,
+        level,
+        format,
+        totalPages,
+        duration,
+      }: PropBooks = req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -75,6 +89,7 @@ export class BookController {
         level,
         format,
         totalPages,
+        duration,
       };
 
       serviceContainer.book.createBooks.run(newBook);
