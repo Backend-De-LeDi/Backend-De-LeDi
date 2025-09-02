@@ -110,13 +110,14 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[]): Promise<SearchedBook[]> {
+  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[], format: string[]): Promise<SearchedBook[]> {
     const conditions: FilterCondition[] = [];
 
     if (yearBook.length > 0) conditions.push({ yearBook: { $in: yearBook } });
     if (theme.length > 0) conditions.push({ theme: { $in: theme } });
     if (subgenre.length > 0) conditions.push({ subgenre: { $in: subgenre } });
     if (genre.length > 0) conditions.push({ genre: { $in: genre } });
+    if (format.length > 0) conditions.push({ format: { $in: format } });
 
     if (conditions.length === 0) return await BookModel.find().exec();
 
@@ -132,6 +133,8 @@ export class MongoBookRepository implements BooksRepository {
       if (subgenre.length > 0 && book.subgenre.some((s: string) => subgenre.includes(s))) score++;
 
       if (genre.length > 0 && genre.includes(book.genre)) score++;
+
+      if (format.length > 0 && format.includes(book.genre)) score++;
 
       return { ...book, score };
     });

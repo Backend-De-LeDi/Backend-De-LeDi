@@ -17,8 +17,7 @@ export class BookController {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages }: PropBooks =
-        req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages }: PropBooks = req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -169,8 +168,7 @@ export class BookController {
 
       const isDeletingBook: boolean = await deleteBookInCloudinary(book.contentBook.idContentBook);
 
-      if (!isDeletingCoverImage || !isDeletingBook)
-        console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
+      if (!isDeletingCoverImage || !isDeletingBook) console.warn("Ocurrió un error al eliminar la documentación en Cloudinary. Verifica si siguen existiendo.");
 
       await serviceContainer.book.deleteBook.run(idValid);
 
@@ -277,8 +275,8 @@ export class BookController {
 
   // ✅
   async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
-    const { theme, subgenre, yearBook, genre }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[] } = req.body;
-    const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre);
+    const { theme, subgenre, yearBook, genre, format }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[]; format: string[] } = req.body;
+    const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre, format);
     return res.status(200).json(books);
   }
 
