@@ -17,7 +17,7 @@ export class BookController {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages, duration }: PropBooks = req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -74,6 +74,7 @@ export class BookController {
         level,
         format,
         totalPages,
+        duration,
       };
 
       serviceContainer.book.createBooks.run(newBook);
@@ -245,12 +246,6 @@ export class BookController {
   // ✅
   async getContentBookById(req: Request, res: Response): Promise<Response> {
     try {
-      const idUser = req.user.id;
-
-      const user = await UserModel.findById(idUser);
-
-      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
-
       const id = req.params.id;
 
       if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "ID inválida" });

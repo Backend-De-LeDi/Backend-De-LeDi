@@ -35,6 +35,9 @@ export const parseFormData = (req: Request, res: Response, next: NextFunction): 
     if ("totalPages" in req.body) {
       req.body.totalPages = parseNumber(req.body.totalPages);
     }
+    if ("duration" in req.body) {
+      req.body.duration = parseNumber(req.body.duration);
+    }
   } catch (err) {}
 
   next();

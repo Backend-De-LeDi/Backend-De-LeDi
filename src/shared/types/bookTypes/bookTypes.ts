@@ -19,7 +19,8 @@ export interface PropBooks extends Document {
   genre: string;
   level: string;
   format: string;
-  totalPages: number;
+  totalPages?: number;
+  duration?: number;
 }
 
 export interface IBook extends PropBooks {

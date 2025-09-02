@@ -18,6 +18,7 @@ export class Books {
     public genre: string,
     public level: string,
     public format: string,
-    public totalPages: number
+    public totalPages?: number,
+    public duration?: number
   ) {}
 }
