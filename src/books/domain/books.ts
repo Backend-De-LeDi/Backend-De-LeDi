@@ -13,7 +13,7 @@ export class Books {
     public bookCoverImage: BookCoverImage,
     public contentBook: ContentBook,
     public synopsis: string,
-    public yearBook: Date,
+    public yearBook: string,
     public theme: string[],
     public genre: string,
     public level: string,

@@ -10,7 +10,7 @@ export interface BooksRepository {
   getIntelligenceBook(id: string[]): Promise<SearchedBook[]>;
   getContentBookById(id: Types.ObjectId): Promise<string | null>;
   getAllBooksByLevel(nivel?: string): Promise<SearchedBook[]>;
-  getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[], format: string[]): Promise<SearchedBook[]>;
+  getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[]): Promise<SearchedBook[]>;
   getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]>;
   getAllThemes(): Promise<string[]>;
   getAllSubgenres(): Promise<string[]>;

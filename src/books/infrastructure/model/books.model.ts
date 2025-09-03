@@ -9,7 +9,7 @@ const bookSchema = new Schema<IBook>(
     subgenre: [{ type: String, required: true }],
     language: { type: String, required: true },
     available: { type: Boolean, default: true },
-    yearBook: { type: Date, default: Date.now },
+    yearBook: { type: String, default: new Date().getFullYear().toString() },
     synopsis: { type: String, required: true },
     contentBook: {
       type: {

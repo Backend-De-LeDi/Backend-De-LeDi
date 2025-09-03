@@ -109,7 +109,7 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: Date[], genre: string[], format: string[]): Promise<SearchedBook[]> {
+  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[]): Promise<SearchedBook[]> {
     const conditions: FilterCondition[] = [];
 
     if (yearBook.length > 0) conditions.push({ yearBook: { $in: yearBook } });
@@ -125,7 +125,7 @@ export class MongoBookRepository implements BooksRepository {
     const scored = books.map((book) => {
       let score = 0;
 
-      if (yearBook.length > 0 && yearBook.some((date) => new Date(date).getFullYear() === new Date(book.yearBook).getFullYear())) score++;
+      if (yearBook.length > 0 && yearBook.includes(book.yearBook)) score++;
 
       if (theme.length > 0 && book.theme.some((t: string) => theme.includes(t))) score++;
 
@@ -133,7 +133,7 @@ export class MongoBookRepository implements BooksRepository {
 
       if (genre.length > 0 && genre.includes(book.genre)) score++;
 
-      if (format.length > 0 && format.includes(book.genre)) score++;
+      if (format.length > 0 && format.includes(book.format)) score++;
 
       return { ...book, score };
     });

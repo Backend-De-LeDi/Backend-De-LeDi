@@ -270,7 +270,7 @@ export class BookController {
 
   // ✅
   async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
-    const { theme, subgenre, yearBook, genre, format }: { theme: string[]; subgenre: string[]; yearBook: Date[]; genre: string[]; format: string[] } = req.body;
+    const { theme, subgenre, yearBook, genre, format }: { theme: string[]; subgenre: string[]; yearBook: string[]; genre: string[]; format: string[] } = req.body;
     const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre, format);
     return res.status(200).json(books);
   }

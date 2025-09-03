@@ -13,7 +13,7 @@ export interface PropBooks extends Document {
   subgenre: string[];
   language: string;
   available: boolean;
-  yearBook: Date;
+  yearBook: string;
   synopsis: string;
   theme: string[];
   genre: string;
