@@ -7,12 +7,12 @@ import mongoose from "mongoose";
 
 export class MongoRecommendationsRepository implements RecommendationsRepository {
   // ✅
-  async getBasicRecommendations(themes: string[], format: string[]): Promise<SearchedBook[]> {
+  async getBasicRecommendations(subgenre: string[], format: string[]): Promise<SearchedBook[]> {
     const pipeline: PipelineStage[] = [];
 
     pipeline.push({
       $addFields: {
-        themeMatches: themes.length > 0 ? { $setIntersection: ["$theme", themes] } : [],
+        subgenreMatches: subgenre.length > 0 ? { $setIntersection: ["$subgenre", subgenre] } : [],
         formatMatch: format.length > 0 ? { $cond: [{ $in: ["$format", format] }, 1, 0] } : 0,
       },
     });
@@ -20,14 +20,14 @@ export class MongoRecommendationsRepository implements RecommendationsRepository
     pipeline.push({
       $addFields: {
         matchScore: {
-          $add: [themes.length > 0 ? { $size: "$themeMatches" } : 0, format.length > 0 ? "$formatMatch" : 0],
+          $add: [subgenre.length > 0 ? { $size: "$subgenreMatches" } : 0, format.length > 0 ? "$formatMatch" : 0],
         },
       },
     });
 
     pipeline.push({ $match: { matchScore: { $gte: 0 } } });
 
-    pipeline.push({ $sort: { matchScore: -1 as 1 | -1 } }); // 👈 esto es clave
+    pipeline.push({ $sort: { matchScore: -1 as 1 | -1 } });
 
     const recommendations = await BookModel.aggregate(pipeline);
 

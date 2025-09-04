@@ -20,6 +20,7 @@ export class RecommendationsController {
       const plainUser = user.toObject();
       const { category, format } = plainUser.preference as PreferenceTypes;
       const recommendations = await serviceContainer.recommendations.getBasicRecommendations.run(category, format);
+      console.log("recomendaciones básicas");
       return res.status(200).json(recommendations);
     }
 
@@ -38,7 +39,7 @@ export class RecommendationsController {
     const allBook = await serviceContainer.ConnectionAI.sendBooksContent(textsContent);
 
     const recommendation = await serviceContainer.recommendations.getAdvancedRecommendations.run(idsBooks, allBook.ids);
-
+    console.log("recomendaciones avanzadas");
     return res.status(200).json(recommendation);
   }
 }
