@@ -190,21 +190,16 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getAllYears(): Promise<number[]> {
+  async getAllYears(): Promise<string[]> {
     const books = await BookModel.find({}, { yearBook: 1, _id: 0 });
 
-    const years = new Set<number>();
+    const years = new Set<string>();
 
     books.forEach((book) => {
-      if (book.yearBook) {
-        const year = new Date(book.yearBook).getFullYear();
-        if (!isNaN(year)) {
-          years.add(year);
-        }
-      }
+      years.add(book.yearBook);
     });
-
-    return Array.from(years).sort((a, b) => a - b); // opcional: orden ascendente
+    return Array.from(years);
+    // opcional: orden ascendente
   }
 
   //  ✅
