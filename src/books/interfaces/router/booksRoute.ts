@@ -65,6 +65,7 @@ bookRouter.get("/booksThemes", (req: Request, res: Response) => {
 bookRouter.get("/booksSubgenres", (req: Request, res: Response) => {
   controller.getAllSubgenres(req, res);
 });
+
 // ✅
 bookRouter.get("/booksGenres", (req: Request, res: Response) => {
   controller.getAllGenres(req, res);

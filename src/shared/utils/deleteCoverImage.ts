@@ -11,6 +11,7 @@ cloudinary.config({
 export async function deleteCoverImage(publicId: string): Promise<boolean> {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
+    console.log("imagen eliminada de cloudinary");
 
     return result.result === "ok";
   } catch (error) {

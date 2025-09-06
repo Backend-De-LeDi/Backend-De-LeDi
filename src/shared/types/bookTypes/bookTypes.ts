@@ -21,6 +21,7 @@ export interface PropBooks extends Document {
   format: string;
   totalPages?: number;
   duration?: number;
+  fileExtension: string;
 }
 
 export interface IBook extends PropBooks {

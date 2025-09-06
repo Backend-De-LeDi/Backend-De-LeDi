@@ -13,6 +13,7 @@ export async function deleteBookInCloudinary(publicId: string): Promise<boolean>
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: "raw",
     });
+    console.log("libro eliminado de cloudinary");
 
     return result.result === "ok";
   } catch (error) {
