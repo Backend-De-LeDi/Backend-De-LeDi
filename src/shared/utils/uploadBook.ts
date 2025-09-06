@@ -10,9 +10,15 @@ cloudinary.config({
 
 export async function uploadBook(rutaArchivo: string) {
   try {
+    if (rutaArchivo.includes('.mp4')) {
+      const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "Books", resource_type: "video" });
+      console.log("✅libro mp4 subido exitosamente:", result.secure_url);
+
+      return result;
+    }
     const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "Books", resource_type: "raw" });
 
-    console.log("libro subido exitosamente:", result.secure_url);
+    console.log("✅libro subido exitosamente:", result.secure_url);
 
     return result;
   } catch (error) {

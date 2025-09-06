@@ -12,7 +12,7 @@ export async function uploadCoverImage(filePhat: string) {
   try {
     const result = await cloudinary.uploader.upload(filePhat, { folder: "BooksCovers" });
 
-    console.log("Imagen subida exitosamente:", result.secure_url);
+    console.log("✅Imagen subida exitosamente:", result.secure_url);
 
     return result;
   } catch (error) {
