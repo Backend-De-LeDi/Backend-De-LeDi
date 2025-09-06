@@ -17,7 +17,7 @@ export class BookController {
     try {
       const idUser = req.user.id;
 
-      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages, duration }: PropBooks = req.body;
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages, duration, fileExtension }: PropBooks = req.body;
 
       const files = req.files as {
         [key: string]: Express.Multer.File[];
@@ -49,6 +49,8 @@ export class BookController {
       if (!coverImage || !content) {
         await fileDelete(img.path);
         await fileDelete(file.path);
+        if (coverImage && coverImage.public_id !== undefined) await deleteCoverImage(coverImage.public_id);
+        if (content && content.public_id !== undefined) await deleteBookInCloudinary(content.public_id);
         return res.status(400).json({ msg: "no se pudo almacenar el contenido o la portada del libro" });
       }
 
@@ -73,6 +75,7 @@ export class BookController {
         genre,
         level,
         format,
+        fileExtension,
         totalPages,
         duration,
       };
@@ -142,7 +145,7 @@ export class BookController {
     }
   }
 
-  // 🔄️
+  // ✅
   async deleteBook(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -280,6 +283,7 @@ export class BookController {
     const themes = await serviceContainer.book.getAllThemes.run();
     return res.status(200).json(themes);
   }
+
   // ✅
   async getAllSubgenres(req: Request, res: Response): Promise<Response> {
     const subgenres = await serviceContainer.book.getAllSubgenres.run();

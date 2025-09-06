@@ -18,7 +18,8 @@ export class Books {
     public genre: string,
     public level: string,
     public format: string,
+    public fileExtension: string,
     public totalPages?: number,
     public duration?: number
-  ) {}
+  ) { }
 }
