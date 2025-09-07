@@ -81,4 +81,18 @@ bookRouter.get("/booksFormats", (req: Request, res: Response) => {
   controller.getAllFormats(req, res);
 });
 
+//✅
+bookRouter.put(
+  "/book/:id",
+  validateBooksJWT,
+  upload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "img", maxCount: 1 },
+  ]),
+  parseFormData,
+  // validatorBooks(bookSchema),
+  (req: Request, res: Response) => {
+    controller.updateBookById(req, res);
+  }
+);
 export default bookRouter;

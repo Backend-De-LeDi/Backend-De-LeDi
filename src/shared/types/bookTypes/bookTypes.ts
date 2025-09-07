@@ -6,6 +6,10 @@ export interface BookCoverImage {
   url_secura: string;
 }
 
+export interface FullBookCoverImage extends BookCoverImage {
+  _id: string;
+}
+
 export interface PropBooks extends Document {
   title: string;
   author: Types.ObjectId[];

@@ -17,6 +17,7 @@ import { GetAllSubgenres } from "../../books/application/getAllSubgenres";
 import { GetAllGenres } from "../../books/application/getAllGenres";
 import { GetAllYearsBooks } from "../../books/application/getAllYearBooks";
 import { getAllFormats } from "../../books/application/getAllFormats";
+import { UpdateBooksById } from "../../books/application/updateBookById";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -40,6 +41,7 @@ export const serviceContainer = {
     getAllGenres: new GetAllGenres(booksRepository),
     getAllYears: new GetAllYearsBooks(booksRepository),
     getAllFormats: new getAllFormats(booksRepository),
+    updateBooksById: new UpdateBooksById(booksRepository),
   },
 
   // * método de solo recomendaciones

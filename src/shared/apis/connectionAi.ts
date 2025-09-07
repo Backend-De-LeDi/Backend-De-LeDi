@@ -1,10 +1,11 @@
-import { SearchedBook } from "../types/bookTypes/bookTypes";
+import { PropBooks, SearchedBook } from "../types/bookTypes/bookTypes";
 import { separator } from "../utils/consoleSeparator";
 import chalk from "chalk";
 import { Books } from "../../books/domain/books";
 import { PreferenceTypes } from "../types/preferenceTypes";
 
 export class ConnectionAI {
+
   async sendBooksToAI(books: SearchedBook[]) {
     try {
       const req = await fetch("http://127.0.0.1:4590/recommendations", {
@@ -29,7 +30,7 @@ export class ConnectionAI {
     return res;
   }
 
-  async uploadBookForIA(book: Books) {
+  async uploadBookForIA(book: SearchedBook) {
     try {
       const req = await fetch("http://127.0.0.1:4590/books/upload", {
         method: "POST",
@@ -109,6 +110,31 @@ export class ConnectionAI {
     } catch (error) {
       separator();
       console.log(chalk.yellow("⚠️ Error en la API: deleteBookFromIA"));
+      separator();
+      console.error(error);
+      separator();
+    }
+  }
+
+  async updateBookInIA(id: string, book: SearchedBook) {
+    try {
+      const req = await fetch(`http://127.0.0.1:4590/books/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(book),
+      });
+      if (!req.ok) {
+        const errorRes = await req.json();
+        separator();
+        console.log(chalk.red(`⛔ Error ${req.status} - ${req.statusText}`));
+        console.log(errorRes.detail);
+        separator();
+        return;
+      }
+      console.log(chalk.green("✅ Libro actualizado en la IA"));
+    } catch (error) {
+      separator();
+      console.log(chalk.yellow("⚠️ Error en la API: updateBookInIA"));
       separator();
       console.error(error);
       separator();

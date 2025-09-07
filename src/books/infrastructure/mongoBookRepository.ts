@@ -23,6 +23,11 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  async updateBookById(id: Types.ObjectId, book: SearchedBook): Promise<void> {
+    await BookModel.findByIdAndUpdate(id, book);
+    await serviceContainer.ConnectionAI.updateBookInIA(id.toString(), book);
+  }
+
   //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);

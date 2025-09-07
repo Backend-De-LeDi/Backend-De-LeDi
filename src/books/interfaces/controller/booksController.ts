@@ -10,7 +10,8 @@ import { fileDelete } from "../../../shared/utils/deleteFile";
 import { uploadBook } from "../../../shared/utils/uploadBook";
 import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudinary";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
-
+import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
+import { BookCoverImage } from "../../../shared/types/bookTypes/bookTypes";
 export class BookController {
   // ✅
   async createBook(req: Request, res: Response): Promise<Response> {
@@ -188,6 +189,113 @@ export class BookController {
         msg: "Erro inesperado por favor intente de nuevo mas tarde",
       });
     }
+  }
+
+  //🔄️
+  async updateBookById(req: Request, res: Response): Promise<Response> {
+    try {
+      const idUser = req.user.id;
+
+      const id = req.params.id;
+
+      const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages, duration, fileExtension }: PropBooks = req.body;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "id invalida" });
+      const idValid = new mongoose.Types.ObjectId(id);
+
+      const user = await UserModel.findById(idUser);
+      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
+
+      const plainUser = user.toObject();
+      if (plainUser.rol !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+
+      const existingBook: SearchedBook | null = await serviceContainer.book.getBooksById.run(idValid);
+
+      if (!existingBook) return res.status(404).json({ msg: "no se encontró el libro para actualizar" });
+
+      const files = req.files as {
+        [key: string]: Express.Multer.File[];
+      };
+
+      let coverImage: BookCoverImage = existingBook.bookCoverImage;
+      let contentBook: ContentBook = existingBook.contentBook;
+
+      if (files && files.img && files.img.length > 0) {
+        const img = files.img[0];
+        const newCoverImage = await uploadCoverImage(img.path);
+
+        if (newCoverImage) {
+          const isDeletingCoverImage: boolean = await deleteCoverImage(existingBook.bookCoverImage.idBookCoverImage);
+
+          if (!isDeletingCoverImage) console.warn("Ocurrió un error al eliminar la portada en Cloudinary. Verifica si sigue existiendo.");
+
+          coverImage = {
+            url_secura: newCoverImage.secure_url,
+            idBookCoverImage: newCoverImage.public_id,
+          };
+
+        }
+
+        await fileDelete(img.path);
+      }
+
+      if (files && files.file && files.file.length > 0) {
+
+        const file = files.file[0];
+
+        const newContent = await uploadBook(file.path);
+
+        if (newContent) {
+
+          const isDeletingBook: boolean = await deleteBookInCloudinary(existingBook.contentBook.idContentBook);
+
+          if (!isDeletingBook) console.warn("Ocurrió un error al eliminar el libro en Cloudinary. Verifica si sigue existiendo.");
+
+          contentBook = {
+            idContentBook: newContent.public_id,
+            url_secura: newContent.secure_url,
+
+          };
+
+        }
+        await fileDelete(file.path);
+      }
+
+      const updatedBook = {
+        _id: existingBook._id,
+        title: title || existingBook.title,
+        author: author || existingBook.author,
+        summary: summary || existingBook.summary,
+        subgenre: subgenre || existingBook.subgenre,
+        available: available !== undefined ? available : existingBook.available,
+        language: language || existingBook.language,
+        yearBook: yearBook || existingBook.yearBook,
+        synopsis: synopsis || existingBook.synopsis,
+        theme: theme || existingBook.theme,
+        genre: genre || existingBook.genre,
+        level: level || existingBook.level,
+        format: format || existingBook.format,
+        totalPages: totalPages || existingBook.totalPages,
+        duration: duration || existingBook.duration,
+        fileExtension: fileExtension || existingBook.fileExtension,
+        bookCoverImage: coverImage || existingBook.bookCoverImage,
+        contentBook: contentBook || existingBook.contentBook
+      };
+
+      await serviceContainer.book.updateBooksById.run(idValid, updatedBook);
+
+      return res.status(200).json({ msg: "libro actualizado correctamente" });
+
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: updateBook"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde", });
+    }
+
   }
 
   // ✅
