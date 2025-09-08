@@ -15,7 +15,7 @@ const BookProgresSchema = new Schema<BookUserProgresRepo>({
   },
   status: {
     type: String,
-    enum: ["reading", "finished", "abandoned", "unmarked"],
+    enum: ["reading", "finished", "abandoned", "pending"],
     required: true,
   },
   progress: {
