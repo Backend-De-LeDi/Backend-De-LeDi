@@ -8,7 +8,7 @@ export interface BooksRepository {
   updateBookById(id: Types.ObjectId, book: Partial<Books>): Promise<void>;
   deleteBook(id: Types.ObjectId): Promise<void>;
   getBookById(id: Types.ObjectId): Promise<SearchedBook | null>;
-  getIntelligenceBook(id: string[]): Promise<SearchedBook[]>;
+  getIntelligenceBook(query: string[]): Promise<SearchedBook[]>;
   getContentBookById(id: Types.ObjectId): Promise<string | null>;
   getAllBooksByLevel(nivel?: string): Promise<SearchedBook[]>;
   getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[]): Promise<SearchedBook[]>;

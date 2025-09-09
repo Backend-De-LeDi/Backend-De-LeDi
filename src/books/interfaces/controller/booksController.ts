@@ -233,20 +233,17 @@ export class BookController {
             url_secura: newCoverImage.secure_url,
             idBookCoverImage: newCoverImage.public_id,
           };
-
         }
 
         await fileDelete(img.path);
       }
 
       if (files && files.file && files.file.length > 0) {
-
         const file = files.file[0];
 
         const newContent = await uploadBook(file.path);
 
         if (newContent) {
-
           const isDeletingBook: boolean = await deleteBookInCloudinary(existingBook.contentBook.idContentBook);
 
           if (!isDeletingBook) console.warn("Ocurrió un error al eliminar el libro en Cloudinary. Verifica si sigue existiendo.");
@@ -254,9 +251,7 @@ export class BookController {
           contentBook = {
             idContentBook: newContent.public_id,
             url_secura: newContent.secure_url,
-
           };
-
         }
         await fileDelete(file.path);
       }
@@ -279,13 +274,12 @@ export class BookController {
         duration: duration || existingBook.duration,
         fileExtension: fileExtension || existingBook.fileExtension,
         bookCoverImage: coverImage || existingBook.bookCoverImage,
-        contentBook: contentBook || existingBook.contentBook
+        contentBook: contentBook || existingBook.contentBook,
       };
 
       await serviceContainer.book.updateBooksById.run(idValid, updatedBook);
 
       return res.status(200).json({ msg: "libro actualizado correctamente" });
-
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: updateBook"));
       console.log(chalk.yellow(separator()));
@@ -293,9 +287,8 @@ export class BookController {
       console.log(error);
       console.log();
       console.log(chalk.yellow(separator()));
-      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde", });
+      return res.status(500).json({ msg: "Error inesperado por favor intente de nuevo mas tarde" });
     }
-
   }
 
   // ✅
@@ -336,11 +329,7 @@ export class BookController {
 
       const query = decodeURIComponent(req.params.query);
 
-      console.log(query);
-
-      const { ids }: { ids: string[] } = await serviceContainer.ConnectionAI.sendQuery(query);
-
-      const books = await serviceContainer.book.getIntelligenceBook.run(ids);
+      const books = await serviceContainer.book.getIntelligenceBook.run(query.split(" "));
 
       return res.status(200).json(books);
     } catch (error) {
