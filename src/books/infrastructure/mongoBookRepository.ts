@@ -49,11 +49,19 @@ export class MongoBookRepository implements BooksRepository {
 
     const orderedBooks = await BookModel.aggregate([
       {
+        $lookup: {
+          from: "authormodels", // nombre real de la colección en MongoDB (pluralizado y en minúsculas)
+          localField: "author",
+          foreignField: "_id",
+          as: "authorData",
+        },
+      },
+      {
         $addFields: {
           matchScore: {
             $sum: regexTerms.map((regex) => ({
               $add: [
-                { $cond: [{ $regexMatch: { input: "$title", regex } }, 2, 0] }, // peso 3
+                { $cond: [{ $regexMatch: { input: "$title", regex } }, 3, 0] },
                 { $cond: [{ $regexMatch: { input: "$summary", regex } }, 1, 0] },
                 { $cond: [{ $regexMatch: { input: "$synopsis", regex } }, 1, 0] },
                 { $cond: [{ $regexMatch: { input: "$genre", regex } }, 1, 0] },
@@ -110,6 +118,38 @@ export class MongoBookRepository implements BooksRepository {
       },
       {
         $sort: { matchScore: -1, createdAt: -1 },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          summary: 1,
+          synopsis: 1,
+          subgenre: 1,
+          theme: 1,
+          genre: 1,
+          yearBook: 1,
+          language: 1,
+          available: 1,
+          level: 1,
+          format: 1,
+          fileExtension: 1,
+          totalPages: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          contentBook: 1,
+          bookCoverImage: 1,
+          author: {
+            $map: {
+              input: "$authorData",
+              as: "a",
+              in: {
+                _id: "$$a._id",
+                name: "$$a.name",
+              },
+            },
+          },
+        },
       },
     ]);
 
