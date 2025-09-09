@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
 import { UpdateProgressMongo, DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
+import { GetBooksByIds } from "../../../books/application/getBooksByIds";
+import { MongoBookRepository } from "../../../books/infrastructure/mongoBookRepository";
 
+//intancias 
 const updateRepo = new UpdateProgressMongo();
-const deleteRepo = new DeleteRepo();
+const booksRepo = new MongoBookRepository();
+const getBooksByIds = new GetBooksByIds(booksRepo);
+const bookService = new UpdateProgressService(updateRepo, getBooksByIds);
 
-const bookService = new UpdateProgressService(updateRepo, deleteRepo);
-
+//controllador para actualizar progreso
 export const updateProgresBook = async (req: Request, res: Response) => {
     try {
         const { id, ...date } = req.body;
