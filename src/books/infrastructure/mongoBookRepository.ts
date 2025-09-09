@@ -4,15 +4,12 @@ import { Books } from "../domain/books";
 import { Types } from "mongoose";
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { FilterCondition } from "../../shared/types/filterType";
-import { serviceContainer } from "../../shared/services/serviceContainer";
 import mongoose from "mongoose";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
-
-    await serviceContainer.ConnectionAI.uploadBookForIA(newBook);
 
     await newBook.save();
   }
@@ -25,13 +22,11 @@ export class MongoBookRepository implements BooksRepository {
 
   async updateBookById(id: Types.ObjectId, book: SearchedBook): Promise<void> {
     await BookModel.findByIdAndUpdate(id, book);
-    await serviceContainer.ConnectionAI.updateBookInIA(id.toString(), book);
   }
 
   //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
-    await serviceContainer.ConnectionAI.deleteBookFromIA(id.toString());
   }
 
   //  ✅
@@ -50,7 +45,7 @@ export class MongoBookRepository implements BooksRepository {
     const orderedBooks = await BookModel.aggregate([
       {
         $lookup: {
-          from: "authormodels", // nombre real de la colección en MongoDB (pluralizado y en minúsculas)
+          from: "authormodels",
           localField: "author",
           foreignField: "_id",
           as: "authorData",
