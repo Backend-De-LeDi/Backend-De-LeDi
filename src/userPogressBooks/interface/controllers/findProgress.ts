@@ -12,7 +12,7 @@ export const findByProgressIdControllers = async (req: Request, res: Response) =
     try {
         const id = req.user?.id;
         const objectId = typeof id === "string" ? new ObjectId(id) : id;
-        const result = findProgress.findByUser(id)
+        const result = await findProgress.findByUser(id)
         if (!result) {
             res.status(404).json({ msg: 'the progress user not found' })
         }

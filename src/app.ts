@@ -15,7 +15,6 @@ import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
-import { getAllAvatars } from "./userService/interfaces/Apis/avatarApi";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
 
@@ -25,7 +24,6 @@ export const app = express();
 // ? configuración del directorio de subida de archivos
 const fileUpload = path.join(__dirname, "./uploads");
 app.use(express.static(path.join(__dirname, "public")));
-
 
 // ? verificación de la existencia del directorio de subida de archivos
 if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
