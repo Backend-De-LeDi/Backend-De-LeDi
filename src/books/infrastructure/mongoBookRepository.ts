@@ -23,6 +23,11 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  async updateBookById(id: Types.ObjectId, book: SearchedBook): Promise<void> {
+    await BookModel.findByIdAndUpdate(id, book);
+    await serviceContainer.ConnectionAI.updateBookInIA(id.toString(), book);
+  }
+
   //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
@@ -39,41 +44,72 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getIntelligenceBook(id: string[]): Promise<SearchedBook[]> {
-    const ids = id.map((x) => new mongoose.Types.ObjectId(x));
+  async getIntelligenceBook(query: string[]): Promise<SearchedBook[]> {
+    const regexTerms = query.map((term) => new RegExp(term, "i"));
 
     const orderedBooks = await BookModel.aggregate([
-      { $match: { _id: { $in: ids } } },
       {
         $addFields: {
-          __order: { $indexOfArray: [ids, "$_id"] },
-        },
-      },
-      { $sort: { __order: 1 } },
-      {
-        $lookup: {
-          from: "authormodels", // nombre real de la colección
-          localField: "author", // campo en BookModel con los ObjectId
-          foreignField: "_id", // campo en Author que se matchea
-          as: "authorData", // resultado del join
-        },
-      },
-      {
-        $addFields: {
-          author: {
-            $map: {
-              input: "$authorData",
-              as: "a",
-              in: "$$a.name",
-            },
+          matchScore: {
+            $sum: regexTerms.map((regex) => ({
+              $add: [
+                { $cond: [{ $regexMatch: { input: "$title", regex } }, 2, 0] }, // peso 3
+                { $cond: [{ $regexMatch: { input: "$summary", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$synopsis", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$genre", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$yearBook", regex } }, 1, 0] },
+                {
+                  $cond: [
+                    {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$subgenre",
+                              as: "s",
+                              cond: { $regexMatch: { input: "$$s", regex } },
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    1,
+                    0,
+                  ],
+                },
+                {
+                  $cond: [
+                    {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$theme",
+                              as: "t",
+                              cond: { $regexMatch: { input: "$$t", regex } },
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    1,
+                    0,
+                  ],
+                },
+              ],
+            })),
           },
         },
       },
       {
-        $project: {
-          authorData: 0,
-          __order: 0,
+        $match: {
+          matchScore: { $gt: 0 },
         },
+      },
+      {
+        $sort: { matchScore: -1, createdAt: -1 },
       },
     ]);
 
