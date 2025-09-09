@@ -14,7 +14,6 @@ import bookRouter from "./books/interfaces/router/booksRoute";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
-import { recommendationsRouter } from "./recommendations/interface/routers/recommendationRouter";
 import { getAllAvatars } from "./userService/interfaces/Apis/avatarApi";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
@@ -26,17 +25,16 @@ export const app = express();
 const fileUpload = path.join(__dirname, "./uploads");
 app.use(express.static(path.join(__dirname, "public")));
 
-
 // ? verificación de la existencia del directorio de subida de archivos
 if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
 
 // ? configuración de middlewares
 app.use(
-    cors({
-        origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    })
+  cors({
+    origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
 );
 app.use(cookies());
 app.use(morgan("dev"));
@@ -46,15 +44,15 @@ app.use(express.static("./src/uploads"));
 
 // ? configuración de sesiones
 app.use(
-    session({
-        secret: "tu_clave_secreta",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: false, // poner true solo si usas HTTPS
-            maxAge: 3600000,
-        },
-    })
+  session({
+    secret: "tu_clave_secreta",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // poner true solo si usas HTTPS
+      maxAge: 3600000,
+    },
+  })
 );
 
 // ? configuración de rutas
@@ -62,9 +60,6 @@ app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
-app.use(avaRoutes)
+app.use(avaRoutes);
 app.use(bookRouter);
-app.use(recommendationsRouter);
-app.use(forosRoutes)
-
-
+app.use(forosRoutes);
