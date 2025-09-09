@@ -33,6 +33,10 @@ export class findAuthorMongoRepo implements FindAuthor {
         const result = await AuthorModel.findOne({ name: date });
         return result;
     }
+    async findAuthor(): Promise<Author[]> {
+        const result = await AuthorModel.find()
+        return result
+    }
 }
 
 //repo de delete author in mongo

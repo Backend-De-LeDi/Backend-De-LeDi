@@ -40,3 +40,14 @@ export const getAuthorByName = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+
+export const getAllAuthores = async (req: Request, res: Response) => {
+    try {
+        const result = await findAuthorService.findAuthores()
+
+        res.status(200).json({ msg: 'the authors', result })
+    } catch (error) {
+        console.error("Error al buscar autor:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+}

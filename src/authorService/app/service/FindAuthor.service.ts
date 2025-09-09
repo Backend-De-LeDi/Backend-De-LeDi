@@ -20,4 +20,8 @@ export class FindAuthors {
         }
         return null;
     }
+    async findAuthores(): Promise<Author[]> {
+        const result = await this.findAuthorRepository.findAuthor()
+        return result
+    }
 }
