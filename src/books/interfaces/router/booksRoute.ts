@@ -5,7 +5,6 @@ import { Request, Response } from "express";
 import { parseFormData } from "../../../shared/utils/parseFormData";
 import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
-import { validateBooksJWT } from "../../../shared/middlewares/validateBookJWT";
 import { validateLevel } from "../../../shared/middlewares/validateLevel";
 import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { validarRol } from "../../../shared/middlewares/validateRol";
