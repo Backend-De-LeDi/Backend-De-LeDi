@@ -7,6 +7,8 @@ import { validatorBooks } from "../../../shared/middlewares/validatorBooks";
 import { bookSchema } from "../../../shared/validations/book.validations";
 import { validateBooksJWT } from "../../../shared/middlewares/validateBookJWT";
 import { validateLevel } from "../../../shared/middlewares/validateLevel";
+import { validateJWT } from "../../../shared/middlewares/validateJWT";
+import { validarRol } from "../../../shared/middlewares/validateRol";
 
 const bookRouter = Router();
 const controller = new BookController();
@@ -14,7 +16,11 @@ const controller = new BookController();
 // ✅
 bookRouter.post(
   "/books",
-  validateBooksJWT,
+  validateJWT,
+  validarRol("Admin")
+
+
+  ,
   upload.fields([
     { name: "file", maxCount: 1 },
     { name: "img", maxCount: 1 },
@@ -37,14 +43,19 @@ bookRouter.get("/book/:id", (req: Request, res: Response) => {
 });
 
 // 🔄️
-bookRouter.delete("/book/:id", validateBooksJWT, (req: Request, res: Response) => {
-  controller.deleteBook(req, res);
-});
+bookRouter.delete("/book/:id",
+  validateJWT,
+
+  (req: Request, res: Response) => {
+    controller.deleteBook(req, res);
+  });
 
 // ✅
-bookRouter.get("/books/:query", validateBooksJWT, (req: Request, res: Response) => {
-  controller.getIntelligenceBooks(req, res);
-});
+bookRouter.get("/books/:query",
+  validateJWT
+  , (req: Request, res: Response) => {
+    controller.getIntelligenceBooks(req, res);
+  });
 
 // ✅
 bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
@@ -52,9 +63,11 @@ bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
 });
 
 // ✅
-bookRouter.post("/booksByFiltering", validateBooksJWT, (req: Request, res: Response) => {
-  controller.getBooksByFiltering(req, res);
-});
+bookRouter.post("/booksByFiltering",
+  validateJWT
+  , (req: Request, res: Response) => {
+    controller.getBooksByFiltering(req, res);
+  });
 
 // ✅
 bookRouter.get("/booksThemes", (req: Request, res: Response) => {

@@ -32,6 +32,12 @@ const UserSchema = new Schema<User>({
     type: String,
     required: true,
   },
+  rol: {
+    type: String,
+    enum: ["User", "Admin"],
+    default: "User",
+    required: true,
+  },
   avatar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Avatars",

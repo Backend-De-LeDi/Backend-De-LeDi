@@ -39,7 +39,7 @@ export const login = async (req: Request, res: Response) => {
         } else {
             const id = result._id
 
-            const token = await generarJWT(id);
+            const token = await generarJWT(id, result.rol);
             req.session.token = token;
             req.session.isLoggedIn = true
 
