@@ -62,9 +62,7 @@ app.use(autorRoutes);
 app.use(progressRouter);
 app.use(avaRoutes);
 app.use(bookRouter);
-<<<<<<< HEAD
 app.use(forosRoutes);
-=======
 app.use(forosRoutes);
 app.use(recommendationRouters);
->>>>>>> 2e9d6b8a1b8e55d77c340fcfa9399cf6fdd15990
+
