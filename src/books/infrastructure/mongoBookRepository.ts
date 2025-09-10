@@ -4,15 +4,12 @@ import { Books } from "../domain/books";
 import { Types } from "mongoose";
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { FilterCondition } from "../../shared/types/filterType";
-import { serviceContainer } from "../../shared/services/serviceContainer";
 import mongoose from "mongoose";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
-
-    await serviceContainer.ConnectionAI.uploadBookForIA(newBook);
 
     await newBook.save();
   }
@@ -23,10 +20,13 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  async updateBookById(id: Types.ObjectId, book: SearchedBook): Promise<void> {
+    await BookModel.findByIdAndUpdate(id, book);
+  }
+
   //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findOneAndDelete(id);
-    await serviceContainer.ConnectionAI.deleteBookFromIA(id.toString());
   }
 
   //  ✅
@@ -39,40 +39,111 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getIntelligenceBook(id: string[]): Promise<SearchedBook[]> {
-    const ids = id.map((x) => new mongoose.Types.ObjectId(x));
+  async getIntelligenceBook(query: string[]): Promise<SearchedBook[]> {
+    const regexTerms = query.map((term) => new RegExp(term, "i"));
 
     const orderedBooks = await BookModel.aggregate([
-      { $match: { _id: { $in: ids } } },
-      {
-        $addFields: {
-          __order: { $indexOfArray: [ids, "$_id"] },
-        },
-      },
-      { $sort: { __order: 1 } },
       {
         $lookup: {
-          from: "authormodels", // nombre real de la colección
-          localField: "author", // campo en BookModel con los ObjectId
-          foreignField: "_id", // campo en Author que se matchea
-          as: "authorData", // resultado del join
+          from: "authormodels",
+          localField: "author",
+          foreignField: "_id",
+          as: "authorData",
         },
       },
       {
         $addFields: {
-          author: {
-            $map: {
-              input: "$authorData",
-              as: "a",
-              in: "$$a.name",
-            },
+          matchScore: {
+            $sum: regexTerms.map((regex) => ({
+              $add: [
+                { $cond: [{ $regexMatch: { input: "$title", regex } }, 3, 0] },
+                { $cond: [{ $regexMatch: { input: "$summary", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$synopsis", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$genre", regex } }, 1, 0] },
+                { $cond: [{ $regexMatch: { input: "$yearBook", regex } }, 1, 0] },
+                {
+                  $cond: [
+                    {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$subgenre",
+                              as: "s",
+                              cond: { $regexMatch: { input: "$$s", regex } },
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    1,
+                    0,
+                  ],
+                },
+                {
+                  $cond: [
+                    {
+                      $gt: [
+                        {
+                          $size: {
+                            $filter: {
+                              input: "$theme",
+                              as: "t",
+                              cond: { $regexMatch: { input: "$$t", regex } },
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    1,
+                    0,
+                  ],
+                },
+              ],
+            })),
           },
         },
       },
       {
+        $match: {
+          matchScore: { $gt: 0 },
+        },
+      },
+      {
+        $sort: { matchScore: -1, createdAt: -1 },
+      },
+      {
         $project: {
-          authorData: 0,
-          __order: 0,
+          _id: 1,
+          title: 1,
+          summary: 1,
+          synopsis: 1,
+          subgenre: 1,
+          theme: 1,
+          genre: 1,
+          yearBook: 1,
+          language: 1,
+          available: 1,
+          level: 1,
+          format: 1,
+          fileExtension: 1,
+          totalPages: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          contentBook: 1,
+          bookCoverImage: 1,
+          author: {
+            $map: {
+              input: "$authorData",
+              as: "a",
+              in: {
+                _id: "$$a._id",
+                name: "$$a.name",
+              },
+            },
+          },
         },
       },
     ]);

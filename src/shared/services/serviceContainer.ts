@@ -7,20 +7,17 @@ import { GetContentBookById } from "../../books/application/getContentBookById";
 import { MongoBookRepository } from "../../books/infrastructure/mongoBookRepository";
 import { GetAllBooksByLevel } from "../../books/application/getAllBooksByLevel";
 import { GetBooksByFiltering } from "../../books/application/getBooksByFiltering";
-import { GetBasicRecommendations } from "../../recommendations/applications/getBasicRecommendations";
-import { MongoRecommendationsRepository } from "../../recommendations/infrastructure/mongoRecommendationsRepository";
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
-import { GetAdvancedRecommendations } from "../../recommendations/applications/getAdvancedRecommendations";
-import { ConnectionAI } from "../../shared/apis/connectionAi";
+// import { ConnectionAI } from "../../shared/apis/connectionAi";
 import { GetAllThemes } from "../../books/application/getAllThemes";
 import { GetAllSubgenres } from "../../books/application/getAllSubgenres";
 import { GetAllGenres } from "../../books/application/getAllGenres";
 import { GetAllYearsBooks } from "../../books/application/getAllYearBooks";
 import { getAllFormats } from "../../books/application/getAllFormats";
+import { UpdateBooksById } from "../../books/application/updateBookById";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
-const recommendationRepository = new MongoRecommendationsRepository();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -40,14 +37,9 @@ export const serviceContainer = {
     getAllGenres: new GetAllGenres(booksRepository),
     getAllYears: new GetAllYearsBooks(booksRepository),
     getAllFormats: new getAllFormats(booksRepository),
-  },
-
-  // * método de solo recomendaciones
-  recommendations: {
-    getBasicRecommendations: new GetBasicRecommendations(recommendationRepository),
-    getAdvancedRecommendations: new GetAdvancedRecommendations(recommendationRepository),
+    updateBooksById: new UpdateBooksById(booksRepository),
   },
 
   // * método de IA
-  ConnectionAI: new ConnectionAI(),
+  // ConnectionAI: new ConnectionAI(),
 };
