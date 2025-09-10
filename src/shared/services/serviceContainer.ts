@@ -8,16 +8,18 @@ import { MongoBookRepository } from "../../books/infrastructure/mongoBookReposit
 import { GetAllBooksByLevel } from "../../books/application/getAllBooksByLevel";
 import { GetBooksByFiltering } from "../../books/application/getBooksByFiltering";
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
-// import { ConnectionAI } from "../../shared/apis/connectionAi";
 import { GetAllThemes } from "../../books/application/getAllThemes";
+import { GetRecommendations } from "../../recommendations/applications/getRecommendations";
 import { GetAllSubgenres } from "../../books/application/getAllSubgenres";
 import { GetAllGenres } from "../../books/application/getAllGenres";
 import { GetAllYearsBooks } from "../../books/application/getAllYearBooks";
 import { getAllFormats } from "../../books/application/getAllFormats";
 import { UpdateBooksById } from "../../books/application/updateBookById";
+import { MongoRecommendationRepository } from "../../recommendations/infrastructures/mongoRecommendationRepository";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
+const recommendationsRepository = new MongoRecommendationRepository();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -41,5 +43,7 @@ export const serviceContainer = {
   },
 
   // * método de IA
-  // ConnectionAI: new ConnectionAI(),
+  recommendations: {
+    getRecommendations: new GetRecommendations(recommendationsRepository),
+  },
 };
