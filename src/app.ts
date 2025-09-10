@@ -16,6 +16,7 @@ import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
+import { recommendationRouters } from "./recommendations/interfaces/routers/recommendationRouters";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -61,4 +62,9 @@ app.use(autorRoutes);
 app.use(progressRouter);
 app.use(avaRoutes);
 app.use(bookRouter);
+<<<<<<< HEAD
 app.use(forosRoutes);
+=======
+app.use(forosRoutes);
+app.use(recommendationRouters);
+>>>>>>> 2e9d6b8a1b8e55d77c340fcfa9399cf6fdd15990
