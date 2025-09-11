@@ -16,10 +16,7 @@ const controller = new BookController();
 bookRouter.post(
   "/books",
   validateJWT,
-  validarRol("Admin")
-
-
-  ,
+  validarRol("Admin"),
   upload.fields([
     { name: "file", maxCount: 1 },
     { name: "img", maxCount: 1 },
@@ -37,36 +34,29 @@ bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
 });
 
 // ✅
-bookRouter.get("/book/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/:id", validateJWT, (req: Request, res: Response) => {
   controller.getBookById(req, res);
 });
 
 // 🔄️
-bookRouter.delete("/book/:id",
-  validateJWT,
-
-  (req: Request, res: Response) => {
-    controller.deleteBook(req, res);
-  });
+bookRouter.delete("/book/:id", validateJWT, validarRol("admin"), (req: Request, res: Response) => {
+  controller.deleteBook(req, res);
+});
 
 // ✅
-bookRouter.get("/books/:query",
-  validateJWT
-  , (req: Request, res: Response) => {
-    controller.getIntelligenceBooks(req, res);
-  });
+bookRouter.get("/books/:query", validateJWT, (req: Request, res: Response) => {
+  controller.getIntelligenceBooks(req, res);
+});
 
 // ✅
-bookRouter.get("/book/content/:id", (req: Request, res: Response) => {
+bookRouter.get("/book/content/:id", validateJWT, (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
 });
 
 // ✅
-bookRouter.post("/booksByFiltering",
-  validateJWT
-  , (req: Request, res: Response) => {
-    controller.getBooksByFiltering(req, res);
-  });
+bookRouter.post("/booksByFiltering", validateJWT, (req: Request, res: Response) => {
+  controller.getBooksByFiltering(req, res);
+});
 
 // ✅
 bookRouter.get("/booksThemes", (req: Request, res: Response) => {

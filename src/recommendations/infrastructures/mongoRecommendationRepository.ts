@@ -15,31 +15,45 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
     const recommendations = await BookModel.aggregate([
       {
         $match: {
-          level: "joven adulto",
-        },
+          level: user.nivel
+        }
       },
       {
         $addFields: {
-          matchScore: {
+          subgenreScore: {
             $size: {
-              $setIntersection: ["$subgenre", ["Ciencia Ficción"]],
-            },
+              $setIntersection: ["$subgenre", user.preference.category]
+            }
           },
-        },
+          formatScore: {
+            $cond: [
+              { $in: ["$format", user.preference.format] },
+              1,
+              0
+            ]
+          }
+        }
+      },
+      {
+        $addFields: {
+          totalScore: {
+            $add: ["$subgenreScore", "$formatScore"]
+          }
+        }
       },
       {
         $lookup: {
           from: "authormodels",
           localField: "author",
           foreignField: "_id",
-          as: "authorData",
-        },
+          as: "authorData"
+        }
       },
       {
-        $sort: { matchScore: -1, stock: -1 },
+        $sort: { totalScore: -1, stock: -1 }
       },
       {
-        $limit: 10,
+        $limit: 10
       },
       {
         $project: {
@@ -61,18 +75,19 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
           updatedAt: 1,
           contentBook: 1,
           bookCoverImage: 1,
+          totalScore: 1,
           author: {
             $map: {
               input: "$authorData",
               as: "a",
               in: {
                 _id: "$$a._id",
-                name: "$$a.name",
-              },
-            },
-          },
-        },
-      },
+                name: "$$a.name"
+              }
+            }
+          }
+        }
+      }
     ]);
     return recommendations;
   }
