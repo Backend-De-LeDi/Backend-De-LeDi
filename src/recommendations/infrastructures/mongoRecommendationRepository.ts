@@ -91,4 +91,9 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
     ]);
     return recommendations;
   }
+
+  async getRecommendatioSemantic(userId: Types.ObjectId): Promise<SearchedBook[]> {
+    console.log(userId)
+    return await BookModel.find()
+  }
 }
