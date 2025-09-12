@@ -16,7 +16,9 @@ export class RecommendationControllers {
 
     const idValid = new mongoose.Types.ObjectId(token.id);
 
-    const recommendations = await serviceContainer.recommendations.getRecommendations.run(idValid);
+    // const recommendations = await serviceContainer.recommendations.getRecommendations.run(idValid);
+
+    const recommendations = await serviceContainer.recommendations.getRecommendatioSemantic.run(idValid)
     return res.status(200).json(recommendations);
   }
 }
