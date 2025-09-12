@@ -17,10 +17,13 @@ import { getAllFormats } from "../../books/application/getAllFormats";
 import { UpdateBooksById } from "../../books/application/updateBookById";
 import { MongoRecommendationRepository } from "../../recommendations/infrastructures/mongoRecommendationRepository";
 import { GetRecommendatioSemantic } from "../../recommendations/applications/recommendations/getRecommendatioSemantic";
+import { GetIdsForRecommendation } from "../../recommendations/applications/serviceOfAI/getIdsForRecommendation";
+import { ConnectionAI } from "../../recommendations/infrastructures/serviceOfAI";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const recommendationsRepository = new MongoRecommendationRepository();
+const aiService = new ConnectionAI()
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -43,9 +46,13 @@ export const serviceContainer = {
     updateBooksById: new UpdateBooksById(booksRepository),
   },
 
-  // * método de IA
+  // * método de recomendaciones
   recommendations: {
     getRecommendations: new GetRecommendations(recommendationsRepository),
     getRecommendatioSemantic: new GetRecommendatioSemantic(recommendationsRepository)
   },
+
+  ai: {
+    getIdsForRecommendation: new GetIdsForRecommendation(aiService)
+  }
 };
