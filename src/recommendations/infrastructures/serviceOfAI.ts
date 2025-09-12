@@ -1,12 +1,21 @@
-import { Types } from "mongoose";
 import { ConnectionAIRepository } from "../domains/connectionAIRepository";
-import { BookModel } from "../../books/infrastructure/model/books.model";
-import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
+
 export class ConnectionAI implements ConnectionAIRepository {
 
-     async getIdsForRecommendation(idsBooks: Types.ObjectId[]): Promise<Types.ObjectId[]> {
-          console.log(idsBooks)
-          return idsBooks
+     async getIdsForRecommendation(idsBooks: string[]): Promise<string[]> {
+          try {
+               const req = await fetch("http://127.0.0.1:4590/books", {
+                    method: "post", // GET no admite body
+                    headers: { "Content-Type": "application/json" }, // typo corregido
+                    body: JSON.stringify({ ids: idsBooks }) // estructura explícita
+               });
+               const res: { bookId: string, score: number }[] = await req.json();
+               const recommendations = res.map((recommendation: { bookId: string; score: number }) => recommendation.bookId);
+               return recommendations
+          } catch (err) {
+               console.log(err);
+               return []
+          }
      }
 
 }
