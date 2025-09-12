@@ -1,8 +1,10 @@
 import { BookModel } from "../../books/infrastructure/model/books.model";
-import { UserModel } from "../../userService/infrastructure/models/userModels";
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { RecommendationsRepository } from "../domains/recommendationsRepository";
 import { Types } from "mongoose";
+import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
+import { serviceContainer } from "../../shared/services/serviceContainer";
+import { UserModel } from "../../userService/infrastructure/models/userModels";
 
 export class MongoRecommendationRepository implements RecommendationsRepository {
   async getRecommendations(idUser: Types.ObjectId): Promise<SearchedBook[]> {
@@ -46,8 +48,8 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
           from: "authormodels",
           localField: "author",
           foreignField: "_id",
-          as: "authorData"
-        }
+          as: "authorData",
+        },
       },
       {
         $sort: { totalScore: -1, stock: -1 }
@@ -93,7 +95,84 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
   }
 
   async getRecommendatioSemantic(userId: Types.ObjectId): Promise<SearchedBook[]> {
-    console.log(userId)
-    return await BookModel.find()
+
+    const userProgresse = await BookProgressModel.find({ idUser: userId })
+
+    const idsBook: string[] = userProgresse.map(progrese => progrese.idBook.toString())
+
+    const idsRecommendation = await serviceContainer.ai.getIdsForRecommendation.run(idsBook)
+
+    const leakedIds = idsRecommendation
+      .filter((id: string) => !idsBook.includes(id))
+      .map((id: string) => new Types.ObjectId(id));
+
+    const recommendedBooks = await BookModel.aggregate([
+      {
+        $match: {
+          _id: { $in: leakedIds } // ya son ObjectId
+        }
+      },
+      {
+        $addFields: {
+          sortIndex: {
+            $indexOfArray: [leakedIds.map(id => id.toString()), { $toString: "$_id" }]
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "authormodels",
+          let: { authorIds: "$author" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ["$_id", "$$authorIds"] }
+              }
+            },
+            {
+              $project: { _id: 1, name: 1 }
+            }
+          ],
+          as: "authorData"
+        }
+      },
+      {
+        $sort: { sortIndex: 1 }
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          summary: 1,
+          synopsis: 1,
+          subgenre: 1,
+          theme: 1,
+          genre: 1,
+          yearBook: 1,
+          language: 1,
+          available: 1,
+          level: 1,
+          format: 1,
+          fileExtension: 1,
+          totalPages: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          contentBook: 1,
+          bookCoverImage: 1,
+          author: {
+            $map: {
+              input: "$authorData",
+              as: "a",
+              in: {
+                _id: "$$a._id",
+                name: "$$a.name",
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    return recommendedBooks
   }
 }
