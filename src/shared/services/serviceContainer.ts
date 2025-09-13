@@ -9,16 +9,17 @@ import { GetAllBooksByLevel } from "../../books/application/getAllBooksByLevel";
 import { GetBooksByFiltering } from "../../books/application/getBooksByFiltering";
 import { GetBooksByIds } from "../../books/application/getBooksByIds";
 import { GetAllThemes } from "../../books/application/getAllThemes";
-import { GetRecommendations } from "../../recommendations/applications/recommendations/getRecommendations";
+import { GetRecommendations } from "../../recommendations/applications/getRecommendations";
 import { GetAllSubgenres } from "../../books/application/getAllSubgenres";
 import { GetAllGenres } from "../../books/application/getAllGenres";
 import { GetAllYearsBooks } from "../../books/application/getAllYearBooks";
 import { getAllFormats } from "../../books/application/getAllFormats";
 import { UpdateBooksById } from "../../books/application/updateBookById";
 import { MongoRecommendationRepository } from "../../recommendations/infrastructures/mongoRecommendationRepository";
-import { GetRecommendatioSemantic } from "../../recommendations/applications/recommendations/getRecommendatioSemantic";
-import { GetIdsForRecommendation } from "../../recommendations/applications/serviceOfAI/getIdsForRecommendation";
-import { ConnectionAI } from "../../recommendations/infrastructures/serviceOfAI";
+import { GetRecommendatioSemantic } from "../../recommendations/applications/getRecommendatioSemantic";
+import { GetIdsForRecommendation } from "../../ai/applications/getIdsForRecommendation";
+import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
+import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -53,6 +54,7 @@ export const serviceContainer = {
   },
 
   ai: {
-    getIdsForRecommendation: new GetIdsForRecommendation(aiService)
+    getIdsForRecommendation: new GetIdsForRecommendation(aiService),
+    getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService)
   }
 };

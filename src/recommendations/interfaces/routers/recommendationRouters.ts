@@ -11,4 +11,4 @@ recommendationRouters.get("/recommendations", validateJWT, (req: Request, res: R
   recommendationControllers.getRecommendations(req, res);
 });
 
-export { recommendationRouters };
+export default recommendationRouters;
