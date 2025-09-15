@@ -277,4 +277,10 @@ export class MongoBookRepository implements BooksRepository {
   async getAllFormats(): Promise<string[]> {
     return BookModel.distinct("format").exec();
   }
+
+  // ✅
+  async getBookByAuthorId(idsAuthor: Types.ObjectId): Promise<SearchedBook[]> {
+    const books = await BookModel.find({ author: { $in: [idsAuthor] } }).populate("author", "name");
+    return books;
+  }
 }
