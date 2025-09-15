@@ -18,4 +18,5 @@ export interface BooksRepository {
   getAllYears(): Promise<string[]>;
   getAllGenres(): Promise<string[]>;
   getAllFormats(): Promise<string[]>;
+  getBookByAuthorId(idAuthor: Types.ObjectId): Promise<SearchedBook[]>;
 }
