@@ -20,11 +20,12 @@ import { GetRecommendatioSemantic } from "../../recommendations/applications/get
 import { GetIdsForRecommendation } from "../../ai/applications/getIdsForRecommendation";
 import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
 import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
+import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const recommendationsRepository = new MongoRecommendationRepository();
-const aiService = new ConnectionAI()
+const aiService = new ConnectionAI();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -45,16 +46,17 @@ export const serviceContainer = {
     getAllYears: new GetAllYearsBooks(booksRepository),
     getAllFormats: new getAllFormats(booksRepository),
     updateBooksById: new UpdateBooksById(booksRepository),
+    getBookByAuthorId: new GetBookByAuthorId(booksRepository),
   },
 
   // * método de recomendaciones
   recommendations: {
     getRecommendations: new GetRecommendations(recommendationsRepository),
-    getRecommendatioSemantic: new GetRecommendatioSemantic(recommendationsRepository)
+    getRecommendatioSemantic: new GetRecommendatioSemantic(recommendationsRepository),
   },
 
   ai: {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
-    getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService)
-  }
+    getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
+  },
 };

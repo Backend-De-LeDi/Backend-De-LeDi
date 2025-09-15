@@ -39,7 +39,7 @@ bookRouter.get("/book/:id", validateJWT, (req: Request, res: Response) => {
 });
 
 // 🔄️
-bookRouter.delete("/book/:id", validateJWT, validarRol("admin"), (req: Request, res: Response) => {
+bookRouter.delete("/book/:id", validateJWT, validarRol("Admin"), (req: Request, res: Response) => {
   controller.deleteBook(req, res);
 });
 
@@ -51,6 +51,11 @@ bookRouter.get("/books/:query", validateJWT, (req: Request, res: Response) => {
 // ✅
 bookRouter.get("/book/content/:id", validateJWT, (req: Request, res: Response) => {
   controller.getContentBookById(req, res);
+});
+
+// ✅
+bookRouter.get("/book/autor/:id", validateJWT, (req: Request, res: Response) => {
+  controller.getBookByAuthorId(req, res);
 });
 
 // ✅
