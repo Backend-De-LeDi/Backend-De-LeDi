@@ -5,13 +5,15 @@ import { Types } from "mongoose";
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
 import { FilterCondition } from "../../shared/types/filterType";
 import mongoose from "mongoose";
+import { serviceContainer } from "../../shared/services/serviceContainer";
+import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
-
-    await newBook.save();
+    const result = await newBook.save();
+    await serviceContainer.ai.createEmbedding.run(String(result._id), result.title, result.summary, result.synopsis)
   }
 
   //  ✅
@@ -20,13 +22,20 @@ export class MongoBookRepository implements BooksRepository {
     return books;
   }
 
+  //  ✅
   async updateBookById(id: Types.ObjectId, book: SearchedBook): Promise<void> {
     await BookModel.findByIdAndUpdate(id, book);
   }
 
   //  ✅
   async deleteBook(id: Types.ObjectId): Promise<void> {
-    await BookModel.findOneAndDelete(id);
+    await BookModel.findOneAndDelete({ _id: id });
+
+    const embeddings = await EmbeddingModel.find({ bookId: id });
+
+    for (const doc of embeddings) {
+      await EmbeddingModel.findByIdAndDelete(doc._id);
+    }
   }
 
   //  ✅
