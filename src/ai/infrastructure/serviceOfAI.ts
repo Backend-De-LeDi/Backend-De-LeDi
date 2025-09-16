@@ -27,4 +27,20 @@ export class ConnectionAI implements AIRepository {
       return null;
     }
   }
+
+  async createEmbedding(id: string, title: string, summary: string, synopsis: string): Promise<{ msg: string; status: boolean; }> {
+    try {
+      const req = await fetch("http://127.0.0.1:4590/createEmbeddingOfBook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, title, summary, synopsis }),
+      })
+
+      const res: { msg: string; status: boolean; } = await req.json()
+      return res
+    } catch (err) {
+      console.log(err);
+      return { msg: "error inesperado en la comunicacion con el servicio", status: false }
+    }
+  }
 }
