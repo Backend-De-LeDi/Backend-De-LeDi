@@ -37,7 +37,7 @@ export class BookController {
 
       const plainUser = user.toObject();
 
-      if (plainUser.rol !== "admin") {
+      if (plainUser.rol.toLowerCase() !== "admin") {
         await fileDelete(img.path);
         await fileDelete(file.path);
 
@@ -157,7 +157,7 @@ export class BookController {
 
       const plainUser = user?.toObject();
 
-      if (plainUser.rol !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+      if (plainUser.rol.toLocaleLowerCase() !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
 
       const id = req.params.id;
 
