@@ -293,15 +293,4 @@ export class MongoBookRepository implements BooksRepository {
     const books = await BookModel.find({ author: { $in: [idsAuthor] } }).populate("author", "name");
     return books;
   }
-
-  // ✅
-  async getBookByProgreses(id: Types.ObjectId): Promise<SearchedBook[]> {
-    console.log(id);
-
-    const progressDocs = await BookProgressModel.find({ idUser: id }, { idBook: 1, _id: 0 }).lean();
-
-    const bookIds = progressDocs.map((doc) => doc.idBook);
-
-    return await serviceContainer.book.getBooksByIds.run(bookIds);
-  }
 }
