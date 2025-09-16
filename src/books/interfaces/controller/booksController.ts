@@ -2,7 +2,7 @@ import { Request, Response, text } from "express";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
 import { PropBooks, SearchedBook } from "../../../shared/types/bookTypes/bookTypes";
 import { uploadCoverImage } from "../../../shared/utils/uploadCoverImage";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
@@ -12,6 +12,7 @@ import { deleteBookInCloudinary } from "../../../shared/utils/deleteBookInCloudi
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
 import { BookCoverImage } from "../../../shared/types/bookTypes/bookTypes";
+import { token } from "../../../shared/types/IToken";
 export class BookController {
   // ✅
   async createBook(req: Request, res: Response): Promise<Response> {
@@ -399,43 +400,64 @@ export class BookController {
   }
 
   // ✅
-  async getAllThemes(req: Request, res: Response): Promise<Response> {
+  async getAllThemes(_req: Request, res: Response): Promise<Response> {
     const themes = await serviceContainer.book.getAllThemes.run();
     return res.status(200).json(themes);
   }
 
   // ✅
-  async getAllSubgenres(req: Request, res: Response): Promise<Response> {
+  async getAllSubgenres(_req: Request, res: Response): Promise<Response> {
     const subgenres = await serviceContainer.book.getAllSubgenres.run();
     return res.status(200).json(subgenres);
   }
 
   // ✅
-  async getAllGenres(req: Request, res: Response): Promise<Response> {
+  async getAllGenres(_req: Request, res: Response): Promise<Response> {
     const genres = await serviceContainer.book.getAllGenres.run();
     return res.status(200).json(genres);
   }
 
   // ✅
-  async getAllYears(req: Request, res: Response): Promise<Response> {
+  async getAllYears(_req: Request, res: Response): Promise<Response> {
     const years = await serviceContainer.book.getAllYears.run();
     return res.status(200).json(years);
   }
 
   // ✅
-  async getAllFormats(req: Request, res: Response): Promise<Response> {
+  async getAllFormats(_req: Request, res: Response): Promise<Response> {
     const formats = await serviceContainer.book.getAllFormats.run();
     return res.status(200).json(formats);
   }
 
   // ✅
   async getBookByProgress(req: Request, res: Response): Promise<Response> {
-    const userId = req["user"].id;
+    try {
+      const token: token = req.user;
 
-    console.log(userId);
+      const idValid = new Types.ObjectId(token.id);
 
-    const book = await serviceContainer.book.getBookByProgress.run(userId);
+      const progress: any = await serviceContainer.progress.findProgres.findByUser(idValid);
 
-    return res.status(200).json(book);
+      const idMap = new Map<string, Types.ObjectId>();
+
+      for (const doc of progress) {
+        const idStr = doc.idBook.toString();
+        if (!idMap.has(idStr)) idMap.set(idStr, doc.idBook);
+      }
+
+      const bookIds: Types.ObjectId[] = Array.from(idMap.values());
+
+      const book = await serviceContainer.book.getBooksByIds.run(bookIds);
+
+      return res.status(200).json(book);
+    } catch (error) {
+      console.log(chalk.yellow("Error en el controlador: getBookByProgress"));
+      console.log(chalk.yellow(separator()));
+      console.log();
+      console.log(error);
+      console.log();
+      console.log(chalk.yellow(separator()));
+      return res.status(500).json({ msg: "Erro inesperado por favor intente de nuevo mas tarde" });
+    }
   }
 }
