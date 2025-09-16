@@ -8,12 +8,12 @@ const SECRET_KEY = process.env.CLAVE_SECRETA || "clave_secreta";
 // Middleware para validar JWT
 export const validateJWT = (req: Request, res: Response, next: NextFunction): void => {
   const tokenHeader = req.headers["authorization"]?.split(" ")[1];
-  const tokenCookie = req.cookies.token
+  const tokenCookie = req.cookies.token;
 
-  console.log({ tokenCookie })
-  console.log({ tokenHeader })
+  console.log({ tokenCookie });
+  console.log({ tokenHeader });
 
-  const token: string = tokenHeader || tokenCookie
+  const token: string = tokenHeader || tokenCookie;
 
   if (!token) {
     res.status(403).json({ message: "Token no proporcionado" });

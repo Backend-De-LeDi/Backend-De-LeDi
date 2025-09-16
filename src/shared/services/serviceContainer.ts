@@ -22,6 +22,7 @@ import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
 import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
 import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
 import { CreateEmbedding } from "../../ai/applications/createEmbedding";
+import { GetBookByProgress } from "../../books/application/getBookByProgress";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -48,6 +49,7 @@ export const serviceContainer = {
     getAllFormats: new getAllFormats(booksRepository),
     updateBooksById: new UpdateBooksById(booksRepository),
     getBookByAuthorId: new GetBookByAuthorId(booksRepository),
+    getBookByProgress: new GetBookByProgress(booksRepository),
   },
 
   // * método de recomendaciones
@@ -59,6 +61,6 @@ export const serviceContainer = {
   ai: {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
     getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
-    createEmbedding: new CreateEmbedding(aiService)
+    createEmbedding: new CreateEmbedding(aiService),
   },
 };

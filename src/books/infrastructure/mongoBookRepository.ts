@@ -7,13 +7,14 @@ import { FilterCondition } from "../../shared/types/filterType";
 import mongoose from "mongoose";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
+import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
   async createBook(book: Books): Promise<void> {
     const newBook = new BookModel(book);
     const result = await newBook.save();
-    await serviceContainer.ai.createEmbedding.run(String(result._id), result.title, result.summary, result.synopsis)
+    await serviceContainer.ai.createEmbedding.run(String(result._id), result.title, result.summary, result.synopsis);
   }
 
   //  ✅
@@ -291,5 +292,16 @@ export class MongoBookRepository implements BooksRepository {
   async getBookByAuthorId(idsAuthor: Types.ObjectId): Promise<SearchedBook[]> {
     const books = await BookModel.find({ author: { $in: [idsAuthor] } }).populate("author", "name");
     return books;
+  }
+
+  // ✅
+  async getBookByProgreses(id: Types.ObjectId): Promise<SearchedBook[]> {
+    console.log(id);
+
+    const progressDocs = await BookProgressModel.find({ idUser: id }, { idBook: 1, _id: 0 }).lean();
+
+    const bookIds = progressDocs.map((doc) => doc.idBook);
+
+    return await serviceContainer.book.getBooksByIds.run(bookIds);
   }
 }

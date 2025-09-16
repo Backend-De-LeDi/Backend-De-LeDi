@@ -427,4 +427,15 @@ export class BookController {
     const formats = await serviceContainer.book.getAllFormats.run();
     return res.status(200).json(formats);
   }
+
+  // ✅
+  async getBookByProgress(req: Request, res: Response): Promise<Response> {
+    const userId = req["user"].id;
+
+    console.log(userId);
+
+    const book = await serviceContainer.book.getBookByProgress.run(userId);
+
+    return res.status(200).json(book);
+  }
 }
