@@ -22,12 +22,14 @@ import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
 import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
 import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
 import { CreateEmbedding } from "../../ai/applications/createEmbedding";
-import { GetBookByProgress } from "../../books/application/getBookByProgress";
+import { FindProgresByID } from "../../userPogressBooks/aplication/service/FindById.Service";
+import { FindProgressMongo } from "../../userPogressBooks/infrastructure/bookProgressRepoMongo";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const recommendationsRepository = new MongoRecommendationRepository();
 const aiService = new ConnectionAI();
+const progressRepository = new FindProgressMongo();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -49,7 +51,6 @@ export const serviceContainer = {
     getAllFormats: new getAllFormats(booksRepository),
     updateBooksById: new UpdateBooksById(booksRepository),
     getBookByAuthorId: new GetBookByAuthorId(booksRepository),
-    getBookByProgress: new GetBookByProgress(booksRepository),
   },
 
   // * método de recomendaciones
@@ -62,5 +63,8 @@ export const serviceContainer = {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
     getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
     createEmbedding: new CreateEmbedding(aiService),
+  },
+  progress: {
+    findProgres: new FindProgresByID(progressRepository),
   },
 };
