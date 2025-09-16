@@ -21,6 +21,7 @@ import { GetIdsForRecommendation } from "../../ai/applications/getIdsForRecommen
 import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
 import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
 import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
+import { CreateEmbedding } from "../../ai/applications/createEmbedding";
 
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
@@ -58,5 +59,6 @@ export const serviceContainer = {
   ai: {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
     getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
+    createEmbedding: new CreateEmbedding(aiService)
   },
 };
