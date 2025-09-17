@@ -8,10 +8,13 @@ export class AIControlles {
 
           if (!Types.ObjectId.isValid(idsBooks)) return res.status(400).json({ "msg": "id invalida" });
 
-          const { game }: { game: string } = await serviceContainer.ai.getCreateYourHistoryGame.run(idsBooks);
+          const response: { game: string } = await serviceContainer.ai.getCreateYourHistoryGame.run(idsBooks);
 
-          res.type("html");
-          res.send(game);
+          const game = response.game
+
+          if (!game) return [];
+
+          res.status(200).json(game);
 
      }
 }
