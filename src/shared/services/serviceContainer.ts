@@ -24,12 +24,14 @@ import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
 import { CreateEmbedding } from "../../ai/applications/createEmbedding";
 import { FindProgresByID } from "../../userPogressBooks/aplication/service/FindById.Service";
 import { FindProgressMongo } from "../../userPogressBooks/infrastructure/bookProgressRepoMongo";
-
+import { CreateBookContent } from "../../bookContent/application/createBookContent";
+import { mongoRepositoryBookContent } from "../../bookContent/infrastructure/moongoRepositoryBookContent";
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const recommendationsRepository = new MongoRecommendationRepository();
 const aiService = new ConnectionAI();
 const progressRepository = new FindProgressMongo();
+const bookContentRepository = new mongoRepositoryBookContent();
 
 // ? contenedor que combina las aplicaciones de uso con los repositorios
 export const serviceContainer = {
@@ -66,5 +68,8 @@ export const serviceContainer = {
   },
   progress: {
     findProgres: new FindProgresByID(progressRepository),
+  },
+  bookContent: {
+    createBookContent: new CreateBookContent(bookContentRepository),
   },
 };
