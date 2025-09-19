@@ -7,6 +7,7 @@ import { FilterCondition } from "../../shared/types/filterType";
 import mongoose from "mongoose";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
+import { extractTextByPage } from "../../shared/utils/pdfService";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
@@ -14,6 +15,11 @@ export class MongoBookRepository implements BooksRepository {
     const newBook = new BookModel(book);
     const result = await newBook.save();
     const id: Types.ObjectId = result._id as Types.ObjectId;
+    const url = result.contentBook.url_secura;
+    const text = await extractTextByPage(url);
+    const title = result.title;
+    await serviceContainer.bookContent.createBookContent.run(id, title, text);
+
     await serviceContainer.ai.createEmbedding.run(id, result.title, result.summary, result.synopsis);
   }
 
