@@ -87,8 +87,8 @@ bookRouter.get("/booksYears", (req: Request, res: Response) => {
 bookRouter.get("/booksFormats", (req: Request, res: Response) => {
   controller.getAllFormats(req, res);
 });
-
-bookRouter.get("/booksProgress", validateJWT, (req: Request, res: Response) => {
+// ✅
+bookRouter.get("/booksProgress", (req: Request, res: Response) => {
   controller.getBookByProgress(req, res);
 });
 
