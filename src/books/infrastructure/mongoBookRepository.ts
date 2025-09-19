@@ -223,7 +223,7 @@ export class MongoBookRepository implements BooksRepository {
   //  ✅
   async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {
     const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
-    const books = await BookModel.find({ _id: { $in: objectIds } });
+    const books = await BookModel.find({ _id: { $in: objectIds } }).populate("author", "name");
     return books;
   }
 
