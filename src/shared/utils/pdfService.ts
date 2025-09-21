@@ -11,8 +11,8 @@ export async function extractTextByPage(url: string): Promise<{ page: number; co
   const pages = data.text.split(/\f|\n\s*\n/);
   return pages
     .map((content, index) => ({
-      page: index + 1,
-      content: content.trim(),
+      page: index,
+      content: content.replace(/\s+/g, " ").trim(),
     }))
     .filter((p) => p.content.length > 0);
 }
