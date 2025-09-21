@@ -10,11 +10,7 @@ export class AIControlles {
 
           const response: { game: string } = await serviceContainer.ai.getCreateYourHistoryGame.run(idsBooks);
 
-          const game = response.game
-
-          if (!game) return [];
-
-          res.status(200).json(game);
+          res.status(200).json(response);
 
      }
 }
