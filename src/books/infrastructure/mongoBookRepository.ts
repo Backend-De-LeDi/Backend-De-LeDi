@@ -15,10 +15,12 @@ export class MongoBookRepository implements BooksRepository {
     const newBook = new BookModel(book);
     const result = await newBook.save();
     const id: Types.ObjectId = result._id as Types.ObjectId;
-    const url = result.contentBook.url_secura;
-    const text = await extractTextByPage(url);
-    const title = result.title;
-    await serviceContainer.bookContent.createBookContent.run(id, title, text);
+    if (result.genre === "Narrativo") {
+      const url = result.contentBook.url_secura;
+      const text = await extractTextByPage(url);
+      const title = result.title;
+      await serviceContainer.bookContent.createBookContent.run(id, title, text);
+    }
 
     await serviceContainer.ai.createEmbedding.run(id, result.title, result.summary, result.synopsis);
   }
