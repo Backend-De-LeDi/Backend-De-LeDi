@@ -6,7 +6,7 @@ import { validateJWT } from "../../../shared/middlewares/validateJWT";
 const aIRouter = Router()
 const aIControlles = new AIControlles();
 
-aIRouter.get("/createYourHistory/:id", validateJWT, (req: Request, res: Response) => {
+aIRouter.post("/createYourHistory/:id", validateJWT, (req: Request, res: Response) => {
      aIControlles.getGameCreateYourHistory(req, res)
 })
 
