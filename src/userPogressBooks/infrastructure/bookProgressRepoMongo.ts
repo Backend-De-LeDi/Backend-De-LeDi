@@ -31,7 +31,8 @@ export class DeleteRepo implements deleteProgress {
 
 export class FindProgressMongo implements FindProgressPort {
     async findByUser(id: any): Promise<BookUserProgresRepo[]> {
-        const result = await BookProgressModel.find({ idUser: id });
+        const algo = "689a2a15666f7bedc309c68f"
+        const result = await BookProgressModel.find({ idUser: algo });
         return result;
     }
     async findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null> {
