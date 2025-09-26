@@ -34,8 +34,8 @@ export class FindProgressMongo implements FindProgressPort {
         const result = await BookProgressModel.find({ idUser: id });
         return result;
     }
-    async findByBook(id: any): Promise<BookUserProgresRepo[] | null> {
-        const result = await BookProgressModel.find({ idBook: id });
+    async findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null> {
+        const result = await BookProgressModel.find({ idBook: id, idUser: idUser });
         return result;
     }
 }

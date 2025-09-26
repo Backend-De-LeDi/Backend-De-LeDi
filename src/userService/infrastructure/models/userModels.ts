@@ -38,6 +38,7 @@ const UserSchema = new Schema<User>({
     default: "User",
     required: true,
   },
+
   avatar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Avatars",

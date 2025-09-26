@@ -12,8 +12,8 @@ export class FindProgresByID implements FindProgressPort {
         console.log(progreso?.length)
         return progreso
     }
-    async findByBook(id: any): Promise<BookUserProgresRepo[] | null> {
-        const progreso = await this.findProgress.findByBook(id)
+    async findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null> {
+        const progreso = await this.findProgress.findByBook(id, idUser)
         return progreso
     }
 }

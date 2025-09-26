@@ -25,6 +25,11 @@ export class UpdateProgressService implements UpdateProgresPort {
             throw new Error("Libro no encontrado");
         }
 
+        if (data.status === "finished") {
+            data.finishDate = new Date();
+        }
+
+
         // Ajustar unit y total según el formato del libro
         if (book.format === "ebook" || book.format === "pdf" || book.format === "epub") {
             data.unit = "page";
@@ -33,6 +38,8 @@ export class UpdateProgressService implements UpdateProgresPort {
             data.unit = "second";
             data.total = book.duration || 0;
         }
+        data.position = data.position ?? 0;
+
 
         if (data.total && data.position !== undefined) {
             data.percent = Math.min(100, (data.position / data.total) * 100);
