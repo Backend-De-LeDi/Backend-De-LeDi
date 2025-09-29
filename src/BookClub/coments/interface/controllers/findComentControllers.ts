@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { FindComentService } from "../../app/service/findComent.Service";
 import { FindComentsMongo } from "../../infraestructure/comentsMongoRepo";
+import { Result } from "express-validator";
 
 
 
@@ -13,7 +14,7 @@ export const getAllComents = async () => {
         const result = await findComent.findComents()
         return result
     } catch (error) {
-
+        return error
     }
 }
 export const getComentById = async (req: Request, res: Response) => {
@@ -31,3 +32,10 @@ export const getComentById = async (req: Request, res: Response) => {
         res.status(500).json({ msg: 'the internal server error', error })
     }
 }
+export const getComentsByForo = async (foroId: string) => {
+    try {
+        return await findComent.findComentByForo(foroId);
+    } catch (error) {
+        return error;
+    }
+};

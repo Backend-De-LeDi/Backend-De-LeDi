@@ -1,5 +1,5 @@
 
 
 export interface IDeleteComent {
-    deleteComent(id: any): Promise<void>
+    deleteComent(id: any, userid: any): Promise<void>
 }

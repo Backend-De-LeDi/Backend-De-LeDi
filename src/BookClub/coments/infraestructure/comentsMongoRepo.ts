@@ -2,6 +2,7 @@ import { ComentTypes } from "../domain/entities/coments.types";
 import { ICreateComent } from "../domain/ports/createComent.port";
 import { IDeleteComent } from "../domain/ports/deleteComentPorts";
 import { IfindComents } from "../domain/ports/findComentsPorts";
+import { IUpdateComentPort } from "../domain/ports/updateComents.ports";
 import comentsModel from "./models/comentsModel";
 
 
@@ -20,10 +21,35 @@ export class FindComentsMongo implements IfindComents {
             .populate("users", "userName email")
             .exec();
     }
+    async findComentByForo(foroId: any): Promise<ComentTypes[]> {
+        return await comentsModel.find({ idForo: foroId }).populate("users", "userName email")
+            .exec();
+    }
 }
 
 export class DeleteComentsMongo implements IDeleteComent {
-    async deleteComent(id: any): Promise<void> {
-        await comentsModel.findByIdAndDelete(id)
+    async deleteComent(id: any, userid: any): Promise<void> {
+        await comentsModel.findOneAndDelete({
+            _id: id,
+            idUser: userid
+        });
+    }
+}
+export class UpdateComents implements IUpdateComentPort {
+    async updateComents(userID: any, idComent: any, coment: Partial<ComentTypes>): Promise<ComentTypes | null> {
+        const updateComent = await comentsModel.findByIdAndUpdate(
+            {
+                $set: {
+                    idUser: userID,
+                    _id: idComent
+                }
+            },
+            { new: true }
+        );
+        if (updateComent) {
+            return updateComent
+        } else {
+            return null
+        }
     }
 }

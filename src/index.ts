@@ -10,7 +10,7 @@ import { findForoById, findForosLogic } from "./BookClub/foros/interface/control
 import { createComentLogic } from "./BookClub/coments/interface/controllers/createComentControllers";
 import chalk from "chalk";
 import { app } from "./app";
-import { getAllComents } from "./BookClub/coments/interface/controllers/findComentControllers";
+import { getAllComents, getComentsByForo } from "./BookClub/coments/interface/controllers/findComentControllers";
 
 const server = createServer(app)
 const io = new Server(server, {
@@ -22,7 +22,7 @@ const io = new Server(server, {
 
 
 io.on("connection", (socket: Socket) => {
-
+    console.log("✅ Conectado al servidor con id:", socket.id);
     socket.on("get-all-foros", async () => {
         try {
             const foros = await findForosLogic()
@@ -48,6 +48,7 @@ io.on("connection", (socket: Socket) => {
     socket.on("new-public", async (data: ComentTypes) => {
         try {
             const result = await createComentLogic(data);
+            console.log("📤 Enviando evento new-public:", { data });
             io.emit("coment-created", result);
         } catch (error) {
             console.error("Error en new-public:", error);
@@ -67,6 +68,10 @@ io.on("connection", (socket: Socket) => {
         const result = await getAllComents()
         io.emit("coments", result)
     })
+    socket.on("all-public-foro", async (foroId: string) => {
+        const coments = await getComentsByForo(foroId);
+        socket.emit("coments in the foro", coments);
+    });
 
 })
 // ? configuración de puerto

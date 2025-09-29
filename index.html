@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Frontend Socket.IO - Foros y Comentarios</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h2 {
+        color: #333;
+      }
+      .box {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+      .foro {
+        cursor: pointer;
+        padding: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #eee;
+      }
+      .foro:hover {
+        background-color: #f0f0f0;
+      }
+      .coment {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📢 Frontend Socket.IO - Foros y Comentarios</h1>
+
+    <!-- Foros -->
+    <div class="box">
+      <h2>📂 Foros</h2>
+      <button onclick="getAllForos()">Obtener todos los foros</button>
+      <div id="foros"></div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="box">
+      <h2>💬 Comentarios del foro seleccionado</h2>
+      <div id="comentarios"></div>
+    </div>
+
+    <!-- Nuevo Comentario -->
+    <div class="box">
+      <h2>✍️ Nuevo comentario</h2>
+      <input type="text" id="idUser" placeholder="ID del Usuario" /><br /><br />
+      <textarea id="content" placeholder="Escribe tu comentario"></textarea
+      ><br /><br />
+      <button onclick="createComent()">Publicar</button>
+    </div>
+
+    <script>
+      const socket = io("http://localhost:3402");
+      let foroSeleccionado = null; // Guarda el id del foro seleccionado
+
+      // Conexión
+      socket.on("connect", () =>
+        console.log("✅ Conectado al servidor:", socket.id)
+      );
+      socket.on("connect_error", (err) =>
+        console.error("❌ Error de conexión:", err.message)
+      );
+      socket.on("error", (data) => alert("⚠️ " + data.msg));
+
+      // Obtener todos los foros
+      function getAllForos() {
+        socket.emit("get-all-foros");
+      }
+
+      socket.on("all-foros", (foros) => {
+        const container = document.getElementById("foros");
+        container.innerHTML = "";
+        foros.forEach((foro) => {
+          const div = document.createElement("div");
+          div.className = "foro";
+          div.textContent = foro.title || "Sin título";
+          div.dataset.idForo = foro._id || foro.id;
+
+          // Seleccionar foro al hacer click y obtener comentarios
+          div.addEventListener("click", () => {
+            foroSeleccionado = div.dataset.idForo;
+            getComentariosForo();
+          });
+
+          container.appendChild(div);
+        });
+      });
+
+      // Obtener comentarios del foro seleccionado
+      function getComentariosForo() {
+        if (!foroSeleccionado) return;
+        socket.emit("all-public-foro", foroSeleccionado);
+      }
+
+      socket.on("coments in the foro", (coments) => {
+        const container = document.getElementById("comentarios");
+        container.innerHTML = "";
+        if (!coments || coments.length === 0) {
+          container.textContent = "No hay comentarios aún.";
+          return;
+        }
+        coments.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "coment";
+          div.innerHTML = `<strong>UserID:</strong> ${c.idUser}<br>
+                         <strong>Comentario:</strong> ${c.content}`;
+          container.appendChild(div);
+        });
+      });
+
+      // Crear nuevo comentario
+      function createComent() {
+        const idUser = document.getElementById("idUser").value;
+        const content = document.getElementById("content").value;
+
+        if (!foroSeleccionado) {
+          alert("Selecciona primero un foro.");
+          return;
+        }
+        if (!idUser || !content) {
+          alert("Completa todos los campos");
+          return;
+        }
+
+        const newComent = { idForo: foroSeleccionado, idUser, content };
+        socket.emit("new-public", newComent);
+      }
+
+      socket.on("coment-created", (coment) => {
+        console.log("✅ Comentario creado:", coment);
+        getComentariosForo(); // Actualiza automáticamente
+        document.getElementById("content").value = "";
+      });
+    </script>
+  </body>
+</html>
