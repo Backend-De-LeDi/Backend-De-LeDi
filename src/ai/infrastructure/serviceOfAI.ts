@@ -76,4 +76,8 @@ export class ConnectionAI implements AIRepository {
       separator();
     }
   }
+
+  async chatBot(idUser: Types.ObjectId, message: string, idSession: string) {
+
+  }
 }
