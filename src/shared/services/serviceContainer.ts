@@ -17,15 +17,20 @@ import { getAllFormats } from "../../books/application/getAllFormats";
 import { UpdateBooksById } from "../../books/application/updateBookById";
 import { MongoRecommendationRepository } from "../../recommendations/infrastructures/mongoRecommendationRepository";
 import { GetRecommendatioSemantic } from "../../recommendations/applications/getRecommendatioSemantic";
-import { GetIdsForRecommendation } from "../../ai/applications/getIdsForRecommendation";
+import { GetIdsForRecommendation } from "../../ai/applications/recommendations/getIdsForRecommendation";
 import { ConnectionAI } from "../../ai/infrastructure/serviceOfAI";
-import { GetCreateYourHistoryGame } from "../../ai/applications/getCreateYourHistoryGame";
+import { GetCreateYourHistoryGame } from "../../ai/applications/games/getCreateYourHistoryGame";
 import { GetBookByAuthorId } from "../../books/application/getBookByAuthorId";
-import { CreateEmbedding } from "../../ai/applications/createEmbedding";
+import { CreateEmbedding } from "../../ai/applications/embeddings/createEmbedding";
 import { FindProgresByID } from "../../userPogressBooks/aplication/service/FindById.Service";
 import { FindProgressMongo } from "../../userPogressBooks/infrastructure/bookProgressRepoMongo";
 import { CreateBookContent } from "../../bookContent/application/createBookContent";
 import { mongoRepositoryBookContent } from "../../bookContent/infrastructure/moongoRepositoryBookContent";
+import { CreateVectorStoreMemory } from "../../ai/applications/vectorStoreMemory.ts/createVectorStoreMemory";
+import { GetAllVectorStoresMemoryByIdSession } from "../../ai/applications/vectorStoreMemory.ts/getAllVectorStoresMemoryByIdUser";
+import { GetAllVectorStoresMemoryByIdUser } from "../../ai/applications/vectorStoreMemory.ts/getAllVectorStoreMemoryByIdSession";
+import { ChatBot } from "../../ai/applications/chatBot/chatBot";
+
 // * repositorio de la base de datos para uso de sus métodos de almacenamiento
 const booksRepository = new MongoBookRepository();
 const recommendationsRepository = new MongoRecommendationRepository();
@@ -65,6 +70,10 @@ export const serviceContainer = {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
     getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
     createEmbedding: new CreateEmbedding(aiService),
+    createVectorStoreMemory: new CreateVectorStoreMemory(aiService),
+    getAllVectorStoresMemoryByIdSession: new GetAllVectorStoresMemoryByIdUser(aiService),
+    getAllVectorStoresMemoryByIdUser: new GetAllVectorStoresMemoryByIdUser(aiService),
+    chatBot: new ChatBot(aiService)
   },
   progress: {
     findProgres: new FindProgresByID(progressRepository),

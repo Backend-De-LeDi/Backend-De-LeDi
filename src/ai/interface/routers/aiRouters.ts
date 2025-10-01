@@ -11,5 +11,9 @@ aIRouter.post("/createYourHistory/:id", validateJWT, (req: Request, res: Respons
      aIControlles.getGameCreateYourHistory(req, res)
 })
 
+aIRouter.post("/bot", validateJWT, (req: Request, res: Response) => {
+     aIControlles.chatBot(req, res)
+})
+
 
 export default aIRouter

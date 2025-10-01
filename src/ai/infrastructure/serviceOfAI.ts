@@ -1,16 +1,18 @@
-import { AIRepository } from "../domain/AIRepository";
+import { AIRepository } from "../domain/services/AIRepository";
 import { generateEmbedding } from "../../shared/utils/loadModel";
 import { EmbeddingModel } from "./model/embeddingModel";
 import { Types } from "mongoose";
 import { cosineSimilarity } from "../../shared/utils/simility";
 import { zodResponseFormat } from "openai/helpers/zod"
-import { openai } from "../domain/model";
+import { openai } from "../domain/models/model";
 import { createYourHistoModel, final } from "./model/createYourHistoModel";
 import { BookContentModel } from "../../bookContent/infrastructure/model/BookContentModel";
 import { ContentBookLiteral, Gamble } from "../../shared/types/createYourHistory/createYourHistory";
 import { PromptFactory } from "../../shared/config/const/prompt";
 import { PromptSystem } from "../../shared/class/promptSystem";
 import { separator } from "../../shared/utils/consoleSeparator";
+import { VectorStoreMemory } from "../domain/entities/vectorStoreMemory";
+import { VectorStoreMemoryModel } from "./model/vectorStoresMemory";
 
 export class ConnectionAI implements AIRepository {
 
@@ -77,7 +79,47 @@ export class ConnectionAI implements AIRepository {
     }
   }
 
-  async chatBot(idUser: Types.ObjectId, message: string, idSession: string) {
+  async createVectorStoreMemory(data: VectorStoreMemory): Promise<void> {
+    const isChat = await VectorStoreMemoryModel.findOne({ idSeccion: data.idSeccion });
 
+    if (isChat) {
+      await VectorStoreMemoryModel.findByIdAndUpdate(isChat._id, {
+        $push: { conversation: { $each: data.conversation } }
+      });
+    } else {
+      const newChat = new VectorStoreMemoryModel({
+        idUser: data.idUser,
+        idSeccion: data.idSeccion,
+        conversation: data.conversation
+      });
+      await newChat.save();
+    }
   }
+
+  async getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<VectorStoreMemory[]> {
+    return await VectorStoreMemoryModel.find({ idUser })
+  }
+
+  async getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<VectorStoreMemory[]> {
+    return await VectorStoreMemoryModel.find({ idSeccion })
+  }
+
+  async chatBot(message: string): Promise<any> {
+
+    const response = await openai.chat.completions.create({
+      model: "gemini-2.0-flash",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    });
+
+    console.log(response.choices[0].message.content);
+
+    return response.choices[0].message.content
+  }
+
 }
