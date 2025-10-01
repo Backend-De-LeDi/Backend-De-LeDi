@@ -66,5 +66,5 @@ app.use(bookRouter);
 app.use(forosRoutes);
 app.use(forosRoutes);
 app.use(recommendationRouters);
-app.use("/game", aIRouter)
+app.use(aIRouter)
 
