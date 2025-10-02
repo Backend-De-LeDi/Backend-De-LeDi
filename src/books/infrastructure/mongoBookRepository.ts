@@ -195,15 +195,7 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-
-  async getBooksByFiltering(
-    theme: string[],
-    subgenre: string[],
-    yearBook: string[],
-    genre: string[],
-    format: string[],
-    level?: string
-  ): Promise<SearchedBook[]> {
+  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[], level?: string): Promise<SearchedBook[]> {
     const levelHierarchy: Record<string, string[]> = {
       "inicial": ["inicial"],
       "secundario": ["secundario", "inicial"],
