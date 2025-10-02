@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
 import { extractTextByPage } from "../../shared/utils/pdfService";
+import { PipelineStage } from "mongoose";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
@@ -53,7 +54,7 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getIntelligenceBook(query: string[]): Promise<SearchedBook[]> {
+  async getIntelligenceBook(query: string[], level?: string): Promise<SearchedBook[]> {
     const regexTerms = query.map((term) => new RegExp(term, "i"));
 
     const orderedBooks = await BookModel.aggregate([
@@ -194,39 +195,88 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[]): Promise<SearchedBook[]> {
-    const conditions: FilterCondition[] = [];
 
-    if (yearBook.length > 0) conditions.push({ yearBook: { $in: yearBook } });
-    if (theme.length > 0) conditions.push({ theme: { $in: theme } });
-    if (subgenre.length > 0) conditions.push({ subgenre: { $in: subgenre } });
-    if (genre.length > 0) conditions.push({ genre: { $in: genre } });
-    if (format.length > 0) conditions.push({ format: { $in: format } });
+  async getBooksByFiltering(
+    theme: string[],
+    subgenre: string[],
+    yearBook: string[],
+    genre: string[],
+    format: string[],
+    level?: string
+  ): Promise<SearchedBook[]> {
+    const levelHierarchy: Record<string, string[]> = {
+      "inicial": ["inicial"],
+      "secundario": ["secundario", "inicial"],
+      "joven adulto": ["joven adulto", "secundario", "inicial"],
+      "adulto Mayor": ["adulto Mayor", "joven adulto", "secundario", "inicial"]
+    };
 
-    if (conditions.length === 0) return await BookModel.find().exec();
+    const filters: Record<string, any> = {};
+    if (yearBook?.length) filters.yearBook = { $in: yearBook };
+    if (theme?.length) filters.theme = { $in: theme };
+    if (subgenre?.length) filters.subgenre = { $in: subgenre };
+    if (genre?.length) filters.genre = { $in: genre };
+    if (format?.length) filters.format = { $in: format };
+    if (level && levelHierarchy[level]?.length) filters.level = { $in: levelHierarchy[level] };
 
-    const books = await BookModel.find({ $or: conditions }).populate("author", "name").lean().exec();
+    const pipeline: PipelineStage[] = [];
 
-    const scored = books.map((book) => {
-      let score = 0;
+    if (Object.keys(filters).length > 0) {
+      pipeline.push({ $match: filters });
+    }
 
-      if (yearBook.length > 0 && yearBook.includes(book.yearBook)) score++;
+    const scoreConditions: (number | { $cond: [any, number, number] })[] = [];
 
-      if (theme.length > 0 && book.theme.some((t: string) => theme.includes(t))) score++;
+    if (yearBook?.length) {
+      scoreConditions.push({ $cond: [{ $in: ["$yearBook", yearBook] }, 1, 0] });
+    }
+    if (theme?.length) {
+      scoreConditions.push({ $cond: [{ $gt: [{ $size: { $setIntersection: ["$theme", theme] } }, 0] }, 1, 0] });
+    }
+    if (subgenre?.length) {
+      scoreConditions.push({ $cond: [{ $gt: [{ $size: { $setIntersection: ["$subgenre", subgenre] } }, 0] }, 1, 0] });
+    }
+    if (genre?.length) {
+      scoreConditions.push({ $cond: [{ $in: ["$genre", genre] }, 1, 0] });
+    }
+    if (format?.length) {
+      scoreConditions.push({ $cond: [{ $in: ["$format", format] }, 1, 0] });
+    }
+    if (level && levelHierarchy[level]?.length) {
+      scoreConditions.push({ $cond: [{ $in: ["$level", levelHierarchy[level]] }, 1, 0] });
+    }
 
-      if (subgenre.length > 0 && book.subgenre.some((s: string) => subgenre.includes(s))) score++;
-
-      if (genre.length > 0 && genre.includes(book.genre)) score++;
-
-      if (format.length > 0 && format.includes(book.format)) score++;
-
-      return { ...book, score };
+    pipeline.push({
+      $addFields: {
+        score: {
+          $add: scoreConditions.length > 0 ? scoreConditions : [0]
+        }
+      }
     });
 
-    const sorted = scored.sort((a, b) => b.score - a.score);
+    pipeline.push({ $sort: { score: -1 } });
 
-    return sorted.map((book) => book as SearchedBook & { score: number });
+    pipeline.push({
+      $lookup: {
+        from: "authormodels",
+        localField: "author",
+        foreignField: "_id",
+        as: "author"
+      }
+    });
+
+    pipeline.push({ $unwind: "$author" });
+
+    pipeline.push({
+      $addFields: {
+        author: "$author.name"
+      }
+    });
+
+    const books = await BookModel.aggregate(pipeline).exec();
+    return books as SearchedBook[];
   }
+
 
   //  ✅
   async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {

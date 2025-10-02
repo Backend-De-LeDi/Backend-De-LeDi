@@ -13,7 +13,10 @@ import { UserModel } from "../../../userService/infrastructure/models/userModels
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
 import { BookCoverImage } from "../../../shared/types/bookTypes/bookTypes";
 import { token } from "../../../shared/types/IToken";
+
+
 export class BookController {
+
   // ✅
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
@@ -192,7 +195,7 @@ export class BookController {
     }
   }
 
-  //🔄️
+  //✅
   async updateBookById(req: Request, res: Response): Promise<Response> {
     try {
       const idUser = req.user.id;
@@ -394,8 +397,20 @@ export class BookController {
 
   // ✅
   async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
+    const idUser = req.user.id
+    if (!Types.ObjectId.isValid(idUser)) return res.status(400).json({ msg: "credenciales de usuairo invalida" });
+
+    const idValid = new Types.ObjectId(idUser as string)
+
+    const user = await UserModel.findById(idValid)
+
+    const plainUser = user?.toObject();
+
+
     const { theme, subgenre, yearBook, genre, format }: { theme: string[]; subgenre: string[]; yearBook: string[]; genre: string[]; format: string[] } = req.body;
-    const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre, format);
+    const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre, format, plainUser?.nivel);
+    console.log(books.length);
+
     return res.status(200).json(books);
   }
 
