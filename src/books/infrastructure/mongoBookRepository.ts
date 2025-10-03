@@ -177,17 +177,17 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getAllBooksByLevel(nivel: string): Promise<SearchedBook[]> {
-    if (nivel === "inicial") {
-      const books = await BookModel.find({ level: { $in: ["inicial"] } }).populate("author", "name");
+    if (nivel === "Inicial") {
+      const books = await BookModel.find({ level: { $in: ["Inicial"] } }).populate("author", "name");
       return books;
-    } else if (nivel === "secundario") {
-      const books = await BookModel.find({ level: { $in: ["secundario", "inicial"] } }).populate("author", "name");
+    } else if (nivel === "Secundario") {
+      const books = await BookModel.find({ level: { $in: ["Secundario", "Inicial"] } }).populate("author", "name");
       return books;
-    } else if (nivel === "joven adulto") {
-      const books = await BookModel.find({ level: { $in: ["joven adulto", "secundario", "inicial"] } }).populate("author", "name");
+    } else if (nivel === "Joven Adulto") {
+      const books = await BookModel.find({ level: { $in: ["Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "name");
       return books;
-    } else if (nivel === "adulto Mayor") {
-      const books = await BookModel.find({ level: { $in: ["adulto Mayor", "joven adulto", "secundario", "inicial"] } }).populate("author", "name");
+    } else if (nivel === "Adulto Mayor") {
+      const books = await BookModel.find({ level: { $in: ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "name");
       return books;
     }
 
@@ -195,19 +195,12 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getBooksByFiltering(
-    theme: string[],
-    subgenre: string[],
-    yearBook: string[],
-    genre: string[],
-    format: string[],
-    level?: string
-  ): Promise<SearchedBook[]> {
+  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[], level?: string): Promise<SearchedBook[]> {
     const levelHierarchy: Record<string, string[]> = {
-      "inicial": ["inicial"],
-      "secundario": ["secundario", "inicial"],
+      inicial: ["inicial"],
+      secundario: ["secundario", "inicial"],
       "joven adulto": ["joven adulto", "secundario", "inicial"],
-      "adulto Mayor": ["adulto Mayor", "joven adulto", "secundario", "inicial"]
+      "adulto Mayor": ["adulto Mayor", "joven adulto", "secundario", "inicial"],
     };
 
     const filters: Record<string, any> = {};
@@ -248,9 +241,9 @@ export class MongoBookRepository implements BooksRepository {
     pipeline.push({
       $addFields: {
         score: {
-          $add: scoreConditions.length > 0 ? scoreConditions : [0]
-        }
-      }
+          $add: scoreConditions.length > 0 ? scoreConditions : [0],
+        },
+      },
     });
 
     pipeline.push({ $sort: { score: -1 } });
@@ -260,8 +253,8 @@ export class MongoBookRepository implements BooksRepository {
         from: "authormodels",
         localField: "author",
         foreignField: "_id",
-        as: "authorData"
-      }
+        as: "authorData",
+      },
     });
 
     pipeline.push({
@@ -272,18 +265,16 @@ export class MongoBookRepository implements BooksRepository {
             as: "a",
             in: {
               _id: "$$a._id",
-              name: "$$a.name"
-            }
-          }
-        }
-      }
+              name: "$$a.name",
+            },
+          },
+        },
+      },
     });
 
     const books = await BookModel.aggregate(pipeline).exec();
     return books as SearchedBook[];
   }
-
-
 
   //  ✅
   async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {
