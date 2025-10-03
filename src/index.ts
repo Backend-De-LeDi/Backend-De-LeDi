@@ -21,8 +21,17 @@ const io = new Server(server, {
 });
 
 
-io.on("connection", (socket: Socket) => {
-    console.log("✅ Conectado al servidor con id:", socket.id);
+io.on("connection", async (socket: Socket) => {
+    console.log("Conectado al servidor con id:", socket.id);
+
+    // Enviar todos los comentarios al cliente cuando se conecta
+    try {
+        const coments = await getAllComents();
+        socket.emit("coments", coments);
+    } catch (error) {
+        socket.emit("error", { msg: "Error al cargar comentarios" });
+    }
+
     socket.on("get-all-foros", async () => {
         try {
             const foros = await findForosLogic()
@@ -47,33 +56,45 @@ io.on("connection", (socket: Socket) => {
 
     socket.on("new-public", async (data: ComentTypes) => {
         try {
-            const result = await createComentLogic(data);
-            console.log("📤 Enviando evento new-public:", { data });
-            io.emit("coment-created", result);
+            await createComentLogic(data);
+            // Después de crear, obtenemos todos los comentarios y los emitimos a todos
+            const coments = await getAllComents();
+            io.emit("coments", coments);
         } catch (error) {
             console.error("Error en new-public:", error);
             socket.emit("error", { msg: "Error al crear el comentario" });
         }
     });
-    socket.on("new-public", async (data: ComentTypes) => {
-        try {
-            const result = await createComentLogic(data);
 
-            io.emit("coment-created", result);
+    // Eliminamos el evento all-public porque ya no es necesario que el cliente lo solicite
+    // Pero si lo quieres mantener por si acaso, lo dejamos, pero ahora con io.emit para que todos reciban la lista?
+    // Si lo dejamos, cuando un cliente emita all-public, enviaremos la lista a todos los clientes.
+    // Pero eso podría ser molesto si no se desea. Por eso, si lo dejamos, quizá sea mejor que solo responda al que solicita.
+    // Depende de ti.
+
+    // Si quieres que cuando un cliente solicite all-public, se actualice la lista en todos, entonces:
+    socket.on("all-public", async () => {
+        try {
+            const result = await getAllComents();
+            console.log(result)
+            io.emit("coments", result);
         } catch (error) {
-            socket.emit("error", { msg: "Error al crear el comentario" });
+            console.error("Error en all-public:", error);
+            socket.emit("error", { msg: "Error al obtener todos los comentarios" });
         }
     });
-    socket.on("all-public", async () => {
-        const result = await getAllComents()
-        io.emit("coments", result)
-    })
+
     socket.on("all-public-foro", async (foroId: string) => {
-        const coments = await getComentsByForo(foroId);
-        socket.emit("coments in the foro", coments);
+        try {
+            const coments = await getComentsByForo(foroId);
+            socket.emit("coments-in-the-foro", coments);
+        } catch (error) {
+            console.error("Error en all-public-foro:", error);
+            socket.emit("error", { msg: "Error al obtener comentarios del foro" });
+        }
     });
 
-})
+});
 // ? configuración de puerto
 
 server.listen(Number(ENV.PORT), async () => {

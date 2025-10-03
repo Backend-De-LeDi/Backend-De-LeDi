@@ -14,16 +14,17 @@ export class CreateComentMongo implements ICreateComent {
 }
 export class FindComentsMongo implements IfindComents {
     async findComents(): Promise<ComentTypes[]> {
-        return await comentsModel.find().populate("users", "userName email")
+        // Corregir: idUser, no idUSer
+        return await comentsModel.find().populate("idUser", "userName email");
     }
     async findComentById(id: any): Promise<ComentTypes | null> {
         return await comentsModel.findById(id)
-            .populate("users", "userName email")
+            .populate("idUser", "userName email") // Corregir: idUser, no users
             .exec();
     }
     async findComentByForo(foroId: any): Promise<ComentTypes[]> {
-        return await comentsModel.find({ idForo: foroId }).populate("users", "userName email")
-            .exec();
+        // Corregir: quitar el .find() duplicado
+        return await comentsModel.find({ idForo: foroId }).populate("idUser");
     }
 }
 

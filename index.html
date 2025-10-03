@@ -2,145 +2,460 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Frontend Socket.IO - Foros y Comentarios</title>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Comentarios</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      h2 {
+        background-color: #f5f7fa;
         color: #333;
+        line-height: 1.6;
+        padding: 20px;
       }
-      .box {
-        border: 1px solid #ccc;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 8px;
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
       }
-      .foro {
-        cursor: pointer;
-        padding: 5px;
-        margin-bottom: 5px;
-        border-bottom: 1px solid #eee;
+
+      header {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
-      .foro:hover {
-        background-color: #f0f0f0;
-      }
-      .coment {
-        border-bottom: 1px solid #eee;
+
+      h1 {
+        text-align: center;
         margin-bottom: 10px;
-        padding-bottom: 5px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .status {
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .connected {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .disconnected {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .content {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .comments-section,
+      .form-section {
+        flex: 1;
+        min-width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comments-section h2,
+      .form-section h2 {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #2c3e50;
+      }
+
+      .comment-list {
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+
+      .comment {
+        background: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #6a11cb;
+        transition: transform 0.2s;
+      }
+
+      .comment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-name {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .user-email {
+        font-size: 0.8rem;
+        color: #6c757d;
+      }
+
+      .comment-content {
+        font-size: 1rem;
+        color: #333;
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+
+      .comment-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 10px;
+      }
+
+      .foro-id {
+        background-color: #e9ecef;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border 0.3s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #6a11cb;
+        box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        width: 100%;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;
+        display: none;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+
+        .comments-section,
+        .form-section {
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>📢 Frontend Socket.IO - Foros y Comentarios</h1>
+    <div class="container">
+      <header>
+        <h1>Sistema de Comentarios</h1>
+        <p class="subtitle">Visualiza y crea comentarios en tiempo real</p>
+      </header>
 
-    <!-- Foros -->
-    <div class="box">
-      <h2>📂 Foros</h2>
-      <button onclick="getAllForos()">Obtener todos los foros</button>
-      <div id="foros"></div>
-    </div>
+      <div id="status" class="status disconnected">
+        Desconectado del servidor
+      </div>
 
-    <!-- Comentarios -->
-    <div class="box">
-      <h2>💬 Comentarios del foro seleccionado</h2>
-      <div id="comentarios"></div>
-    </div>
+      <div class="content">
+        <section class="comments-section">
+          <h2>Comentarios</h2>
+          <div id="comment-list" class="comment-list">
+            <div class="empty-state">
+              <i>📝</i>
+              <p>Cargando comentarios...</p>
+            </div>
+          </div>
+        </section>
 
-    <!-- Nuevo Comentario -->
-    <div class="box">
-      <h2>✍️ Nuevo comentario</h2>
-      <input type="text" id="idUser" placeholder="ID del Usuario" /><br /><br />
-      <textarea id="content" placeholder="Escribe tu comentario"></textarea
-      ><br /><br />
-      <button onclick="createComent()">Publicar</button>
+        <section class="form-section">
+          <h2>Nuevo Comentario</h2>
+          <form id="comment-form">
+            <div class="form-group">
+              <label for="idForo">ID del Foro:</label>
+              <input type="text" id="idForo" required />
+            </div>
+
+            <div class="form-group">
+              <label for="idUser">ID del Usuario:</label>
+              <input type="text" id="idUser" required />
+            </div>
+
+            <div class="form-group">
+              <label for="content">Comentario:</label>
+              <textarea id="content" required></textarea>
+            </div>
+
+            <button type="submit">Publicar Comentario</button>
+          </form>
+
+          <div id="error-message" class="error-message"></div>
+        </section>
+      </div>
     </div>
 
     <script>
-      const socket = io("http://localhost:3402");
-      let foroSeleccionado = null; // Guarda el id del foro seleccionado
+      // Conectar al servidor Socket.IO
+      const socket = io("http://localhost:3402"); // Ajusta la URL según tu servidor
 
-      // Conexión
-      socket.on("connect", () =>
-        console.log("✅ Conectado al servidor:", socket.id)
-      );
-      socket.on("connect_error", (err) =>
-        console.error("❌ Error de conexión:", err.message)
-      );
-      socket.on("error", (data) => alert("⚠️ " + data.msg));
+      // Elementos del DOM
+      const statusElement = document.getElementById("status");
+      const commentList = document.getElementById("comment-list");
+      const commentForm = document.getElementById("comment-form");
+      const errorMessage = document.getElementById("error-message");
 
-      // Obtener todos los foros
-      function getAllForos() {
-        socket.emit("get-all-foros");
-      }
-
-      socket.on("all-foros", (foros) => {
-        const container = document.getElementById("foros");
-        container.innerHTML = "";
-        foros.forEach((foro) => {
-          const div = document.createElement("div");
-          div.className = "foro";
-          div.textContent = foro.title || "Sin título";
-          div.dataset.idForo = foro._id || foro.id;
-
-          // Seleccionar foro al hacer click y obtener comentarios
-          div.addEventListener("click", () => {
-            foroSeleccionado = div.dataset.idForo;
-            getComentariosForo();
-          });
-
-          container.appendChild(div);
-        });
+      // Manejar conexión exitosa
+      socket.on("connect", () => {
+        console.log("Conectado al servidor con ID:", socket.id);
+        statusElement.textContent = "Conectado al servidor";
+        statusElement.className = "status connected";
       });
 
-      // Obtener comentarios del foro seleccionado
-      function getComentariosForo() {
-        if (!foroSeleccionado) return;
-        socket.emit("all-public-foro", foroSeleccionado);
-      }
-
-      socket.on("coments in the foro", (coments) => {
-        const container = document.getElementById("comentarios");
-        container.innerHTML = "";
-        if (!coments || coments.length === 0) {
-          container.textContent = "No hay comentarios aún.";
-          return;
-        }
-        coments.forEach((c) => {
-          const div = document.createElement("div");
-          div.className = "coment";
-          div.innerHTML = `<strong>UserID:</strong> ${c.idUser}<br>
-                         <strong>Comentario:</strong> ${c.content}`;
-          container.appendChild(div);
-        });
+      // Manejar desconexión
+      socket.on("disconnect", () => {
+        console.log("Desconectado del servidor");
+        statusElement.textContent = "Desconectado del servidor";
+        statusElement.className = "status disconnected";
       });
 
-      // Crear nuevo comentario
-      function createComent() {
+      // Manejar errores
+      socket.on("error", (data) => {
+        console.error("Error del servidor:", data.msg);
+        showError(data.msg);
+      });
+
+      // Recibir todos los comentarios
+      socket.on("coments", (coments) => {
+        console.log("Comentarios recibidos:", coments);
+        displayComents(coments);
+      });
+
+      // Recibir comentarios de un foro específico
+      socket.on("coments-in-the-foro", (coments) => {
+        console.log("Comentarios del foro recibidos:", coments);
+        displayComents(coments);
+      });
+
+      // Manejar envío del formulario
+      commentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const idForo = document.getElementById("idForo").value;
         const idUser = document.getElementById("idUser").value;
         const content = document.getElementById("content").value;
 
-        if (!foroSeleccionado) {
-          alert("Selecciona primero un foro.");
-          return;
-        }
-        if (!idUser || !content) {
-          alert("Completa todos los campos");
+        if (!idForo || !idUser || !content) {
+          showError("Todos los campos son obligatorios");
           return;
         }
 
-        const newComent = { idForo: foroSeleccionado, idUser, content };
+        const newComent = {
+          idForo,
+          idUser,
+          content,
+        };
+
+        // Enviar nuevo comentario al servidor
         socket.emit("new-public", newComent);
+
+        // Limpiar formulario
+        commentForm.reset();
+        hideError();
+      });
+
+      // Función para obtener iniciales del nombre de usuario
+      function getInitials(userName) {
+        return userName
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase())
+          .join("")
+          .substring(0, 2);
       }
 
-      socket.on("coment-created", (coment) => {
-        console.log("✅ Comentario creado:", coment);
-        getComentariosForo(); // Actualiza automáticamente
-        document.getElementById("content").value = "";
-      });
+      // Función para mostrar comentarios
+      function displayComents(coments) {
+        if (!coments || coments.length === 0) {
+          commentList.innerHTML = `
+                    <div class="empty-state">
+                        <i>💬</i>
+                        <p>No hay comentarios disponibles</p>
+                        <p>¡Sé el primero en comentar!</p>
+                    </div>
+                `;
+          return;
+        }
+
+        commentList.innerHTML = "";
+
+        coments.forEach((coment) => {
+          const commentElement = document.createElement("div");
+          commentElement.className = "comment";
+
+          // Formatear fecha
+          const date = new Date(coment.createdAt);
+          const formattedDate = date.toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          // Obtener iniciales del usuario
+          const initials = getInitials(coment.idUser.userName);
+
+          commentElement.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-avatar">${initials}</div>
+                        <div class="user-details">
+                            <div class="user-name">${coment.idUser.userName}</div>
+                            <div class="user-email">${coment.idUser.email}</div>
+                        </div>
+                    </div>
+                    <div class="comment-content">
+                        ${coment.content}
+                    </div>
+                    <div class="comment-footer">
+                        <span>${formattedDate}</span>
+                        <span class="foro-id">Foro: ${coment.idForo}</span>
+                    </div>
+                `;
+
+          commentList.appendChild(commentElement);
+        });
+      }
+
+      // Función para mostrar errores
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+      }
+
+      // Función para ocultar errores
+      function hideError() {
+        errorMessage.style.display = "none";
+      }
+
+      // Solicitar todos los comentarios al cargar la página
+      socket.emit("all-public");
     </script>
   </body>
 </html>
