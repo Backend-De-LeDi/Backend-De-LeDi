@@ -14,9 +14,7 @@ import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
 import { BookCoverImage } from "../../../shared/types/bookTypes/bookTypes";
 import { token } from "../../../shared/types/IToken";
 
-
 export class BookController {
-
   // ✅
   async createBook(req: Request, res: Response): Promise<Response> {
     try {
@@ -211,7 +209,7 @@ export class BookController {
       if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
 
       const plainUser = user.toObject();
-      if (plainUser.rol !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
+      if (plainUser.rol.toLocaleLowerCase() !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
 
       const existingBook: SearchedBook | null = await serviceContainer.book.getBooksById.run(idValid);
 
@@ -397,15 +395,14 @@ export class BookController {
 
   // ✅
   async getBooksByFiltering(req: Request, res: Response): Promise<Response> {
-    const idUser = req.user.id
+    const idUser = req.user.id;
     if (!Types.ObjectId.isValid(idUser)) return res.status(400).json({ msg: "credenciales de usuairo invalida" });
 
-    const idValid = new Types.ObjectId(idUser as string)
+    const idValid = new Types.ObjectId(idUser as string);
 
-    const user = await UserModel.findById(idValid)
+    const user = await UserModel.findById(idValid);
 
     const plainUser = user?.toObject();
-
 
     const { theme, subgenre, yearBook, genre, format }: { theme: string[]; subgenre: string[]; yearBook: string[]; genre: string[]; format: string[] } = req.body;
     const books = await serviceContainer.book.getBooksByFiltering.run(theme, subgenre, yearBook, genre, format, plainUser?.nivel);
