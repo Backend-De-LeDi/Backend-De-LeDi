@@ -4,4 +4,5 @@ export interface IfindComents {
     findComents(): Promise<ComentTypes[]>
     findComentById(id: any): Promise<ComentTypes | null>
     findComentByForo(foroId: string): Promise<ComentTypes[]>
+    findComentByUserID(userID: string): Promise<ComentTypes[]>
 }

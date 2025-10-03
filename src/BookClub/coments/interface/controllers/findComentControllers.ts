@@ -36,6 +36,16 @@ export const getComentsByForo = async (foroId: string) => {
     try {
         return await findComent.findComentByForo(foroId);
     } catch (error) {
-        return error;
+        console.log(error)
+        return error
     }
 };
+export const getComentByUserID = async (userid: string) => {
+    try {
+        const comentarios = await findComent.findComentByUserID(userid);
+        return comentarios;
+    } catch (error) {
+        console.error("Error en getComentByUserID:", error);
+        return error
+    }
+}

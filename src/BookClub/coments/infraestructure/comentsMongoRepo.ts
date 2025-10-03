@@ -14,17 +14,20 @@ export class CreateComentMongo implements ICreateComent {
 }
 export class FindComentsMongo implements IfindComents {
     async findComents(): Promise<ComentTypes[]> {
-        // Corregir: idUser, no idUSer
-        return await comentsModel.find().populate("idUser", "userName email");
+        return await comentsModel.find().populate("idUser", "userName email").populate('idForo', "title")
     }
     async findComentById(id: any): Promise<ComentTypes | null> {
         return await comentsModel.findById(id)
-            .populate("idUser", "userName email") // Corregir: idUser, no users
+            .populate("idUser", "userName email")
             .exec();
     }
     async findComentByForo(foroId: any): Promise<ComentTypes[]> {
-        // Corregir: quitar el .find() duplicado
         return await comentsModel.find({ idForo: foroId }).populate("idUser");
+    }
+    async findComentByUserID(userID: string): Promise<ComentTypes[]> {
+        return await comentsModel.find({ idUser: userID })
+            .populate("idUser", "userName email")
+            .populate("idForo", "title");
     }
 }
 
@@ -43,7 +46,8 @@ export class UpdateComents implements IUpdateComentPort {
                 $set: {
                     idUser: userID,
                     _id: idComent
-                }
+                },
+                coment
             },
             { new: true }
         );

@@ -17,5 +17,8 @@ export class FindComentService implements IfindComents {
     async findComentByForo(foroId: string): Promise<ComentTypes[]> {
         return await this.findComentsRepo.findComentByForo(foroId)
     }
+    async findComentByUserID(userID: string): Promise<ComentTypes[]> {
+        return await this.findComentsRepo.findComentByUserID(userID)
+    }
 }
 
