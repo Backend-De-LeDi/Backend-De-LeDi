@@ -195,7 +195,14 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[], level?: string): Promise<SearchedBook[]> {
+  async getBooksByFiltering(
+    theme: string[],
+    subgenre: string[],
+    yearBook: string[],
+    genre: string[],
+    format: string[],
+    level?: string
+  ): Promise<SearchedBook[]> {
     const levelHierarchy: Record<string, string[]> = {
       "inicial": ["inicial"],
       "secundario": ["secundario", "inicial"],
@@ -253,21 +260,29 @@ export class MongoBookRepository implements BooksRepository {
         from: "authormodels",
         localField: "author",
         foreignField: "_id",
-        as: "author"
+        as: "authorData"
       }
     });
 
-    pipeline.push({ $unwind: "$author" });
-
     pipeline.push({
       $addFields: {
-        author: "$author.name"
+        author: {
+          $map: {
+            input: "$authorData",
+            as: "a",
+            in: {
+              _id: "$$a._id",
+              name: "$$a.name"
+            }
+          }
+        }
       }
     });
 
     const books = await BookModel.aggregate(pipeline).exec();
     return books as SearchedBook[];
   }
+
 
 
   //  ✅
