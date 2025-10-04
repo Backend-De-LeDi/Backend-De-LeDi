@@ -3,12 +3,12 @@ import { BooksRepository } from "../domain/booksRepository";
 import { Books } from "../domain/books";
 import { Types } from "mongoose";
 import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
-import { FilterCondition } from "../../shared/types/filterType";
 import mongoose from "mongoose";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
 import { extractTextByPage } from "../../shared/utils/pdfService";
 import { PipelineStage } from "mongoose";
+
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
