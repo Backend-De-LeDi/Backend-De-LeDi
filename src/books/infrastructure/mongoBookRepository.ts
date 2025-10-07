@@ -154,7 +154,7 @@ export class MongoBookRepository implements BooksRepository {
               as: "a",
               in: {
                 _id: "$$a._id",
-                name: "$$a.fullName",
+                fullName: "$$a.fullName",
               },
             },
           },
@@ -264,7 +264,7 @@ export class MongoBookRepository implements BooksRepository {
             as: "a",
             in: {
               _id: "$$a._id",
-              name: "$$a.fullName",
+              fullName: "$$a.fullName",
             },
           },
         },

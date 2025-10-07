@@ -17,31 +17,27 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
     const recommendations = await BookModel.aggregate([
       {
         $match: {
-          level: user.nivel
-        }
+          level: user.nivel,
+        },
       },
       {
         $addFields: {
           subgenreScore: {
             $size: {
-              $setIntersection: ["$subgenre", user.preference.category]
-            }
+              $setIntersection: ["$subgenre", user.preference.category],
+            },
           },
           formatScore: {
-            $cond: [
-              { $in: ["$format", user.preference.format] },
-              1,
-              0
-            ]
-          }
-        }
+            $cond: [{ $in: ["$format", user.preference.format] }, 1, 0],
+          },
+        },
       },
       {
         $addFields: {
           totalScore: {
-            $add: ["$subgenreScore", "$formatScore"]
-          }
-        }
+            $add: ["$subgenreScore", "$formatScore"],
+          },
+        },
       },
       {
         $lookup: {
@@ -52,10 +48,10 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
         },
       },
       {
-        $sort: { totalScore: -1, stock: -1 }
+        $sort: { totalScore: -1, stock: -1 },
       },
       {
-        $limit: 10
+        $limit: 10,
       },
       {
         $project: {
@@ -84,40 +80,37 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
               as: "a",
               in: {
                 _id: "$$a._id",
-                name: "$$a.name"
-              }
-            }
-          }
-        }
-      }
+                fullName: "$$a.fullName",
+              },
+            },
+          },
+        },
+      },
     ]);
     return recommendations;
   }
 
   async getRecommendatioSemantic(userId: Types.ObjectId): Promise<SearchedBook[]> {
+    const userProgresse = await BookProgressModel.find({ idUser: userId });
 
-    const userProgresse = await BookProgressModel.find({ idUser: userId })
+    const idsBook: string[] = userProgresse.map((progrese) => progrese.idBook.toString());
 
-    const idsBook: string[] = userProgresse.map(progrese => progrese.idBook.toString())
+    const idsRecommendation = await serviceContainer.ai.getIdsForRecommendation.run(idsBook);
 
-    const idsRecommendation = await serviceContainer.ai.getIdsForRecommendation.run(idsBook)
-
-    const leakedIds = idsRecommendation
-      .filter((id: string) => !idsBook.includes(id))
-      .map((id: string) => new Types.ObjectId(id));
+    const leakedIds = idsRecommendation.filter((id: string) => !idsBook.includes(id)).map((id: string) => new Types.ObjectId(id));
 
     const recommendedBooks = await BookModel.aggregate([
       {
         $match: {
-          _id: { $in: leakedIds } // ya son ObjectId
-        }
+          _id: { $in: leakedIds }, // ya son ObjectId
+        },
       },
       {
         $addFields: {
           sortIndex: {
-            $indexOfArray: [leakedIds.map(id => id.toString()), { $toString: "$_id" }]
-          }
-        }
+            $indexOfArray: [leakedIds.map((id) => id.toString()), { $toString: "$_id" }],
+          },
+        },
       },
       {
         $lookup: {
@@ -126,18 +119,18 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
           pipeline: [
             {
               $match: {
-                $expr: { $in: ["$_id", "$$authorIds"] }
-              }
+                $expr: { $in: ["$_id", "$$authorIds"] },
+              },
             },
             {
-              $project: { _id: 1, name: 1 }
-            }
+              $project: { _id: 1, name: 1 },
+            },
           ],
-          as: "authorData"
-        }
+          as: "authorData",
+        },
       },
       {
-        $sort: { sortIndex: 1 }
+        $sort: { sortIndex: 1 },
       },
       {
         $project: {
@@ -173,6 +166,6 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
       },
     ]);
 
-    return recommendedBooks
+    return recommendedBooks;
   }
 }
