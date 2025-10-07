@@ -18,7 +18,7 @@ export const createAuthor = async (req: Request, res: Response) => {
     console.log(file);
 
     const avatar = await UploadService.uploadAvatar(file as Express.Multer.File);
-    const newAuthor = { ...author, avatar, birthdate: new Date(author.birthdate) };
+    const newAuthor = { ...author, avatar };
     const result = await authorService.saveAuthors(newAuthor);
 
     if (!result) {
