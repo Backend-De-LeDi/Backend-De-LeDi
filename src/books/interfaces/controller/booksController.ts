@@ -196,8 +196,6 @@ export class BookController {
   //✅
   async updateBookById(req: Request, res: Response): Promise<Response> {
     try {
-      const idUser = req.user.id;
-
       const id = req.params.id;
 
       const { title, author, summary, subgenre, available, language, yearBook, synopsis, theme, genre, level, format, totalPages, duration, fileExtension }: PropBooks = req.body;
@@ -205,14 +203,7 @@ export class BookController {
       if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ msg: "id invalida" });
       const idValid = new mongoose.Types.ObjectId(id);
 
-      const user = await UserModel.findById(idUser);
-      if (!user) return res.status(404).json({ msg: "debes iniciar session en la plataforma para obtener acceso a esta acción" });
-
-      const plainUser = user.toObject();
-      if (plainUser.rol.toLocaleLowerCase() !== "admin") return res.status(403).json({ msg: "No tienes permisos para realizar esta acción" });
-
       const existingBook: SearchedBook | null = await serviceContainer.book.getBooksById.run(idValid);
-
       if (!existingBook) return res.status(404).json({ msg: "no se encontró el libro para actualizar" });
 
       const files = req.files as {

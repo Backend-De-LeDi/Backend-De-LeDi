@@ -7,8 +7,10 @@ interface Env {
   CLOUD_NAME: string | undefined;
   API_KEY: string | undefined;
   API_SECRET: string | undefined;
-  GEMINI_API_KEY: string | undefined
-  URL_GEMINI: string | undefined
+  GEMINI_API_KEY: string | undefined;
+  URL_GEMINI: string | undefined;
+  URL_SUPABASE: string | undefined;
+  SUPABASE_KEY: string | undefined;
 }
 
 const ENV: Env = {
@@ -18,7 +20,9 @@ const ENV: Env = {
   API_KEY: process.env.API_KEY,
   API_SECRET: process.env.API_SECRET,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-  URL_GEMINI: process.env.URL_GEMINI
+  URL_GEMINI: process.env.URL_GEMINI,
+  URL_SUPABASE: process.env.URL_SUPABASE,
+  SUPABASE_KEY: process.env.SUPABASE_KEY,
 };
 
 export default ENV;

@@ -9,7 +9,6 @@ import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
 import { extractTextByPage } from "../../shared/utils/pdfService";
 import { PipelineStage } from "mongoose";
 
-
 export class MongoBookRepository implements BooksRepository {
   //  ✅
   async createBook(book: Books): Promise<void> {
@@ -28,7 +27,7 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getAllBooks(): Promise<SearchedBook[]> {
-    const books = await BookModel.find().populate("author", "name");
+    const books = await BookModel.find().populate("author", "fullName");
     return books;
   }
 
@@ -46,7 +45,7 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getBookById(id: Types.ObjectId): Promise<SearchedBook | null> {
-    const book: SearchedBook | null = await BookModel.findById(id).populate("author", "name");
+    const book: SearchedBook | null = await BookModel.findById(id).populate("author", "fullName");
 
     if (!book) return null;
 
@@ -155,7 +154,7 @@ export class MongoBookRepository implements BooksRepository {
               as: "a",
               in: {
                 _id: "$$a._id",
-                name: "$$a.name",
+                name: "$$a.fullName",
               },
             },
           },
@@ -178,29 +177,29 @@ export class MongoBookRepository implements BooksRepository {
   //  ✅
   async getAllBooksByLevel(nivel: string): Promise<SearchedBook[]> {
     if (nivel === "Inicial") {
-      const books = await BookModel.find({ level: { $in: ["Inicial"] } }).populate("author", "name");
+      const books = await BookModel.find({ level: { $in: ["Inicial"] } }).populate("author", "fullName");
       return books;
     } else if (nivel === "Secundario") {
-      const books = await BookModel.find({ level: { $in: ["Secundario", "Inicial"] } }).populate("author", "name");
+      const books = await BookModel.find({ level: { $in: ["Secundario", "Inicial"] } }).populate("author", "fullName");
       return books;
     } else if (nivel === "Joven Adulto") {
-      const books = await BookModel.find({ level: { $in: ["Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "name");
+      const books = await BookModel.find({ level: { $in: ["Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "fullName");
       return books;
     } else if (nivel === "Adulto Mayor") {
-      const books = await BookModel.find({ level: { $in: ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "name");
+      const books = await BookModel.find({ level: { $in: ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "fullName");
       return books;
     }
 
-    return await BookModel.find().populate("author", "name");
+    return await BookModel.find().populate("author", "fullName");
   }
 
   //  ✅
   async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[], level?: string): Promise<SearchedBook[]> {
     const levelHierarchy: Record<string, string[]> = {
-      inicial: ["inicial"],
-      secundario: ["secundario", "inicial"],
-      "joven adulto": ["joven adulto", "secundario", "inicial"],
-      "adulto Mayor": ["adulto Mayor", "joven adulto", "secundario", "inicial"],
+      inicial: ["Inicial"],
+      secundario: ["Secundario", "Inicial"],
+      "joven adulto": ["Joven Adulto", "Secundario", "Inicial"],
+      "adulto Mayor": ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"],
     };
 
     const filters: Record<string, any> = {};
@@ -265,7 +264,7 @@ export class MongoBookRepository implements BooksRepository {
             as: "a",
             in: {
               _id: "$$a._id",
-              name: "$$a.name",
+              name: "$$a.fullName",
             },
           },
         },
@@ -279,7 +278,7 @@ export class MongoBookRepository implements BooksRepository {
   //  ✅
   async getBooksByIds(ids: Types.ObjectId[]): Promise<SearchedBook[]> {
     const objectIds = ids.map((id) => new mongoose.Types.ObjectId(id));
-    const books = await BookModel.find({ _id: { $in: objectIds } }).populate("author", "name");
+    const books = await BookModel.find({ _id: { $in: objectIds } }).populate("author", "fullName");
     return books;
   }
 
@@ -342,7 +341,7 @@ export class MongoBookRepository implements BooksRepository {
 
   // ✅
   async getBookByAuthorId(idsAuthor: Types.ObjectId): Promise<SearchedBook[]> {
-    const books = await BookModel.find({ author: { $in: [idsAuthor] } }).populate("author", "name");
+    const books = await BookModel.find({ author: { $in: [idsAuthor] } }).populate("author", "fullName");
     return books;
   }
 }

@@ -28,6 +28,21 @@ bookRouter.post(
   }
 );
 
+// 🔄️
+bookRouter.patch(
+  "/book/:id",
+  validateJWT,
+  validarRol("Admin"),
+  upload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "img", maxCount: 1 },
+  ]),
+  parseFormData,
+  (req: Request, res: Response) => {
+    controller.updateBookById(req, res);
+  }
+);
+
 // ✅
 bookRouter.get("/books", validateLevel, (req: Request, res: Response) => {
   controller.getAllBook(req, res);
