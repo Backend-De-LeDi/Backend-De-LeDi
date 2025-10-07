@@ -11,17 +11,19 @@ const authorService = new CreateAuthor(saveAuthor, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {
   const author: Author = req.body;
+  console.log(author);
 
   try {
     const file = req.file;
     console.log(file);
 
     const avatar = await UploadService.uploadAvatar(file as Express.Multer.File);
-    const newAuthor = { ...author, avatar };
+    const newAuthor = { ...author, avatar, birthdate: new Date(author.birthdate) };
     const result = await authorService.saveAuthors(newAuthor);
 
     if (!result) {
       res.status(304).json({ msg: "the author not save" });
+      return;
     }
     res.status(201).json({ msg: "the author save successful" });
   } catch (error) {

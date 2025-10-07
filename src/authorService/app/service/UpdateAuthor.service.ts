@@ -10,7 +10,7 @@ export class UpdateAuthor implements UpdateAuthorRepository {
     ) { }
 
     async updateAuthor(id: any, author: Author): Promise<Author | null> {
-        const authorExist = await this.uniqueAuthor.findByName(author.name);
+        const authorExist = await this.uniqueAuthor.findByName(author.fullName);
         if (authorExist) {
             throw new Error("Email already in use");
         }

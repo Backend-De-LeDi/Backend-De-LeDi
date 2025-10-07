@@ -10,7 +10,7 @@ export class CreateAuthor {
         private readonly uniqueAuthor: FindAuthor
     ) { }
     async saveAuthors(date: Author): Promise<Author> {
-        const authorExist = await this.uniqueAuthor.findByName(date.name)
+        const authorExist = await this.uniqueAuthor.findByName(date.fullName)
         if (authorExist) {
             throw new Error("author already in use");
         }
