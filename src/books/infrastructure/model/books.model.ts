@@ -34,5 +34,28 @@ const bookSchema = new Schema<IBook>(
   { timestamps: true }
 );
 
+bookSchema.index(
+  {
+    title: "text",
+    summary: "text",
+    synopsis: "text",
+    theme: "text",
+    genre: "text",
+    subgenre: "text"
+  },
+  {
+    default_language: "spanish",
+    name: "BookTextIndex",
+    weights: {
+      title: 5,
+      summary: 3,
+      synopsis: 2,
+      theme: 2,
+      genre: 1,
+      subgenre: 1
+    }
+  }
+);
+
 const BookModel = model<IBook>("Books", bookSchema);
 export { BookModel };

@@ -27,7 +27,10 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getAllBooks(): Promise<SearchedBook[]> {
-    const books = await BookModel.find().populate("author", "fullName");
+    const books = await BookModel.find()
+      .populate("author", "fullName")
+      .sort({ createdAt: -1 });
+
     return books;
   }
 
@@ -36,7 +39,7 @@ export class MongoBookRepository implements BooksRepository {
     await BookModel.findByIdAndUpdate(id, book);
   }
 
-  //  ✅
+  //  🔄️
   async deleteBook(id: Types.ObjectId): Promise<void> {
     await BookModel.findByIdAndDelete(id);
 
@@ -53,81 +56,26 @@ export class MongoBookRepository implements BooksRepository {
   }
 
   //  ✅
-  async getIntelligenceBook(query: string[], level?: string): Promise<SearchedBook[]> {
-    const regexTerms = query.map((term) => new RegExp(term, "i"));
+  async getIntelligenceBook(query: string[], userLevel?: string): Promise<SearchedBook[]> {
+    const searchText = query.join(" ");
+    const matchText: any = { $text: { $search: searchText } };
 
-    const orderedBooks = await BookModel.aggregate([
+    if (userLevel) {
+      matchText.level = userLevel;
+    }
+
+    let orderedBooks = await BookModel.aggregate([
+      { $match: matchText },
       {
         $lookup: {
           from: "authormodels",
           localField: "author",
           foreignField: "_id",
-          as: "authorData",
-        },
+          as: "authorData"
+        }
       },
-      {
-        $addFields: {
-          matchScore: {
-            $sum: regexTerms.map((regex) => ({
-              $add: [
-                { $cond: [{ $regexMatch: { input: "$title", regex } }, 3, 0] },
-                { $cond: [{ $regexMatch: { input: "$summary", regex } }, 1, 0] },
-                { $cond: [{ $regexMatch: { input: "$synopsis", regex } }, 1, 0] },
-                { $cond: [{ $regexMatch: { input: "$genre", regex } }, 1, 0] },
-                { $cond: [{ $regexMatch: { input: "$yearBook", regex } }, 1, 0] },
-                {
-                  $cond: [
-                    {
-                      $gt: [
-                        {
-                          $size: {
-                            $filter: {
-                              input: "$subgenre",
-                              as: "s",
-                              cond: { $regexMatch: { input: "$$s", regex } },
-                            },
-                          },
-                        },
-                        0,
-                      ],
-                    },
-                    1,
-                    0,
-                  ],
-                },
-                {
-                  $cond: [
-                    {
-                      $gt: [
-                        {
-                          $size: {
-                            $filter: {
-                              input: "$theme",
-                              as: "t",
-                              cond: { $regexMatch: { input: "$$t", regex } },
-                            },
-                          },
-                        },
-                        0,
-                      ],
-                    },
-                    1,
-                    0,
-                  ],
-                },
-              ],
-            })),
-          },
-        },
-      },
-      {
-        $match: {
-          matchScore: { $gt: 0 },
-        },
-      },
-      {
-        $sort: { matchScore: -1, createdAt: -1 },
-      },
+      { $addFields: { matchScore: { $meta: "textScore" } } },
+      { $sort: { matchScore: -1, createdAt: -1 } },
       {
         $project: {
           _id: 1,
@@ -148,19 +96,91 @@ export class MongoBookRepository implements BooksRepository {
           updatedAt: 1,
           contentBook: 1,
           bookCoverImage: 1,
+          matchScore: 1,
           author: {
             $map: {
               input: "$authorData",
               as: "a",
               in: {
                 _id: "$$a._id",
-                fullName: "$$a.fullName",
-              },
-            },
-          },
-        },
-      },
+                fullName: "$$a.fullName"
+              }
+            }
+          }
+        }
+      }
     ]);
+
+    if (orderedBooks.length === 0) {
+      const regex = new RegExp(searchText.split(" ").join("|"), "i");
+      const regexMatch: any = {};
+
+      if (userLevel) {
+        regexMatch.level = userLevel;
+      }
+
+      orderedBooks = await BookModel.aggregate([
+        {
+          $lookup: {
+            from: "authormodels",
+            localField: "author",
+            foreignField: "_id",
+            as: "authorData"
+          }
+        },
+        {
+          $match: {
+            ...regexMatch,
+            $or: [
+              { title: regex },
+              { summary: regex },
+              { synopsis: regex },
+              { genre: regex },
+              { theme: regex },
+              { subgenre: regex },
+              { "authorData.fullName": regex } // 🧠 búsqueda por autor
+            ]
+          }
+        },
+        {
+          $addFields: { matchScore: 0.1 }
+        },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            summary: 1,
+            synopsis: 1,
+            subgenre: 1,
+            theme: 1,
+            genre: 1,
+            yearBook: 1,
+            language: 1,
+            available: 1,
+            level: 1,
+            format: 1,
+            fileExtension: 1,
+            totalPages: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            contentBook: 1,
+            bookCoverImage: 1,
+            author: {
+              $map: {
+                input: "$authorData",
+                as: "a",
+                in: {
+                  _id: "$$a._id",
+                  fullName: "$$a.fullName"
+                }
+              }
+            },
+            matchScore: 1
+          }
+        },
+        { $sort: { createdAt: -1 } }
+      ]);
+    }
 
     return orderedBooks;
   }
@@ -176,22 +196,22 @@ export class MongoBookRepository implements BooksRepository {
 
   //  ✅
   async getAllBooksByLevel(nivel: string): Promise<SearchedBook[]> {
-    if (nivel === "Inicial") {
-      const books = await BookModel.find({ level: { $in: ["Inicial"] } }).populate("author", "fullName");
-      return books;
-    } else if (nivel === "Secundario") {
-      const books = await BookModel.find({ level: { $in: ["Secundario", "Inicial"] } }).populate("author", "fullName");
-      return books;
-    } else if (nivel === "Joven Adulto") {
-      const books = await BookModel.find({ level: { $in: ["Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "fullName");
-      return books;
-    } else if (nivel === "Adulto Mayor") {
-      const books = await BookModel.find({ level: { $in: ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"] } }).populate("author", "fullName");
-      return books;
-    }
+    const levelHierarchy: Record<string, string[]> = {
+      "Inicial": ["Inicial"],
+      "Secundario": ["Secundario", "Inicial"],
+      "Joven Adulto": ["Joven Adulto", "Secundario", "Inicial"],
+      "Adulto Mayor": ["Adulto Mayor", "Joven Adulto", "Secundario", "Inicial"]
+    };
 
-    return await BookModel.find().populate("author", "fullName");
+    const allowedLevels = levelHierarchy[nivel] || ["Inicial", "Secundario", "Joven Adulto", "Adulto Mayor"];
+
+    const books = await BookModel.find({ level: { $in: allowedLevels } })
+      .populate("author", "fullName")
+      .sort({ createdAt: -1 });
+
+    return books;
   }
+
 
   //  ✅
   async getBooksByFiltering(theme: string[], subgenre: string[], yearBook: string[], genre: string[], format: string[], level?: string): Promise<SearchedBook[]> {
