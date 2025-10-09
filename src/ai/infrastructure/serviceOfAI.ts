@@ -3,19 +3,20 @@ import { generateEmbedding } from "../../shared/utils/loadModel";
 import { EmbeddingModel } from "./model/embeddingModel";
 import { Types } from "mongoose";
 import { cosineSimilarity } from "../../shared/utils/simility";
-import { zodResponseFormat } from "openai/helpers/zod"
+import { zodResponseFormat } from "openai/helpers/zod";
 import { openai } from "../domain/models/model";
 import { createYourHistoModel, final } from "./model/createYourHistoModel";
 import { BookContentModel } from "../../bookContent/infrastructure/model/BookContentModel";
-import { ContentBookLiteral, Gamble } from "../../shared/types/createYourHistory/createYourHistory";
-import { PromptFactory } from "../../shared/config/const/prompt";
-import { PromptSystem } from "../../shared/class/promptSystem";
+import { ContentBookLiteral, Gamble, Quiz } from "../../shared/types/gamesTypes/createYourHistory";
+import { PromptFactory, PromptQuizFactory } from "../../shared/config/const/prompt";
+import { PromptSystem, PromptSystemQuiz } from "../../shared/class/promptSystem";
 import { separator } from "../../shared/utils/consoleSeparator";
 import { VectorStoreMemory } from "../domain/entities/vectorStoreMemory";
 import { VectorStoreMemoryModel } from "./model/vectorStoresMemory";
+import { quizModel } from "./model/createYourHistoModel";
+import { finalQuiz } from "./model/createYourHistoModel";
 
 export class ConnectionAI implements AIRepository {
-
   async getIdsForRecommendation(userBookIds: string[]): Promise<string[]> {
     const filtered = await EmbeddingModel.find({ bookId: { $in: userBookIds } });
 
@@ -48,30 +49,67 @@ export class ConnectionAI implements AIRepository {
 
   async createYourHistoryGame(idBook: string, gamble: Gamble | undefined): Promise<any | void> {
     try {
-      const idValid = new Types.ObjectId(idBook)
-      const [contentBook] = await BookContentModel.find({ bookId: idValid }, { title: 1, text: 1, _id: 0 })
+      const idValid = new Types.ObjectId(idBook);
+      const [contentBook] = await BookContentModel.find({ bookId: idValid }, { title: 1, text: 1, _id: 0 });
 
       const contentBookLiteral: ContentBookLiteral = {
         title: contentBook.title,
-        text: contentBook.text.map(entry => entry.content),
+        text: contentBook.text.map((entry) => entry.content),
       };
       const isInitial = gamble === undefined;
       const page = isInitial ? 0 : gamble.page;
       const outOfBounds = page >= contentBook.text.length;
 
       const promptUser = PromptFactory.create(gamble, contentBookLiteral);
-      const promptSystem = PromptSystem.getIntancia()
+      const promptSystem = PromptSystem.getIntancia();
 
       const completion = await openai.chat.completions.parse({
         model: "gemini-2.5-flash-lite",
         temperature: 0.7,
-        messages: [{ role: "system", content: promptSystem.prompt }, { role: "user", content: promptUser }
+        messages: [
+          { role: "system", content: promptSystem.prompt },
+          { role: "user", content: promptUser },
         ],
-        response_format: zodResponseFormat(outOfBounds ? final : createYourHistoModel, "event")
-      })
+        response_format: zodResponseFormat(outOfBounds ? final : createYourHistoModel, "event"),
+      });
 
       const event = completion.choices[0].message.parsed;
-      return event
+      return event;
+    } catch (error) {
+      separator();
+      console.log(error);
+      separator();
+    }
+  }
+
+  async quiz(idBook: string, quiz: Quiz): Promise<any> {
+    try {
+      const idValid = new Types.ObjectId(idBook);
+      const [contentBook] = await BookContentModel.find({ bookId: idValid }, { title: 1, text: 1, _id: 0 });
+
+      const contentBookLiteral: ContentBookLiteral = {
+        title: contentBook.title,
+        text: contentBook.text.map((entry) => entry.content),
+      };
+
+      const InitialQuiz = quiz === undefined;
+      const page = InitialQuiz ? 0 : quiz.page;
+      const outOfBounds = page >= contentBook.text.length;
+
+      const promptUser = PromptQuizFactory.create(quiz, contentBookLiteral);
+      const promptSystem = PromptSystemQuiz.getIntancia();
+
+      const completion = await openai.chat.completions.parse({
+        model: "gemini-2.0-flash",
+        messages: [
+          { role: "system", content: promptSystem.prompt },
+          { role: "user", content: promptUser },
+        ],
+        response_format: zodResponseFormat(outOfBounds ? finalQuiz : quizModel, "event"),
+      });
+
+      const event = completion.choices[0].message.parsed;
+      return event;
     } catch (error) {
       separator();
       console.log(error);
@@ -84,28 +122,27 @@ export class ConnectionAI implements AIRepository {
 
     if (isChat) {
       await VectorStoreMemoryModel.findByIdAndUpdate(isChat._id, {
-        $push: { conversation: { $each: data.conversation } }
+        $push: { conversation: { $each: data.conversation } },
       });
     } else {
       const newChat = new VectorStoreMemoryModel({
         idUser: data.idUser,
         idSeccion: data.idSeccion,
-        conversation: data.conversation
+        conversation: data.conversation,
       });
       await newChat.save();
     }
   }
 
   async getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<VectorStoreMemory[]> {
-    return await VectorStoreMemoryModel.find({ idUser })
+    return await VectorStoreMemoryModel.find({ idUser });
   }
 
   async getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<VectorStoreMemory[]> {
-    return await VectorStoreMemoryModel.find({ idSeccion })
+    return await VectorStoreMemoryModel.find({ idSeccion });
   }
 
   async chatBot(message: string): Promise<any> {
-
     const response = await openai.chat.completions.create({
       model: "gemini-2.0-flash",
       messages: [
@@ -119,7 +156,6 @@ export class ConnectionAI implements AIRepository {
 
     console.log(response.choices[0].message.content);
 
-    return response.choices[0].message.content
+    return response.choices[0].message.content;
   }
-
 }
