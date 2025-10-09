@@ -100,7 +100,7 @@ export class ConnectionAI implements AIRepository {
       const promptSystem = PromptSystemQuiz.getIntancia();
 
       const completion = await openai.chat.completions.parse({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: promptSystem.prompt },
           { role: "user", content: promptUser },
