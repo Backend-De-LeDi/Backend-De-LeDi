@@ -4,14 +4,18 @@ import { ISaveAuthorRepository } from "../domain/ports/saveAuthorRepository";
 import { UpdateAuthorRepository } from "../domain/ports/updateAuthorRepository";
 import { DeleteAuthor } from "../domain/ports/deleteAuthorRepository";
 import { AuthorModel } from "./models/authores.Model";
+import { deleteCoverImage } from "../../shared/utils/deleteCoverImage";
+
+
 
 //save author on the data base
 export class SaveAuthorMongoRepo implements ISaveAuthorRepository {
-  async crateAuthor(author: Author): Promise<Author> {
+  async createAuthor(author: Author): Promise<Author> {
     const newAuthor = new AuthorModel(author);
     return await newAuthor.save();
   }
 }
+
 //update author on the data base
 export class updateAuthorMongo implements UpdateAuthorRepository {
   async updateAuthor(id: any, author: Partial<Author>) {
@@ -22,6 +26,7 @@ export class updateAuthorMongo implements UpdateAuthorRepository {
     return null;
   }
 }
+
 // search author on the db
 export class findAuthorMongoRepo implements FindAuthor {
   async findById(id: any): Promise<Author | null> {
@@ -40,7 +45,14 @@ export class findAuthorMongoRepo implements FindAuthor {
 
 //repo de delete author in mongo
 export class DeleteAuthorMongoRepo implements DeleteAuthor {
-  async deleteAuthor(id: any): Promise<void> {
+
+  async deleteAuthor(id: any): Promise<void | null> {
+    const result = await AuthorModel.findById(id)
+    if (!result) return null
+
+    if (result && result.avatar) {
+      await deleteCoverImage(result.avatar.id_image);
+    }
     await AuthorModel.findByIdAndDelete(id);
   }
 }
