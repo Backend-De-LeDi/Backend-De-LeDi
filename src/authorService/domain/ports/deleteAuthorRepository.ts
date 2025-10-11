@@ -1,5 +1,5 @@
 
 
 export interface DeleteAuthor {
-    deleteAuthor(id: any): Promise<void>
+    deleteAuthor(id: any): Promise<void | null>;
 }
