@@ -123,7 +123,7 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
               },
             },
             {
-              $project: { _id: 1, name: 1 },
+              $project: { _id: 1, fullName: 1 },
             },
           ],
           as: "authorData",
@@ -158,7 +158,7 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
               as: "a",
               in: {
                 _id: "$$a._id",
-                name: "$$a.name",
+                fullName: "$$a.fullName",
               },
             },
           },
