@@ -10,5 +10,6 @@ export interface AIRepository {
   quiz(idBook: string, quiz: Quiz | undefined): Promise<any>;
   getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<VectorStoreMemory[]>;
   getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<VectorStoreMemory[]>;
+  insertBookToDocuments(idBoook: Types.ObjectId): Promise<void>
   chatBot(message: string): Promise<string>;
 }

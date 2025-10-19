@@ -8,6 +8,7 @@ import { serviceContainer } from "../../shared/services/serviceContainer";
 import { EmbeddingModel } from "../../ai/infrastructure/model/embeddingModel";
 import { extractTextByPage } from "../../shared/utils/pdfService";
 import { PipelineStage } from "mongoose";
+import { serviceAi } from "../../ai/helper/saveForVectorStore";
 
 export class MongoBookRepository implements BooksRepository {
   //  ✅
@@ -23,6 +24,7 @@ export class MongoBookRepository implements BooksRepository {
     }
 
     await serviceContainer.ai.createEmbedding.run(id, result.title, result.summary, result.synopsis);
+    await serviceAi.exec(id)
   }
 
   //  ✅
