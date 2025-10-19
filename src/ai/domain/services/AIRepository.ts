@@ -12,4 +12,5 @@ export interface AIRepository {
   getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<VectorStoreMemory[]>;
   insertBookToDocuments(idBoook: Types.ObjectId): Promise<void>
   chatBot(message: string): Promise<string>;
+  deleteBookFromDocuments(idBook: string): Promise<void>
 }

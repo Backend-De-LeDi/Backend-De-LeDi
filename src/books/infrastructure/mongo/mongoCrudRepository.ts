@@ -4,13 +4,13 @@ import { BookModel } from "../model/books.model";
 import { Types } from "mongoose";
 import { extractTextByPage } from "../../../shared/utils/pdfService";
 import { serviceContainer } from "../../../shared/services/serviceContainer";
-import { serviceAi } from "../../../ai/helper/saveForVectorStore";
+import { deleteBookFromDocuments, serviceAi } from "../../../ai/helper/saveForVectorStore";
 import { BookSearch } from "../../../shared/types/bookTypes/bookTypes";
 import { EmbeddingModel } from "../../../ai/infrastructure/model/embeddingModel";
 
 export class MongoCrudRepository implements BooksCrudRepository {
 
-     //  🔄️
+     //  ✅
      async createBook(book: Books): Promise<void> {
           const newBook = new BookModel(book);
           const result = await newBook.save();
@@ -26,6 +26,23 @@ export class MongoCrudRepository implements BooksCrudRepository {
           await serviceAi.exec(id)
      }
 
+     //  🔄️
+     async updateBookById(id: Types.ObjectId, book: Books): Promise<void> {
+          const result = await BookModel.findByIdAndUpdate(id, book);
+          if (result) {
+               if (result.genre === "Narrativo") {
+                    const url = result.contentBook.url_secura;
+                    const text = await extractTextByPage(url);
+                    const title = result.title;
+                    await serviceContainer.bookContent.createBookContent.run(id, title, text);
+               }
+               await EmbeddingModel.deleteMany({ bookId: id });
+               await deleteBookFromDocuments.exec(String(id))
+               await serviceContainer.ai.createEmbedding.run(id, result.title, result.summary, result.synopsis);
+               await serviceAi.exec(id)
+          }
+     }
+
      //  ✅
      async getAllBooks(): Promise<BookSearch[]> {
           const books = await BookModel.find()
@@ -36,15 +53,11 @@ export class MongoCrudRepository implements BooksCrudRepository {
      }
 
      //  ✅
-     async updateBookById(id: Types.ObjectId, book: Books): Promise<void> {
-          await BookModel.findByIdAndUpdate(id, book);
-     }
-
-     //  🔄️
      async deleteBook(id: Types.ObjectId): Promise<BookSearch | null> {
-          return await BookModel.findByIdAndDelete(id);
 
           await EmbeddingModel.deleteMany({ bookId: id });
+          await deleteBookFromDocuments.exec(String(id))
+          return await BookModel.findByIdAndDelete(id);
      }
 
      //  ✅
