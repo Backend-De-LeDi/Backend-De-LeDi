@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
 import { UpdateProgressMongo, DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
-import { GetBooksByIds } from "../../../books/application/getBooksByIds";
-import { MongoBookRepository } from "../../../books/infrastructure/mongoBookRepository";
+import { GetBooksByIds } from "../../../books/application";
+import { MongoQueryRepository } from "../../../books/infrastructure/mongo";
 
 //intancias 
 const updateRepo = new UpdateProgressMongo();
-const booksRepo = new MongoBookRepository();
+const booksRepo = new MongoQueryRepository();
 const getBooksByIds = new GetBooksByIds(booksRepo);
 const bookService = new UpdateProgressService(updateRepo, getBooksByIds);
 

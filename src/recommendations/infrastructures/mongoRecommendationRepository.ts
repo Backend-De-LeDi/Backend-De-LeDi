@@ -1,5 +1,5 @@
 import { BookModel } from "../../books/infrastructure/model/books.model";
-import { SearchedBook } from "../../shared/types/bookTypes/bookTypes";
+import { BookSearch } from "../../shared/types/bookTypes/bookTypes";
 import { RecommendationsRepository } from "../domains/recommendationsRepository";
 import { Types } from "mongoose";
 import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
@@ -7,7 +7,7 @@ import { serviceContainer } from "../../shared/services/serviceContainer";
 import { UserModel } from "../../userService/infrastructure/models/userModels";
 
 export class MongoRecommendationRepository implements RecommendationsRepository {
-  async getRecommendations(idUser: Types.ObjectId): Promise<SearchedBook[]> {
+  async getRecommendations(idUser: Types.ObjectId): Promise<BookSearch[]> {
     const user = await UserModel.findOne({ _id: idUser }).lean();
 
     if (!user || !user.preference?.category?.length) {
@@ -90,7 +90,7 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
     return recommendations;
   }
 
-  async getRecommendatioSemantic(userId: Types.ObjectId): Promise<SearchedBook[]> {
+  async getRecommendatioSemantic(userId: Types.ObjectId): Promise<BookSearch[]> {
     const userProgresse = await BookProgressModel.find({ idUser: userId });
 
     const idsBook: string[] = userProgresse.map((progrese) => progrese.idBook.toString());

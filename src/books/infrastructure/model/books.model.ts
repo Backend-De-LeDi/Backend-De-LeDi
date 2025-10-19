@@ -1,7 +1,7 @@
-import { IBook } from "../../../shared/types/bookTypes/bookTypes";
+import { BookDetail } from "../../../shared/types/bookTypes/bookTypes";
 import { Schema, model } from "mongoose";
 
-const bookSchema = new Schema<IBook>(
+const bookSchema = new Schema<BookDetail>(
   {
     title: { type: String, required: true },
     author: [{ type: Schema.Types.ObjectId, ref: "AuthorModel" }],
@@ -57,5 +57,5 @@ bookSchema.index(
   }
 );
 
-const BookModel = model<IBook>("Books", bookSchema);
+const BookModel = model<BookDetail>("Books", bookSchema);
 export { BookModel };

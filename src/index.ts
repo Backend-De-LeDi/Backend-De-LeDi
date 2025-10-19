@@ -1,6 +1,4 @@
-import express from "express";
 import { createServer } from "http";
-import path from "path";
 import { Server, Socket } from "socket.io";
 import ENV from "./shared/config/configEnv";
 import connections from "./shared/config/db/database";
