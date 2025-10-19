@@ -7,9 +7,3 @@ export class DeleteAuthors implements DeleteAuthor {
     }
 }
 
-export class DeleteAuthorsSupabase implements DeleteAuthor {
-    constructor(private readonly deleteAuthors: DeleteAuthor) { }
-    async deleteAuthor(id: any): Promise<void> {
-        await this.deleteAuthors.deleteAuthor(id)
-    }
-};

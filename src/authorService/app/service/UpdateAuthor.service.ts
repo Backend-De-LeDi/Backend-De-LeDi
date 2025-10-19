@@ -9,7 +9,6 @@ export class UpdateAuthor implements UpdateAuthorRepository {
     ) { }
 
     async updateAuthor(id: any, author: Author): Promise<Author | null> {
-        console.log(author);
 
         const authorExist = await this.uniqueAuthor.findByName(author.fullName);
         if (authorExist) {
