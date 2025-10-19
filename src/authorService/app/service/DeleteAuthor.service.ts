@@ -6,3 +6,4 @@ export class DeleteAuthors implements DeleteAuthor {
         await this.deleteAuthors.deleteAuthor(id)
     }
 }
+

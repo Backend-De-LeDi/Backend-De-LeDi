@@ -15,6 +15,13 @@ import { VectorStoreMemory } from "../domain/entities/vectorStoreMemory";
 import { VectorStoreMemoryModel } from "./model/vectorStoresMemory";
 import { quizModel } from "./model/createYourHistoModel";
 import { finalQuiz } from "./model/createYourHistoModel";
+import { BookModel } from "../../books/infrastructure/model/books.model";
+import { AuthorModel } from "../../authorService/infrastructure/models/authores.Model";
+import { createClient } from "@supabase/supabase-js"
+import ENV from "../../shared/config/configEnv";
+import { generateEmbeddingForAi } from "../../shared/utils/generateEmbedding";
+
+const supabase = createClient(ENV.URL_SUPABASE!, ENV.SUPABASE_KEY!);
 
 export class ConnectionAI implements AIRepository {
   async getIdsForRecommendation(userBookIds: string[]): Promise<string[]> {
@@ -157,5 +164,49 @@ export class ConnectionAI implements AIRepository {
     console.log(response.choices[0].message.content);
 
     return response.choices[0].message.content;
+  }
+
+  async insertBookToDocuments(bookId: Types.ObjectId): Promise<void> {
+    const book = await BookModel.findById(bookId);
+    if (!book || !book.author || book.author.length === 0) return;
+
+    const authorDocs = await AuthorModel.find({ _id: { $in: book.author } });
+    const authorsData = authorDocs.map(a => ({
+      author_mongo_id: a._id.toString(),
+      author_full_name: a.fullName
+    }));
+
+    const textForEmbedding = [
+      book.title,
+      book.summary,
+      book.synopsis,
+      ...authorsData.map(a => a.author_full_name)
+    ].filter(Boolean).join(". ");
+
+    const embedding = await generateEmbeddingForAi(textForEmbedding);
+    const content = textForEmbedding;
+
+    const metadata = {
+      title: book.title,
+      summary: book.summary,
+      synopsis: book.synopsis,
+      subgenre: book.subgenre,
+      language: book.language,
+      available: book.available,
+      year_book: book.yearBook,
+      theme: book.theme,
+      total_pages: book.totalPages,
+      genre: book.genre,
+      level: book.level,
+      format: book.format,
+      file_extension: book.fileExtension,
+      authors: authorsData // ← nombre + ID Mongo
+    };
+
+    const { error } = await supabase.from("documents").insert({ content, metadata, embedding });
+
+    if (error) {
+      console.error("Error insertando documento:", error);
+    }
   }
 }

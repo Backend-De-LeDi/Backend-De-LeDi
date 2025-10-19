@@ -13,9 +13,11 @@ export const getAuthorById = async (req: Request, res: Response) => {
 
     if (!author) {
       res.status(404).json({ message: "Autor no encontrado" });
+      return
     }
 
     res.status(200).json(author);
+    return
   } catch (error) {
     console.error("Error al buscar autor:", error);
     res.status(500).json({ message: "Error interno del servidor" });

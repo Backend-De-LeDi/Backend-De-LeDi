@@ -3,13 +3,13 @@ import { BookSaveProgres } from "../../aplication/service/SaveProgress.Service";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
 import { BookProgresMongo } from "../../infrastructure/bookProgressRepoMongo";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
-import { GetBooksByIds } from "../../../books/application/getBooksByIds";
-import { MongoBookRepository } from "../../../books/infrastructure/mongoBookRepository";
+import { GetBooksByIds } from "../../../books/application";
+import { MongoQueryRepository } from "../../../books/infrastructure/mongo";
 
 
 // Repositorios
 const saveRepoMongo: BookProgresPort = new BookProgresMongo();
-const booksRepo = new MongoBookRepository();
+const booksRepo = new MongoQueryRepository();
 const getBooksByIds = new GetBooksByIds(booksRepo);
 
 // Servicio

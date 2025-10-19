@@ -1,7 +1,7 @@
 import { photoProfile } from "../../../shared/types/photo.Types";
 
 export class Author {
-  public id: any;
+  public _id: any;
   constructor(
     public readonly fullName: string,
     public readonly biography: string,

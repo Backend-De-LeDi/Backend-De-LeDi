@@ -1,30 +1,33 @@
 import { Request, Response } from "express";
 import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
-import { findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
+import { DeleteAuthorMongoRepo, findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
 import { UploadService } from "../../../shared/services/uploadAvatar.service";
+import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { DeleteAuthors } from "../../app/service/DeleteAuthor.service";
 
-const saveAuthor: ISaveAuthorRepository = new SaveAuthorMongoRepo();
+const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorMongoRepo();
 const findAuthorRepo = new findAuthorMongoRepo();
-const authorService = new CreateAuthor(saveAuthor, findAuthorRepo);
+const deleteAuthor = new DeleteAuthors(new DeleteAuthorMongoRepo())
+const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {
   const author: Author = req.body;
-  console.log(author);
 
   try {
     const file = req.file;
-    console.log(file);
 
     const avatar = await UploadService.uploadAvatar(file as Express.Multer.File);
     const newAuthor = { ...author, avatar };
     const result = await authorService.saveAuthors(newAuthor);
 
     if (!result) {
-      res.status(304).json({ msg: "the author not save" });
-      return;
+      await deleteCoverImage(avatar.id_image);
+      res.status(409).json({ msg: "the author already exist" });
+      return
     }
+
     res.status(201).json({ msg: "the author save successful" });
   } catch (error) {
     console.log(error);
