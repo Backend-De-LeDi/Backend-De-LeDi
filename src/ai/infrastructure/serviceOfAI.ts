@@ -187,6 +187,7 @@ export class ConnectionAI implements AIRepository {
     const content = textForEmbedding;
 
     const metadata = {
+      id_mongo: book._id,
       title: book.title,
       summary: book.summary,
       synopsis: book.synopsis,
@@ -207,6 +208,17 @@ export class ConnectionAI implements AIRepository {
 
     if (error) {
       console.error("Error insertando documento:", error);
+    }
+  }
+
+  async deleteBookFromDocuments(bookId: string): Promise<void> {
+    const { error } = await supabase
+      .from("documents")
+      .delete()
+      .eq("metadata->>id_mongo", bookId.toString()); // ← clave literal en metadata
+
+    if (error) {
+      console.error("Error eliminando documento:", error);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { BookCoverImage } from "../../../shared/types/bookTypes/bookTypes";
+import { BookCover } from "../../../shared/types/bookTypes/bookTypes";
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
 import type { Types } from "mongoose";
 
@@ -10,7 +10,7 @@ export class Books {
     public subgenre: string[],
     public language: string,
     public available: boolean,
-    public bookCoverImage: BookCoverImage,
+    public bookCoverImage: BookCover,
     public contentBook: ContentBook,
     public synopsis: string,
     public yearBook: string,
