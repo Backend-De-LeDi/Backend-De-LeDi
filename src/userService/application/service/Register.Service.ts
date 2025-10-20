@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt-ts';
 import { calcularEdad } from "../../../shared/utils/calcularNivel";
 import { getAllAvatars } from "../../interfaces/Apis/avatarApi";
 import { avatarsAssignment } from "../../domain/utils/avatarAssignment";
+import { getLevel } from "../../interfaces/Apis/FetchLevel";
 
 export class Register {
     constructor(
@@ -30,9 +31,10 @@ export class Register {
 
         if (!user.avatar) {
             const avatars = await getAllAvatars()
+            const level = await getLevel()
             const avatarAssignment = await avatarsAssignment(avatars)
             console.log(avatarAssignment)
-            const newUser = { ...user, nivel, avatar: avatarAssignment, password: hashedPassword };
+            const newUser = { ...user, nivel, avatar: avatarAssignment, level, password: hashedPassword };
             console.log(newUser)
             return await this.userRepo.createUser(newUser);
 

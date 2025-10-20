@@ -32,13 +32,21 @@ const UserSchema = new Schema<User>({
     type: String,
     required: true,
   },
+  level: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Leves",
+  },
   rol: {
     type: String,
     enum: ["User", "Admin"],
     default: "User",
     required: true,
   },
-
+  point: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   avatar: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Avatars",

@@ -2,11 +2,15 @@ import { Types } from "mongoose";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 import { UpdateProgresPort } from "../../domain/ports/updateProgressPort";
 import { GetBooksByIds } from "../../../books/application/getBooksByIds";
+import { UpdateUSer } from "../../../userService/application/service/UpdateUser.Service";
+import { FindAndDeleteUser } from "../../../userService/application/service/FindAndDelete.service";
 
 export class UpdateProgressService implements UpdateProgresPort {
     constructor(
         private readonly progresRepo: UpdateProgresPort,
-        private readonly getBooksByIds: GetBooksByIds
+        private readonly getBooksByIds: GetBooksByIds,
+        private readonly getUser: FindAndDeleteUser,
+        private readonly updateUser: UpdateUSer
     ) { }
 
     async updateProgres(
@@ -17,7 +21,6 @@ export class UpdateProgressService implements UpdateProgresPort {
             return await this.progresRepo.updateProgres(id, data);
         }
 
-        // Traemos el libro para ajustar valores
         const books = await this.getBooksByIds.run([new Types.ObjectId(data.idBook)]);
         const book = books[0];
 
@@ -27,10 +30,14 @@ export class UpdateProgressService implements UpdateProgresPort {
 
         if (data.status === "finished") {
             data.finishDate = new Date();
+            const user = await this.getUser.findByID(id);
+            if (user) {
+                await this.updateUser.updateUSer(id, { point: user.point + 100 });
+                user.point
+            }
         }
 
 
-        // Ajustar unit y total según el formato del libro
         if (book.format === "ebook" || book.format === "pdf" || book.format === "epub") {
             data.unit = "page";
             data.total = book.totalPages || 0;

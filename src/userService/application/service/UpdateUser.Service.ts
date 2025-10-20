@@ -11,14 +11,19 @@ export class UpdateUSer implements UpdateUSerRepository {
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
-    async updateUSer(id: any, user: User): Promise<User | null> {
-        const emailExists = await this.authRepo.findByEmail(user.email);
-        if (emailExists) {
-            throw new Error("Email already in use");
+    async updateUSer(id: any, user: Partial<User>): Promise<User | null> {
+        if (user.email) {
+            const emailExists = await this.authRepo.findByEmail(user.email);
+            if (emailExists) {
+                throw new Error("Email already in use");
+            }
         }
-        const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
-        if (usernameExists) {
-            throw new Error("Username already in use");
+        if (user.userName) {
+            const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
+            if (usernameExists) {
+                throw new Error("Username already in use");
+            }
+
         }
         if (user.password) {
             const hashedPassword = await bcrypt.hash(user.password, 10);
