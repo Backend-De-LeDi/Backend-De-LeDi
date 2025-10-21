@@ -5,6 +5,7 @@ import { UpdateAuthorRepository } from "../domain/ports/updateAuthorRepository";
 import { DeleteAuthor } from "../domain/ports/deleteAuthorRepository";
 import { AuthorModel } from "./models/authores.Model";
 import { deleteCoverImage } from "../../shared/utils/deleteCoverImage";
+import { deleteAuthorFromDocuments, serviceAiAuthor } from "../../ai/helper/saveForVectorStore";
 
 
 
@@ -12,6 +13,7 @@ import { deleteCoverImage } from "../../shared/utils/deleteCoverImage";
 export class SaveAuthorMongoRepo implements ISaveAuthorRepository {
   async createAuthor(author: Author): Promise<Author> {
     const newAuthor = new AuthorModel(author);
+    await serviceAiAuthor.exec(newAuthor._id)
     return await newAuthor.save();
   }
 }
@@ -53,6 +55,7 @@ export class DeleteAuthorMongoRepo implements DeleteAuthor {
     if (result && result.avatar) {
       await deleteCoverImage(result.avatar.id_image);
     }
+    await deleteAuthorFromDocuments.exec(result._id.toString())
     await AuthorModel.findByIdAndDelete(id);
   }
 }
