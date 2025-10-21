@@ -62,8 +62,14 @@ io.on("connection", (socket: Socket) => {
         }
     });
     socket.on("all-public", async () => {
-        const result = await getAllComents()
-        io.emit("coments", result)
+          try {
+            const result = await getAllComents();
+            console.log(result)
+            io.emit("coments", result);
+        } catch (error) {
+            console.error("Error en all-public:", error);
+            socket.emit("error", { msg: "Error al obtener todos los comentarios" });
+        }
     })
 
 })
