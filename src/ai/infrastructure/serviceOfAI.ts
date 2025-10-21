@@ -20,8 +20,10 @@ import { AuthorModel } from "../../authorService/infrastructure/models/authores.
 import { createClient } from "@supabase/supabase-js"
 import ENV from "../../shared/config/configEnv";
 import { generateEmbeddingForAi } from "../../shared/utils/generateEmbedding";
+import { BookDetail } from "../../shared/types/bookTypes/bookTypes";
 
-const supabase = createClient(ENV.URL_SUPABASE!, ENV.SUPABASE_KEY!);
+const supabaseBooks = createClient(ENV.URL_SUPABASE[0]!, ENV.SUPABASE_KEY[0]!);
+const supabaseAuthors = createClient(ENV.URL_SUPABASE[1]!, ENV.SUPABASE_KEY[1]!);
 
 export class ConnectionAI implements AIRepository {
   async getIdsForRecommendation(userBookIds: string[]): Promise<string[]> {
@@ -204,15 +206,68 @@ export class ConnectionAI implements AIRepository {
       authors: authorsData // ← nombre + ID Mongo
     };
 
-    const { error } = await supabase.from("documents").insert({ content, metadata, embedding });
+    const { error } = await supabaseBooks.from("documents").insert({ content, metadata, embedding });
 
+    console.log("✅ autor almacenado correctamente en la base de datos vectorial");
     if (error) {
       console.error("Error insertando documento:", error);
     }
   }
 
+  async insertAuthorToDocuments(authorId: Types.ObjectId): Promise<void> {
+    const author = await AuthorModel.findById(authorId);
+    if (!author) return;
+
+    const books = await BookModel.find({}).populate("author") as (BookDetail & { _id: Types.ObjectId })[];
+
+    const libros = books.map(b => ({
+      id_mongo: b._id.toString(),
+      title: b.title,
+    }));
+
+    const textForEmbedding = [
+      author.fullName,
+      author.biography,
+      author.profession,
+      author.birthdate?.toString().split("T")[0],
+      author.birthplace,
+      author.nationality,
+      ...(author.writingGenre || []),
+      ... (libros.map(l => l.title) || [""]), ,
+    ]
+      .filter(Boolean)
+      .join(". ");
+
+    const embedding = await generateEmbeddingForAi(textForEmbedding);
+    const content = textForEmbedding;
+
+    const metadata = {
+      id_mongo: author._id.toString(),
+      full_name: author.fullName,
+      biography: author.biography,
+      profession: author.profession,
+      birthdate: author.birthdate,
+      birthplace: author.birthplace,
+      nationality: author.nationality,
+      writing_genre: author.writingGenre,
+      books: libros || [],
+    };
+
+    const { error } = await supabaseAuthors.from("documents").insert({
+      content,
+      metadata,
+      embedding,
+    });
+
+    console.log("✅ autor almacenado correctamente en la base de datos vectorial");
+
+    if (error) {
+      console.error("Error insertando autor:", error.message);
+    }
+  }
+
   async deleteBookFromDocuments(bookId: string): Promise<void> {
-    const { error } = await supabase
+    const { error } = await supabaseAuthors
       .from("documents")
       .delete()
       .eq("metadata->>id_mongo", bookId.toString()); // ← clave literal en metadata
@@ -221,4 +276,16 @@ export class ConnectionAI implements AIRepository {
       console.error("Error eliminando documento:", error);
     }
   }
+
+  async deleteAuthorFromDocuments(idAuthor: string): Promise<void> {
+    const { error } = await supabaseAuthors
+      .from("documents")
+      .delete()
+      .eq("metadata->>id_mongo", idAuthor.toString()); // ← clave literal en metadata
+
+    if (error) {
+      console.error("Error eliminando documento:", error);
+    }
+  }
 }
+
