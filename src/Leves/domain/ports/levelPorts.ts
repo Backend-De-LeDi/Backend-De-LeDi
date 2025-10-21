@@ -3,8 +3,8 @@ import { LevesTypes } from "../entities/LevesTypes";
 
 export interface ILevesRepo {
     saveLevel(level: LevesTypes): Promise<LevesTypes>
-    findLevel(level: string): Promise<LevesTypes>
+    findLevel(level: number): Promise<LevesTypes>
     deleteLevel(id: any): Promise<void>
     findLevelByID(id: any): Promise<LevesTypes | null>
-    findFirtsLevel(uno: string): Promise<LevesTypes | null>
+    findFirtsLevel(uno: number): Promise<LevesTypes | null>
 }

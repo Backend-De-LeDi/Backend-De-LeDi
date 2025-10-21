@@ -12,6 +12,8 @@ import chalk from "chalk";
 import { app } from "./app";
 import { getAllComents, getComentByUserID, getComentsByForo } from "./BookClub/coments/interface/controllers/findComentControllers";
 import { emit } from "process";
+import { selecLevel } from "./userPogressBooks/domain/utils/selec_nivel";
+import { createAnsweController } from "./BookClub/coments/interface/controllers/createAsnwer.Controller";
 
 const server = createServer(app)
 const io = new Server(server, {
@@ -96,6 +98,17 @@ io.on("connection", async (socket: Socket) => {
                 msg: "Error al obtener comentarios por userID", error
             })
         }
+        socket.on("create-answer", async (idComent, data: ComentTypes) => {
+            try {
+                await createAnsweController(idComent, data);
+                const coments = await getAllComents();
+                io.emit("coments", coments);
+            } catch (error) {
+                console.error("Error en new-public:", error);
+                socket.emit("error", { msg: "Error al crear el comentario" });
+            }
+
+        })
 
 
     });

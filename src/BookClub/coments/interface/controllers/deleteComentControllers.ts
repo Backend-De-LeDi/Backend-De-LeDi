@@ -12,8 +12,8 @@ const deletComentService = new DeleteComentService(deletComentmongo)
 export const DeleteComent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-
-        const result = await deletComentService.deleteComent(id)
+        const { userId } = req.body
+        const result = await deletComentService.deleteComent(id, userId)
 
         res.status(200).json({
             msg: 'the coment deleted succesful'

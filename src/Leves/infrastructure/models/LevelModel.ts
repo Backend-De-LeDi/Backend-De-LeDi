@@ -4,7 +4,11 @@ import { LevesTypes } from "../../domain/entities/LevesTypes";
 
 const LevelSchema = new Schema<LevesTypes>({
     level: {
-        type: String,
+        type: Number,
+        required: true
+    },
+    maxPoint: {
+        type: Number,
         required: true
     },
     img: {

@@ -14,12 +14,14 @@ export class BookProgresMongo implements BookProgresPort {
 }
 
 export class UpdateProgressMongo implements UpdateProgresPort {
-    async updateProgres(id: string, date: Partial<BookUserProgresRepo>): Promise<BookUserProgresRepo | null> {
-        const updateProgres = await BookProgressModel.findByIdAndUpdate(id, date, { new: true })
-        if (!updateProgres) {
-            return null
-        }
-        return updateProgres
+    async updateProgres(id: string, data: Partial<BookUserProgresRepo>): Promise<BookUserProgresRepo | null> {
+
+        const updated = await BookProgressModel.findByIdAndUpdate(
+            id,
+            { $set: data },
+            { new: true, runValidators: true }
+        );
+        return updated;
     }
 }
 
@@ -31,12 +33,14 @@ export class DeleteRepo implements deleteProgress {
 
 export class FindProgressMongo implements FindProgressPort {
     async findByUser(id: any): Promise<BookUserProgresRepo[]> {
-        const algo = "689a2a15666f7bedc309c68f"
-        const result = await BookProgressModel.find({ idUser: algo });
+        const result = await BookProgressModel.find({ idUser: id });
         return result;
     }
     async findByBook(id: any, idUser: any): Promise<BookUserProgresRepo[] | null> {
         const result = await BookProgressModel.find({ idBook: id, idUser: idUser });
         return result;
+    }
+    async findById(id: any): Promise<BookUserProgresRepo | null> {
+        return await BookProgressModel.findById(id)
     }
 }

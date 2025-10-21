@@ -29,13 +29,13 @@ export class LevelService implements ILevesRepo {
         }
         await this.levelRepo.deleteLevel(id)
     }
-    async findLevel(level: string): Promise<LevesTypes> {
+    async findLevel(level: number): Promise<LevesTypes> {
         return await this.levelRepo.findLevel(level)
     }
     async findLevelByID(id: any): Promise<LevesTypes | null> {
         return this.levelRepo.findLevelByID(id)
     }
-    async findFirtsLevel(uno: string): Promise<LevesTypes | null> {
+    async findFirtsLevel(uno: number): Promise<LevesTypes | null> {
         return this.levelRepo.findFirtsLevel(uno)
     }
 }

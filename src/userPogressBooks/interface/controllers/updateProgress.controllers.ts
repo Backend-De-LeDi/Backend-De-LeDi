@@ -1,33 +1,30 @@
-// import { Request, Response } from "express";
-// import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
-// import { UpdateProgressMongo, DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
-// import { GetBooksByIds } from "../../../books/application/getBooksByIds";
-// import { MongoBookRepository } from "../../../books/infrastructure/mongoBookRepository";
+import { Request, Response } from "express";
+import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
+import { FindProgressMongo, UpdateProgressMongo } from "../../infrastructure/bookProgressRepoMongo";
+import { findAndDeleteMongo, UpdateUSerMongo } from "../../../userService/infrastructure/userRespositoryMongo";
 
-// //intancias
-// const updateRepo = new UpdateProgressMongo();
-// const booksRepo = new MongoBookRepository();
-// const getBooksByIds = new GetBooksByIds(booksRepo);
-// const bookService = new UpdateProgressService(updateRepo, getBooksByIds);
+// Instancias
+const updateRepo = new UpdateProgressMongo();
+const getUser = new findAndDeleteMongo();
+const updateUser = new UpdateUSerMongo();
+const getProgress = new FindProgressMongo()
+const bookService = new UpdateProgressService(updateRepo, getProgress, getUser, updateUser);
 
-// //controllador para actualizar progreso
-// export const updateProgresBook = async (req: Request, res: Response) => {
-//     try {
-//         const id = req.user?.id;
-//         const objectId = typeof id === "string" ? new ObjectId(id) : id;
-//         const { id,..date } = req.body;
+// Controlador para actualizar progreso
+export const updateProgresBook = async (req: Request, res: Response) => {
+    try {
+        const { id, ...progressData } = req.body; // Tomamos id y el resto como datos del progreso
 
-//         const result = await bookService.updateProgres(id, date);
+        // Llamamos al servicio con los datos planos
+        const result = await bookService.updateProgres(id, progressData);
 
-//         if (!result) {
-//             res.status(200).json({ msg: 'Progress was unmarked and deleted successfully.' });
-//         } else {
-//             res.status(200).json({ msg: 'Progress updated successfully.', result });
-//         }
-
-
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "Internal server error", error });
-//     }
-// };
+        if (!result) {
+            res.status(200).json({ msg: 'Progress was unmarked and deleted successfully.' });
+        } else {
+            res.status(200).json({ msg: 'Progress updated successfully.', result });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error", error });
+    }
+};

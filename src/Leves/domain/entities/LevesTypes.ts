@@ -1,10 +1,11 @@
 import { photoProfile } from "../../../shared/types/photo.Types";
 
-//dates of user
+//dates of level
 export class LevesTypes {
   constructor(
-    public readonly level: string,
+    public readonly level: number,
     public readonly img: photoProfile,
+    public readonly maxPoint: number,
     public _id?: any
   ) { }
 }

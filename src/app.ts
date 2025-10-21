@@ -18,6 +18,7 @@ import { recommendationsRouter } from "./recommendations/interface/routers/recom
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
 import { levelRoutes } from "./Leves/interface/routes/level.routes";
+import { selecLevel } from "./userPogressBooks/domain/utils/selec_nivel";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -66,5 +67,4 @@ app.use(bookRouter);
 app.use(recommendationsRouter);
 app.use(forosRoutes)
 app.use(levelRoutes)
-
 

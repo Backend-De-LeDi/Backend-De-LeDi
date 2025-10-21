@@ -29,6 +29,7 @@ export const saveLevel = async (req: MulterRequest, res: Response) => {
         url_secura: levelUploaded.url_secura,
         id_image: levelUploaded.id_image,
       },
+      maxPoint: 0
     };
 
     const result = await levelControllers.saveLevel(date);
@@ -74,7 +75,7 @@ export const getLeves = async (req: Request, res: Response) => {
 };
 export const getFirtsLevel = async (req: Request, res: Response) => {
   try {
-    const firtsLevel = await levelControllers.findFirtsLevel("UNO")
+    const firtsLevel = await levelControllers.findFirtsLevel(1)
     res.status(200).json(firtsLevel)
   } catch (error) {
     console.error(error);

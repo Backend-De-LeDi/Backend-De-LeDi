@@ -11,7 +11,7 @@ export class LevelMongoRepository implements ILevesRepo {
         const newLevel = new LevelModel(level);
         return await newLevel.save()
     }
-    async findLevel(level: string): Promise<LevesTypes> {
+    async findLevel(level: number): Promise<LevesTypes> {
         const result = await LevelModel.findOne({ level: level })
         if (!result) throw new Error('Level not found')
         return result
@@ -24,7 +24,7 @@ export class LevelMongoRepository implements ILevesRepo {
     async findLevelByID(id: any): Promise<LevesTypes | null> {
         return await LevelModel.findById(id)
     }
-    async findFirtsLevel(uno: string): Promise<LevesTypes | null> {
+    async findFirtsLevel(uno: number): Promise<LevesTypes | null> {
         return await LevelModel.findOne({ level: uno })
     }
 }
