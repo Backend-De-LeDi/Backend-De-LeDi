@@ -13,4 +13,6 @@ export interface AIRepository {
   insertBookToDocuments(idBoook: Types.ObjectId): Promise<void>
   chatBot(message: string): Promise<string>;
   deleteBookFromDocuments(idBook: string): Promise<void>
+  insertAuthorToDocuments(authorId: Types.ObjectId): Promise<void>
+  deleteAuthorFromDocuments(idBook: string): Promise<void>
 }
