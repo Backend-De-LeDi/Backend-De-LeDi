@@ -13,7 +13,7 @@ export const validateJWT = (req: Request, res: Response, next: NextFunction): vo
   console.log({ tokenCookie });
   console.log({ tokenHeader });
 
-  const token: string = tokenHeader || tokenCookie;
+  const token: string = tokenCookie || tokenHeader;
 
   if (!token) {
     res.status(403).json({ message: "Token no proporcionado" });
