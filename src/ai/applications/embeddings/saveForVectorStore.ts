@@ -10,3 +10,13 @@ export class SaveForVectorStore {
 
      }
 }
+
+export class SaveForVectorStoreAuthors {
+     constructor(private repository: AIRepository) { }
+
+     async exec(idAuthor: Types.ObjectId) {
+
+          this.repository.insertAuthorToDocuments(idAuthor)
+
+     }
+}
