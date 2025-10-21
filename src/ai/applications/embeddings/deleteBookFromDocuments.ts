@@ -7,3 +7,11 @@ export class DeleteBookFromDocuments {
           await this.repository.deleteBookFromDocuments(idBook)
      }
 }
+
+export class DeleteAuthorFromDocuments {
+     constructor(private repository: AIRepository) { }
+
+     async exec(idBook: string): Promise<void> {
+          await this.repository.deleteAuthorFromDocuments(idBook)
+     }
+}
