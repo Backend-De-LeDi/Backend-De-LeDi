@@ -3,7 +3,8 @@ import { DeleteAuthor } from "../../domain/ports/deleteAuthorRepository";
 import { FindAuthor } from "../../domain/ports/findAuthorRepository";
 
 export class DeleteAuthors implements DeleteAuthor {
-    constructor(private readonly deleteAuthors: DeleteAuthor,
+    constructor(
+        private readonly deleteAuthors: DeleteAuthor,
         private readonly findAthors: FindAuthor
     ) { }
     async deleteAuthor(id: any): Promise<void> {
@@ -22,3 +23,4 @@ export class DeleteAuthors implements DeleteAuthor {
         await this.deleteAuthors.deleteAuthor(id)
     }
 }
+

@@ -1,7 +1,7 @@
-import { IBook } from "../../../shared/types/bookTypes/bookTypes";
+import { BookDetail } from "../../../shared/types/bookTypes/bookTypes";
 import { Schema, model } from "mongoose";
 
-const bookSchema = new Schema<IBook>(
+const bookSchema = new Schema<BookDetail>(
   {
     title: { type: String, required: true },
     author: [{ type: Schema.Types.ObjectId, ref: "AuthorModel" }],
@@ -34,5 +34,28 @@ const bookSchema = new Schema<IBook>(
   { timestamps: true }
 );
 
-const BookModel = model<IBook>("Books", bookSchema);
+bookSchema.index(
+  {
+    title: "text",
+    summary: "text",
+    synopsis: "text",
+    theme: "text",
+    genre: "text",
+    subgenre: "text"
+  },
+  {
+    default_language: "spanish",
+    name: "BookTextIndex",
+    weights: {
+      title: 5,
+      summary: 3,
+      synopsis: 2,
+      theme: 2,
+      genre: 1,
+      subgenre: 1
+    }
+  }
+);
+
+const BookModel = model<BookDetail>("Books", bookSchema);
 export { BookModel };

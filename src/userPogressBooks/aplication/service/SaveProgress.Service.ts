@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
 import { BookProgresPort } from "../../domain/ports/saveProgres.Ports";
-import { GetBooksByIds } from "../../../books/application/getBooksByIds";
+import { GetBooksByIds } from "../../../books/application";
 
 export class BookSaveProgres {
     constructor(

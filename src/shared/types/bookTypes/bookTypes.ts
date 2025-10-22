@@ -1,12 +1,19 @@
-import { Types, Document, NumberExpression } from "mongoose";
+import { Types, Document } from "mongoose";
 import { ContentBook, FullContentBook } from "./contentBookTypes";
 
-export interface BookCoverImage {
+// Imagen de portada básica
+export interface BookCover {
   idBookCoverImage: string;
   url_secura: string;
 }
 
-export interface PropBooks extends Document {
+// Imagen de portada con _id persistente
+export interface BookCoverFull extends BookCover {
+  _id: string;
+}
+
+// Entidad base de libro (persistencia)
+export interface BookBase extends Document {
   title: string;
   author: Types.ObjectId[];
   summary: string;
@@ -24,16 +31,19 @@ export interface PropBooks extends Document {
   fileExtension: string;
 }
 
-export interface IBook extends PropBooks {
+// Libro con contenido y portada
+export interface BookDetail extends BookBase {
   contentBook: ContentBook;
-  bookCoverImage: BookCoverImage;
+  bookCoverImage: BookCover;
 }
 
-export interface SearchedBook extends IBook {
+// Libro usado en búsquedas
+export interface BookSearch extends BookDetail {
   _id: unknown;
   __v: number;
 }
 
-export interface BookContent extends Omit<SearchedBook, "content"> {
+// Libro con contenido expandido
+export interface BookWithContent extends Omit<BookSearch, "content"> {
   content: FullContentBook;
 }

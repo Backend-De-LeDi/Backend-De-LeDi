@@ -12,7 +12,11 @@ const deleteAuthorService = new DeleteAuthors(deleteAuthorRepo, findAuthorRepo);
 export const deleteAuthorById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        await deleteAuthorService.deleteAuthor(id);
+        const result = await deleteAuthorService.deleteAuthor(id);
+        if (result === null) {
+            res.status(404).json({ message: "Author not found" });
+            return
+        }
         res.status(200).json({ message: "Author deleted successfully" });
 
     } catch (error) {

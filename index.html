@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Comentarios</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .status {
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .connected {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .disconnected {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .filter-section {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .filter-section h2 {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #2c3e50;
+      }
+
+      .filter-controls {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .content {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .comments-section,
+      .form-section {
+        flex: 1;
+        min-width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comments-section h2,
+      .form-section h2 {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #2c3e50;
+      }
+
+      .comment-list {
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+
+      .comment {
+        background: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #6a11cb;
+        transition: transform 0.2s;
+      }
+
+      .comment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-name {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .user-email {
+        font-size: 0.8rem;
+        color: #6c757d;
+      }
+
+      .comment-content {
+        font-size: 1rem;
+        color: #333;
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+
+      .comment-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 10px;
+      }
+
+      .foro-id {
+        background-color: #e9ecef;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border 0.3s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #6a11cb;
+        box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .btn-filter {
+        padding: 12px 25px;
+      }
+
+      .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;
+        display: none;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .foros-list {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .foro-item {
+        padding: 8px;
+        margin-bottom: 5px;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .foro-item:hover {
+        background-color: #e9ecef;
+      }
+
+      .active-foro {
+        background-color: #e7f1ff;
+        border-left: 3px solid #2575fc;
+      }
+
+      .users-list {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .user-item {
+        padding: 8px;
+        margin-bottom: 5px;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .user-item:hover {
+        background-color: #e9ecef;
+      }
+
+      .active-user {
+        background-color: #e7f1ff;
+        border-left: 3px solid #2575fc;
+      }
+
+      .filter-tabs {
+        display: flex;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .filter-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+      }
+
+      .filter-tab.active {
+        border-bottom: 3px solid #6a11cb;
+        color: #6a11cb;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+
+        .comments-section,
+        .form-section {
+          width: 100%;
+        }
+
+        .filter-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filter-group {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Sistema de Comentarios</h1>
+        <p class="subtitle">Visualiza y crea comentarios en tiempo real</p>
+      </header>
+
+      <div id="status" class="status disconnected">
+        Desconectado del servidor
+      </div>
+
+      <section class="filter-section">
+        <h2>Filtrar Comentarios</h2>
+
+        <div class="filter-tabs">
+          <div class="filter-tab active" data-tab="foro">Por Foro</div>
+          <div class="filter-tab" data-tab="usuario">Por Usuario</div>
+        </div>
+
+        <div id="foro-filter-container" class="filter-content">
+          <div class="filter-controls">
+            <div class="filter-group">
+              <label for="foro-filter">ID del Foro:</label>
+              <input
+                type="text"
+                id="foro-filter"
+                placeholder="Ingresa el ID del foro"
+              />
+            </div>
+            <button id="filter-btn" class="btn-filter">Filtrar por Foro</button>
+            <button id="show-all-btn" class="btn-filter">Mostrar Todos</button>
+          </div>
+          <div id="foros-container" style="display: none">
+            <h3>Foros Disponibles</h3>
+            <div id="foros-list" class="foros-list"></div>
+          </div>
+        </div>
+
+        <div
+          id="user-filter-container"
+          class="filter-content"
+          style="display: none"
+        >
+          <div class="filter-controls">
+            <div class="filter-group">
+              <label for="user-filter">ID del Usuario:</label>
+              <input
+                type="text"
+                id="user-filter"
+                placeholder="Ingresa el ID del usuario"
+              />
+            </div>
+            <button id="filter-user-btn" class="btn-filter">
+              Filtrar por Usuario
+            </button>
+            <button id="show-all-btn2" class="btn-filter">Mostrar Todos</button>
+          </div>
+          <div id="users-container" style="display: none">
+            <h3>Usuarios Disponibles</h3>
+            <div id="users-list" class="users-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="content">
+        <section class="comments-section">
+          <h2>Comentarios</h2>
+          <div id="comment-list" class="comment-list">
+            <div class="empty-state">
+              <i>📝</i>
+              <p>Cargando comentarios...</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>Nuevo Comentario</h2>
+          <form id="comment-form">
+            <div class="form-group">
+              <label for="idForo">ID del Foro:</label>
+              <input type="text" id="idForo" required />
+            </div>
+
+            <div class="form-group">
+              <label for="idUser">ID del Usuario:</label>
+              <input type="text" id="idUser" required />
+            </div>
+
+            <div class="form-group">
+              <label for="content">Comentario:</label>
+              <textarea id="content" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-full">Publicar Comentario</button>
+          </form>
+
+          <div id="error-message" class="error-message"></div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      // Conectar al servidor Socket.IO
+      const socket = io("http://localhost:3402"); // Ajusta la URL según tu servidor
+
+      // Elementos del DOM
+      const statusElement = document.getElementById("status");
+      const commentList = document.getElementById("comment-list");
+      const commentForm = document.getElementById("comment-form");
+      const errorMessage = document.getElementById("error-message");
+      const foroFilter = document.getElementById("foro-filter");
+      const filterBtn = document.getElementById("filter-btn");
+      const showAllBtn = document.getElementById("show-all-btn");
+      const forosContainer = document.getElementById("foros-container");
+      const forosList = document.getElementById("foros-list");
+
+      // Nuevos elementos para filtro por usuario
+      const userFilter = document.getElementById("user-filter");
+      const filterUserBtn = document.getElementById("filter-user-btn");
+      const showAllBtn2 = document.getElementById("show-all-btn2");
+      const usersContainer = document.getElementById("users-container");
+      const usersList = document.getElementById("users-list");
+
+      // Elementos de pestañas
+      const filterTabs = document.querySelectorAll(".filter-tab");
+      const foroFilterContainer = document.getElementById(
+        "foro-filter-container"
+      );
+      const userFilterContainer = document.getElementById(
+        "user-filter-container"
+      );
+
+      // Variables para almacenar datos
+      let availableForos = [];
+      let availableUsers = [];
+
+      // Manejar conexión exitosa
+      socket.on("connect", () => {
+        console.log("Conectado al servidor con ID:", socket.id);
+        statusElement.textContent = "Conectado al servidor";
+        statusElement.className = "status connected";
+
+        // Solicitar todos los comentarios, foros y usuarios al conectar
+        socket.emit("all-public");
+        socket.emit("get-all-foros");
+        // Asumiendo que existe un endpoint para obtener usuarios
+        // socket.emit("get-all-users");
+      });
+
+      // Manejar desconexión
+      socket.on("disconnect", () => {
+        console.log("Desconectado del servidor");
+        statusElement.textContent = "Desconectado del servidor";
+        statusElement.className = "status disconnected";
+      });
+
+      // Manejar errores
+      socket.on("error", (data) => {
+        console.error("Error del servidor:", data.msg);
+        showError(data.msg);
+      });
+
+      // Recibir todos los comentarios
+      socket.on("coments", (coments) => {
+        console.log("Comentarios recibidos:", coments);
+        displayComents(coments);
+      });
+
+      // Recibir comentarios de un foro específico
+      socket.on("coments-in-the-foro", (coments) => {
+        console.log("Comentarios del foro recibidos:", coments);
+        displayComents(coments);
+
+        // Actualizar el filtro activo
+        const activeForo = foroFilter.value;
+        if (activeForo) {
+          highlightActiveForo(activeForo);
+        }
+      });
+
+      // Recibir comentarios de un usuario específico
+      socket.on("user-publics", (coments) => {
+        console.log("Comentarios del usuario recibidos:", coments);
+        displayComents(coments);
+
+        // Actualizar el filtro activo
+        const activeUser = userFilter.value;
+        if (activeUser) {
+          highlightActiveUser(activeUser);
+        }
+      });
+
+      // Recibir lista de foros
+      socket.on("all-foros", (foros) => {
+        console.log("Foros recibidos:", foros);
+        availableForos = foros;
+        displayForosList(foros);
+      });
+
+      // Recibir lista de usuarios (asumiendo que existe este endpoint)
+      // socket.on("all-users", (users) => {
+      //   console.log("Usuarios recibidos:", users);
+      //   availableUsers = users;
+      //   displayUsersList(users);
+      // });
+
+      // Manejar envío del formulario
+      commentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const idForo = document.getElementById("idForo").value;
+        const idUser = document.getElementById("idUser").value;
+        const content = document.getElementById("content").value;
+
+        if (!idForo || !idUser || !content) {
+          showError("Todos los campos son obligatorios");
+          return;
+        }
+
+        const newComent = {
+          idForo,
+          idUser,
+          content,
+        };
+
+        // Enviar nuevo comentario al servidor
+        socket.emit("new-public", newComent);
+
+        // Limpiar formulario
+        commentForm.reset();
+        hideError();
+      });
+
+      // Manejar filtro por foro
+      filterBtn.addEventListener("click", () => {
+        const foroId = foroFilter.value.trim();
+        if (foroId) {
+          socket.emit("all-public-foro", foroId);
+          // Limpiar filtro de usuario
+          userFilter.value = "";
+          clearUserHighlight();
+        } else {
+          showError("Ingresa un ID de foro válido");
+        }
+      });
+
+      // Manejar filtro por usuario
+      filterUserBtn.addEventListener("click", () => {
+        const userId = userFilter.value.trim();
+        if (userId) {
+          socket.emit("all-publics-idUSer", userId);
+          // Limpiar filtro de foro
+          foroFilter.value = "";
+          clearForoHighlight();
+        } else {
+          showError("Ingresa un ID de usuario válido");
+        }
+      });
+
+      // Manejar mostrar todos los comentarios (desde filtro foro)
+      showAllBtn.addEventListener("click", () => {
+        socket.emit("all-public");
+        foroFilter.value = "";
+        userFilter.value = "";
+        clearForoHighlight();
+        clearUserHighlight();
+      });
+
+      // Manejar mostrar todos los comentarios (desde filtro usuario)
+      showAllBtn2.addEventListener("click", () => {
+        socket.emit("all-public");
+        foroFilter.value = "";
+        userFilter.value = "";
+        clearForoHighlight();
+        clearUserHighlight();
+      });
+
+      // Manejar cambio entre pestañas de filtro
+      filterTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const tabType = tab.dataset.tab;
+
+          // Actualizar pestañas activas
+          filterTabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          // Mostrar/ocultar contenedores de filtro
+          if (tabType === "foro") {
+            foroFilterContainer.style.display = "block";
+            userFilterContainer.style.display = "none";
+          } else if (tabType === "usuario") {
+            foroFilterContainer.style.display = "none";
+            userFilterContainer.style.display = "block";
+          }
+        });
+      });
+
+      // Función para obtener iniciales del nombre de usuario
+      function getInitials(userName) {
+        return userName
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase())
+          .join("")
+          .substring(0, 2);
+      }
+
+      // Función para mostrar comentarios
+      function displayComents(coments) {
+        if (!coments || coments.length === 0) {
+          commentList.innerHTML = `
+            <div class="empty-state">
+              <i>💬</i>
+              <p>No hay comentarios disponibles</p>
+              <p>¡Sé el primero en comentar!</p>
+            </div>
+          `;
+          return;
+        }
+
+        commentList.innerHTML = "";
+
+        coments.forEach((coment) => {
+          const commentElement = document.createElement("div");
+          commentElement.className = "comment";
+
+          // Formatear fecha
+          const date = new Date(coment.createdAt);
+          const formattedDate = date.toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          // Obtener iniciales del usuario
+          const initials = getInitials(coment.idUser.userName);
+
+          commentElement.innerHTML = `
+            <div class="user-info">
+              <div class="user-avatar">${initials}</div>
+              <div class="user-details">
+                <div class="user-name">${coment.idUser.userName}</div>
+                <div class="user-email">${coment.idUser.email}</div>
+              </div>
+            </div>
+            <div class="comment-content">
+              ${coment.content}
+            </div>
+            <div class="comment-footer">
+              <span>${formattedDate}</span>
+              <span class="foro-id">Foro: ${coment.idForo}</span>
+            </div>
+          `;
+
+          commentList.appendChild(commentElement);
+        });
+      }
+
+      // Función para mostrar lista de foros
+      function displayForosList(foros) {
+        if (!foros || foros.length === 0) {
+          forosContainer.style.display = "none";
+          return;
+        }
+
+        forosContainer.style.display = "block";
+        forosList.innerHTML = "";
+
+        foros.forEach((foro) => {
+          const foroItem = document.createElement("div");
+          foroItem.className = "foro-item";
+          foroItem.textContent = `${foro.title || "Foro sin título"} (ID: ${
+            foro._id
+          })`;
+          foroItem.dataset.foroId = foro._id;
+
+          foroItem.addEventListener("click", () => {
+            foroFilter.value = foro._id;
+            socket.emit("all-public-foro", foro._id);
+          });
+
+          forosList.appendChild(foroItem);
+        });
+      }
+
+      // Función para mostrar lista de usuarios (si estuviera disponible)
+      function displayUsersList(users) {
+        if (!users || users.length === 0) {
+          usersContainer.style.display = "none";
+          return;
+        }
+
+        usersContainer.style.display = "block";
+        usersList.innerHTML = "";
+
+        users.forEach((user) => {
+          const userItem = document.createElement("div");
+          userItem.className = "user-item";
+          userItem.textContent = `${user.userName || "Usuario"} (ID: ${
+            user._id
+          })`;
+          userItem.dataset.userId = user._id;
+
+          userItem.addEventListener("click", () => {
+            userFilter.value = user._id;
+            socket.emit("all-publics-idUSer", user._id);
+          });
+
+          usersList.appendChild(userItem);
+        });
+      }
+
+      // Función para resaltar el foro activo
+      function highlightActiveForo(foroId) {
+        // Quitar resaltado anterior
+        clearForoHighlight();
+
+        // Resaltar el foro activo
+        const foroItems = document.querySelectorAll(".foro-item");
+        foroItems.forEach((item) => {
+          if (item.dataset.foroId === foroId) {
+            item.classList.add("active-foro");
+          }
+        });
+      }
+
+      // Función para resaltar el usuario activo
+      function highlightActiveUser(userId) {
+        // Quitar resaltado anterior
+        clearUserHighlight();
+
+        // Resaltar el usuario activo
+        const userItems = document.querySelectorAll(".user-item");
+        userItems.forEach((item) => {
+          if (item.dataset.userId === userId) {
+            item.classList.add("active-user");
+          }
+        });
+      }
+
+      // Función para quitar resaltado de foros
+      function clearForoHighlight() {
+        const foroItems = document.querySelectorAll(".foro-item");
+        foroItems.forEach((item) => {
+          item.classList.remove("active-foro");
+        });
+      }
+
+      // Función para quitar resaltado de usuarios
+      function clearUserHighlight() {
+        const userItems = document.querySelectorAll(".user-item");
+        userItems.forEach((item) => {
+          item.classList.remove("active-user");
+        });
+      }
+
+      // Función para mostrar errores
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+      }
+
+      // Función para ocultar errores
+      function hideError() {
+        errorMessage.style.display = "none";
+      }
+    </script>
+  </body>
+</html>
