@@ -10,6 +10,7 @@ import cookies from "cookie-parser";
 import { userRoutes } from "./userService/interfaces/routes/userService.routes";
 import { autorRoutes } from "./authorService/interfaces/routes/authors.routes";
 import bookRouter from "./books/interfaces/router/index";
+import bookRouter from "./books/interfaces/router/index";
 import { authRoutes } from "./authService/interfaces/routes/auth.routes";
 import session from "express-session";
 import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress.routes";
@@ -35,6 +36,11 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
+  cors({
+    origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
 );
 app.use(cookies());
 app.use(morgan("dev"));
@@ -53,6 +59,15 @@ app.use(
       maxAge: 3600000,
     },
   })
+  session({
+    secret: "tu_clave_secreta",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // poner true solo si usas HTTPS
+      maxAge: 3600000,
+    },
+  })
 );
 
 // ? configuración de rutas
@@ -60,6 +75,7 @@ app.use(userRoutes);
 app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
+app.use(avaRoutes);
 app.use(avaRoutes);
 app.use(bookRouter);
 app.use(forosRoutes);

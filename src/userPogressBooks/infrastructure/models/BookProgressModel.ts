@@ -45,9 +45,17 @@ const BookProgresSchema = new Schema<BookUserProgresRepo>(
       required: true,
       default: Date.now,
     },
+    finishDate: {
+      type: Date,
+      default: Date.now,
+    },
+    UpdateLast: {
+      type: Date,
+      default: Date.now
+    }
   },
   {
-    timestamps: false,
+    timestamps: true,
   }
 );
 
