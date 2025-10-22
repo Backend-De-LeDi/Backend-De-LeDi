@@ -5,6 +5,7 @@ export interface Gamble {
   ecenary: string;
   page: number;
   option: string;
+  score: number;
 }
 
 export type ContentBookLiteral = {

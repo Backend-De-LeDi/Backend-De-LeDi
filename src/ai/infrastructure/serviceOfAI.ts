@@ -17,10 +17,11 @@ import { quizModel } from "./model/createYourHistoModel";
 import { finalQuiz } from "./model/createYourHistoModel";
 import { BookModel } from "../../books/infrastructure/model/books.model";
 import { AuthorModel } from "../../authorService/infrastructure/models/authores.Model";
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js";
 import ENV from "../../shared/config/configEnv";
 import { generateEmbeddingForAi } from "../../shared/utils/generateEmbedding";
 import { BookDetail } from "../../shared/types/bookTypes/bookTypes";
+import { TempData } from "./model/tempData";
 
 const supabaseBooks = createClient(ENV.URL_SUPABASE[0]!, ENV.SUPABASE_KEY[0]!);
 const supabaseAuthors = createClient(ENV.URL_SUPABASE[1]!, ENV.SUPABASE_KEY[1]!);
@@ -83,6 +84,7 @@ export class ConnectionAI implements AIRepository {
       });
 
       const event = completion.choices[0].message.parsed;
+
       return event;
     } catch (error) {
       separator();
@@ -173,17 +175,14 @@ export class ConnectionAI implements AIRepository {
     if (!book || !book.author || book.author.length === 0) return;
 
     const authorDocs = await AuthorModel.find({ _id: { $in: book.author } });
-    const authorsData = authorDocs.map(a => ({
+    const authorsData = authorDocs.map((a) => ({
       author_mongo_id: a._id.toString(),
-      author_full_name: a.fullName
+      author_full_name: a.fullName,
     }));
 
-    const textForEmbedding = [
-      book.title,
-      book.summary,
-      book.synopsis,
-      ...authorsData.map(a => a.author_full_name)
-    ].filter(Boolean).join(". ");
+    const textForEmbedding = [book.title, book.summary, book.synopsis, ...authorsData.map((a) => a.author_full_name)]
+      .filter(Boolean)
+      .join(". ");
 
     const embedding = await generateEmbeddingForAi(textForEmbedding);
     const content = textForEmbedding;
@@ -203,7 +202,7 @@ export class ConnectionAI implements AIRepository {
       level: book.level,
       format: book.format,
       file_extension: book.fileExtension,
-      authors: authorsData // ← nombre + ID Mongo
+      authors: authorsData, // ← nombre + ID Mongo
     };
 
     const { error } = await supabaseBooks.from("documents").insert({ content, metadata, embedding });
@@ -218,9 +217,9 @@ export class ConnectionAI implements AIRepository {
     const author = await AuthorModel.findById(authorId);
     if (!author) return;
 
-    const books = await BookModel.find({}).populate("author") as (BookDetail & { _id: Types.ObjectId })[];
+    const books = (await BookModel.find({}).populate("author")) as (BookDetail & { _id: Types.ObjectId })[];
 
-    const libros = books.map(b => ({
+    const libros = books.map((b) => ({
       id_mongo: b._id.toString(),
       title: b.title,
     }));
@@ -233,7 +232,8 @@ export class ConnectionAI implements AIRepository {
       author.birthplace,
       author.nationality,
       ...(author.writingGenre || []),
-      ... (libros.map(l => l.title) || [""]), ,
+      ...(libros.map((l) => l.title) || [""]),
+      ,
     ]
       .filter(Boolean)
       .join(". ");
@@ -267,10 +267,7 @@ export class ConnectionAI implements AIRepository {
   }
 
   async deleteBookFromDocuments(bookId: string): Promise<void> {
-    const { error } = await supabaseAuthors
-      .from("documents")
-      .delete()
-      .eq("metadata->>id_mongo", bookId.toString()); // ← clave literal en metadata
+    const { error } = await supabaseAuthors.from("documents").delete().eq("metadata->>id_mongo", bookId.toString()); // ← clave literal en metadata
 
     if (error) {
       console.error("Error eliminando documento:", error);
@@ -278,14 +275,10 @@ export class ConnectionAI implements AIRepository {
   }
 
   async deleteAuthorFromDocuments(idAuthor: string): Promise<void> {
-    const { error } = await supabaseAuthors
-      .from("documents")
-      .delete()
-      .eq("metadata->>id_mongo", idAuthor.toString()); // ← clave literal en metadata
+    const { error } = await supabaseAuthors.from("documents").delete().eq("metadata->>id_mongo", idAuthor.toString()); // ← clave literal en metadata
 
     if (error) {
       console.error("Error eliminando documento:", error);
     }
   }
 }
-
