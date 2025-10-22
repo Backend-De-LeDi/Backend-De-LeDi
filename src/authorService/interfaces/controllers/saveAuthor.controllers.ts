@@ -9,7 +9,7 @@ import { DeleteAuthors } from "../../app/service/DeleteAuthor.service";
 
 const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorMongoRepo();
 const findAuthorRepo = new findAuthorMongoRepo();
-const deleteAuthor = new DeleteAuthors(new DeleteAuthorMongoRepo())
+
 const authorService = new CreateAuthor(saveAuthorMongo, findAuthorRepo);
 
 export const createAuthor = async (req: Request, res: Response) => {

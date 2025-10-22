@@ -12,7 +12,7 @@ export const findByProgressIdControllers = async (req: Request, res: Response) =
     try {
         const id = req.user?.id;
         const objectId = typeof id === "string" ? new ObjectId(id) : id;
-        const result = await findProgress.findByUser(id)
+        const result = await findProgress.findByUser(objectId)
         if (!result) {
             res.status(404).json({ msg: 'the progress user not found' })
         }
@@ -20,5 +20,22 @@ export const findByProgressIdControllers = async (req: Request, res: Response) =
     } catch (error) {
         console.log('the server error', error)
         res.status(500).json({ msg: 'the internal server error' })
+    }
+}
+export const findProgressByBook = async (req: Request, res: Response) => {
+    try {
+        const idUser = req.user?.id;
+        const objectId = typeof idUser === "string" ? new ObjectId(idUser) : idUser;
+        const idBook = req.params.id;
+
+        const result = await findProgress.findByBook(idBook, idUser)
+        if (!result) {
+            res.status(404).json({ msg: 'the progress user not found' })
+        }
+        res.status(200).json({ result })
+    } catch (error) {
+        console.log('the server error', error)
+        res.status(500).json({ msg: 'the internal server error' })
+
     }
 }

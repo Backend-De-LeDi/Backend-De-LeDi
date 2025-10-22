@@ -20,4 +20,7 @@ export class AvatarMongoRepository implements IAvatar {
         const result = await AvatarModel.findByIdAndDelete(id)
 
     }
+    async findAvatarById(id: any): Promise<AvatarType | null> {
+        return await AvatarModel.findById(id)
+    }
 }

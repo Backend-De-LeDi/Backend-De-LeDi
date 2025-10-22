@@ -8,7 +8,10 @@ import { findForoById, findForosLogic } from "./BookClub/foros/interface/control
 import { createComentLogic } from "./BookClub/coments/interface/controllers/createComentControllers";
 import chalk from "chalk";
 import { app } from "./app";
-import { getAllComents } from "./BookClub/coments/interface/controllers/findComentControllers";
+import { getAllComents, getComentByUserID, getComentsByForo } from "./BookClub/coments/interface/controllers/findComentControllers";
+import { emit } from "process";
+import { selecLevel } from "./userPogressBooks/domain/utils/selec_nivel";
+import { createAnsweController } from "./BookClub/coments/interface/controllers/createAsnwer.Controller";
 
 const server = createServer(app)
 const io = new Server(server, {
@@ -19,8 +22,16 @@ const io = new Server(server, {
 });
 
 
-io.on("connection", (socket: Socket) => {
+io.on("connection", async (socket: Socket) => {
+    console.log("Conectado al servidor con id:", socket.id);
 
+    try {
+        const coments = await getAllComents();
+        socket.emit("coments", coments);
+    } catch (error) {
+        socket.emit("error", { msg: "Error al cargar comentarios" });
+    }
+    //? get foros 
     socket.on("get-all-foros", async () => {
         try {
             const foros = await findForosLogic()
@@ -42,30 +53,63 @@ io.on("connection", (socket: Socket) => {
             socket.emit("error", { msg: "Error al obtener foro por ID" });
         }
     })
-
+    // ? creates- updates and deletes foros
     socket.on("new-public", async (data: ComentTypes) => {
         try {
-            const result = await createComentLogic(data);
-            io.emit("coment-created", result);
+            await createComentLogic(data);
+            const coments = await getAllComents();
+            io.emit("coments", coments);
         } catch (error) {
             console.error("Error en new-public:", error);
             socket.emit("error", { msg: "Error al crear el comentario" });
         }
     });
-    socket.on("new-public", async (data: ComentTypes) => {
+    //? get Coments
+    socket.on("all-public", async () => {
         try {
-            const result = await createComentLogic(data);
-
-            io.emit("coment-created", result);
+            const result = await getAllComents();
+            console.log(result)
+            io.emit("coments", result);
         } catch (error) {
-            socket.emit("error", { msg: "Error al crear el comentario" });
+            console.error("Error en all-public:", error);
+            socket.emit("error", { msg: "Error al obtener todos los comentarios" });
         }
     });
-    socket.on("all-public", async () => {
-        const result = await getAllComents()
-        io.emit("coments", result)
-    })
+    socket.on("all-public-foro", async (foroId: string) => {
+        try {
+            const coments = await getComentsByForo(foroId);
+            socket.emit("coments-in-the-foro", coments);
+        } catch (error) {
+            console.error("Error en all-public-foro:", error);
+            socket.emit("error", { msg: "Error al obtener comentarios del foro" });
+        }
+    });
+    socket.on("all-publics-idUSer", async (idUser: string) => {
+        try {
+            const result = await getComentByUserID(idUser);
+            console.log(result)
+            console.log(`comentarios de ${idUser},result`)
+            io.emit("user-publics", result);
+        } catch (error) {
+            console.error("Error al traer las publicaciones del usuario:", error);
+            io.emit("error", {
+                msg: "Error al obtener comentarios por userID", error
+            })
+        }
+        socket.on("create-answer", async (idComent, data: ComentTypes) => {
+            try {
+                await createAnsweController(idComent, data);
+                const coments = await getAllComents();
+                io.emit("coments", coments);
+            } catch (error) {
+                console.error("Error en new-public:", error);
+                socket.emit("error", { msg: "Error al crear el comentario" });
+            }
 
+        })
+
+
+    });
 })
 // ? configuración de puerto
 

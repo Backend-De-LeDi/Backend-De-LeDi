@@ -5,10 +5,13 @@ export class BookUserProgresRepo {
         public readonly idUser: Types.ObjectId,
         public readonly idBook: Types.ObjectId,
         public unit: "page" | "second",
-        public readonly position: number,
+        public position: number,
         public percent: number,
         public total: number,
         public readonly status: "reading" | "finished" | "pending" | "abandoned",
         public readonly startDate: Date,
+        public finishDate: Date,
+        public readonly UpdateLast: Date
+
     ) { }
 }

@@ -1,29 +1,28 @@
 import { Request, Response } from "express";
 import { UpdateProgressService } from "../../aplication/service/UpdateProgress.Service";
-import { UpdateProgressMongo, DeleteRepo } from "../../infrastructure/bookProgressRepoMongo";
-import { GetBooksByIds } from "../../../books/application";
-import { MongoQueryRepository } from "../../../books/infrastructure/mongo";
+import { FindProgressMongo, UpdateProgressMongo } from "../../infrastructure/bookProgressRepoMongo";
+import { findAndDeleteMongo, UpdateUSerMongo } from "../../../userService/infrastructure/userRespositoryMongo";
 
-//intancias 
+// Instancias
 const updateRepo = new UpdateProgressMongo();
-const booksRepo = new MongoQueryRepository();
-const getBooksByIds = new GetBooksByIds(booksRepo);
-const bookService = new UpdateProgressService(updateRepo, getBooksByIds);
+const getUser = new findAndDeleteMongo();
+const updateUser = new UpdateUSerMongo();
+const getProgress = new FindProgressMongo()
+const bookService = new UpdateProgressService(updateRepo, getProgress, getUser, updateUser);
 
-//controllador para actualizar progreso
+// Controlador para actualizar progreso
 export const updateProgresBook = async (req: Request, res: Response) => {
     try {
-        const { id, ...date } = req.body;
+        const { id, ...progressData } = req.body; // Tomamos id y el resto como datos del progreso
 
-        const result = await bookService.updateProgres(id, date);
+        // Llamamos al servicio con los datos planos
+        const result = await bookService.updateProgres(id, progressData);
 
         if (!result) {
             res.status(200).json({ msg: 'Progress was unmarked and deleted successfully.' });
         } else {
             res.status(200).json({ msg: 'Progress updated successfully.', result });
         }
-
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error", error });

@@ -6,7 +6,7 @@ export class DeleteComentService implements IDeleteComent {
     ) {
 
     }
-    async deleteComent(id: any): Promise<void> {
-        await this.deleteComentRepo.deleteComent(id)
+    async deleteComent(id: any, userId: any): Promise<void> {
+        await this.deleteComentRepo.deleteComent(id, userId)
     }
 }
