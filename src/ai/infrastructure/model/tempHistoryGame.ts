@@ -37,6 +37,10 @@ const tempHistoryGame = new Schema({
   options: {
     type: [optionSchema],
   },
+  chosenOptions: {
+    type: [optionSchema],
+    default: [],
+  },
   total: {
     type: Number,
     required: true,

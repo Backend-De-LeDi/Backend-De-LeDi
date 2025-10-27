@@ -16,6 +16,7 @@ import { createYourHistoModel } from "./schemas/games";
 import { quizModel } from "./schemas/games";
 import { separator } from "../../shared/utils/consoleSeparator";
 import { Quiz } from "../../shared/types/gamesTypes/gameTypes";
+import { ResGame } from "../../shared/types/gamesTypes/gameTypes";
 
 export class GameDriver implements GameRepository {
   private openai = new OpenAI({
