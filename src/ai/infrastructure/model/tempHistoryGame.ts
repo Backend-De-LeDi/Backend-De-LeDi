@@ -26,13 +26,9 @@ const tempHistoryGame = new Schema({
     type: String,
     required: [true, "titulo del juego"],
   },
-  scenary: {
+  scenery: {
     type: String,
     required: [true, "El escenario debe tener contenido narrativo"],
-  },
-  page: {
-    type: Number,
-    required: true,
   },
   options: {
     type: [optionSchema],
