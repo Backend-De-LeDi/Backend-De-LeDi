@@ -5,6 +5,11 @@ import { Types } from "mongoose";
 import { BookProgressModel } from "../../userPogressBooks/infrastructure/models/BookProgressModel";
 import { serviceContainer } from "../../shared/services/serviceContainer";
 import { UserModel } from "../../userService/infrastructure/models/userModels";
+import { RecommendationDriver } from "../../ai/infrastructure/recommendation.driver";
+import { RecommendationApps } from "../../ai/applications";
+
+const recommendationDriver = new RecommendationDriver();
+const recommendationApp = new RecommendationApps(recommendationDriver);
 
 export class MongoRecommendationRepository implements RecommendationsRepository {
   async getRecommendations(idUser: Types.ObjectId): Promise<BookSearch[]> {
@@ -95,9 +100,11 @@ export class MongoRecommendationRepository implements RecommendationsRepository 
 
     const idsBook: string[] = userProgresse.map((progrese) => progrese.idBook.toString());
 
-    const idsRecommendation = await serviceContainer.ai.getIdsForRecommendation.run(idsBook);
+    const idsRecommendation = await recommendationApp.getIdsForRecommendation(idsBook);
 
-    const leakedIds = idsRecommendation.filter((id: string) => !idsBook.includes(id)).map((id: string) => new Types.ObjectId(id));
+    const leakedIds = idsRecommendation
+      .filter((id: string) => !idsBook.includes(id))
+      .map((id: string) => new Types.ObjectId(id));
 
     const recommendedBooks = await BookModel.aggregate([
       {

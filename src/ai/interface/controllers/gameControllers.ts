@@ -2,19 +2,17 @@ import type { Request, Response } from "express";
 import { Gamble } from "../../../shared/types/gamesTypes/gameTypes";
 import chalk from "chalk";
 import { separator } from "../../../shared/utils/consoleSeparator";
-import { ConnectionAI } from "../../infrastructure/serviceOfAI";
-import { GetCreateYourHistoryGame } from "../../applications/games/getCreateYourHistoryGame";
-import { GetQuiz } from "../../applications/games/getQuiz";
 import { Quiz } from "../../../shared/types/gamesTypes/gameTypes";
 import { Types } from "mongoose";
 import { TempHistoryGame } from "../../infrastructure/model/tempHistoryGame";
 import { UserModel } from "../../../userService/infrastructure/models/userModels";
 import { UtilsGames } from "../../../shared/utils/games/utilsGames";
 import { ResGame, tempGamble } from "../../../shared/types/gamesTypes/gameTypes";
+import { GameDriver } from "../../infrastructure/game.driver";
+import { GameApps } from "../../applications";
 
-const aiRepository = new ConnectionAI();
-const getCreateYourHistoryGame = new GetCreateYourHistoryGame(aiRepository);
-const getQuiz = new GetQuiz(aiRepository);
+const gameDriver = new GameDriver();
+const gameApp = new GameApps(gameDriver);
 
 export class GameControllers {
   gambleHistory: Gamble | undefined;
@@ -29,7 +27,7 @@ export class GameControllers {
 
       if (UtilsGames.isValidGamblePayload(req.body)) this.gambleHistory = UtilsGames.buildGambleFromPayload(req.body);
 
-      const response: ResGame = await getCreateYourHistoryGame.run(idBooks, this.gambleHistory);
+      const response: ResGame = await gameApp.createYourHistoryGame(idBooks, this.gambleHistory);
 
       // preparar update
       const update: any = {
@@ -105,7 +103,7 @@ export class GameControllers {
 
       if (UtilsGames.isValidGamblePayload(req.body)) this.gambleHistory = UtilsGames.buildGambleFromPayload(req.body);
 
-      const response: any = await getQuiz.run(idBook, quiz);
+      const response: any = await gameApp.quiz(idBook, quiz);
       return res.status(200).json(response);
     } catch (error) {
       console.log(chalk.yellow("Error en el controlador: getQuiz"));
