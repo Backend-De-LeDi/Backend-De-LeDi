@@ -20,13 +20,13 @@ const temp = new Schema({
   },
   idUser: {
     type: Schema.ObjectId,
-    ref: "Books",
+    ref: "Users",
   },
   title: {
     type: String,
     required: [true, "titulo del juego"],
   },
-  ecenary: {
+  scenary: {
     type: String,
     required: [true, "El escenario debe tener contenido narrativo"],
   },
@@ -40,9 +40,6 @@ const temp = new Schema({
   total: {
     type: Number,
     required: true,
-  },
-  selectOption: {
-    type: [optionSchema],
   },
 });
 

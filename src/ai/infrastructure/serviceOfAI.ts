@@ -4,15 +4,14 @@ import { EmbeddingModel } from "./model/embeddingModel";
 import { Types } from "mongoose";
 import { cosineSimilarity } from "../../shared/utils/simility";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { openai } from "../domain/models/model";
 import { createYourHistoModel, final } from "./model/createYourHistoModel";
 import { BookContentModel } from "../../bookContent/infrastructure/model/BookContentModel";
 import { ContentBookLiteral, Gamble, Quiz } from "../../shared/types/gamesTypes/createYourHistory";
 import { PromptFactory, PromptQuizFactory } from "../../shared/config/const/prompt";
 import { PromptSystem, PromptSystemQuiz } from "../../shared/class/promptSystem";
 import { separator } from "../../shared/utils/consoleSeparator";
-import { VectorStoreMemory } from "../domain/entities/vectorStoreMemory";
-import { VectorStoreMemoryModel } from "./model/vectorStoresMemory";
+import { SessionRecord } from "../domain/entities/SessionRecord";
+import { SessionRecordModel } from "./model/sessionRecordModel";
 import { quizModel } from "./model/createYourHistoModel";
 import { finalQuiz } from "./model/createYourHistoModel";
 import { BookModel } from "../../books/infrastructure/model/books.model";
@@ -22,11 +21,20 @@ import ENV from "../../shared/config/configEnv";
 import { generateEmbeddingForAi } from "../../shared/utils/generateEmbedding";
 import { BookDetail } from "../../shared/types/bookTypes/bookTypes";
 import { TempData } from "./model/tempData";
+import OpenAI from "openai"
+
+
 
 const supabaseBooks = createClient(ENV.URL_SUPABASE[0]!, ENV.SUPABASE_KEY[0]!);
 const supabaseAuthors = createClient(ENV.URL_SUPABASE[1]!, ENV.SUPABASE_KEY[1]!);
 
 export class ConnectionAI implements AIRepository {
+
+  private openai = new OpenAI({
+    apiKey: ENV.GEMINI_API_KEY,
+    baseURL: ENV.URL_GEMINI
+  })
+
   async getIdsForRecommendation(userBookIds: string[]): Promise<string[]> {
     const filtered = await EmbeddingModel.find({ bookId: { $in: userBookIds } });
 
@@ -73,9 +81,9 @@ export class ConnectionAI implements AIRepository {
       const promptUser = PromptFactory.create(gamble, contentBookLiteral);
       const promptSystem = PromptSystem.getIntancia();
 
-      const completion = await openai.chat.completions.parse({
+      const completion = await this.openai.chat.completions.parse({
         model: "gemini-2.5-flash-lite",
-        temperature: 0.7,
+        temperature: 1.0,
         messages: [
           { role: "system", content: promptSystem.prompt },
           { role: "user", content: promptUser },
@@ -110,7 +118,7 @@ export class ConnectionAI implements AIRepository {
       const promptUser = PromptQuizFactory.create(quiz, contentBookLiteral);
       const promptSystem = PromptSystemQuiz.getIntancia();
 
-      const completion = await openai.chat.completions.parse({
+      const completion = await this.openai.chat.completions.parse({
         model: "gemini-2.5-flash-lite",
         messages: [
           { role: "system", content: promptSystem.prompt },
@@ -128,46 +136,12 @@ export class ConnectionAI implements AIRepository {
     }
   }
 
-  async createVectorStoreMemory(data: VectorStoreMemory): Promise<void> {
-    const isChat = await VectorStoreMemoryModel.findOne({ idSeccion: data.idSeccion });
-
-    if (isChat) {
-      await VectorStoreMemoryModel.findByIdAndUpdate(isChat._id, {
-        $push: { conversation: { $each: data.conversation } },
-      });
-    } else {
-      const newChat = new VectorStoreMemoryModel({
-        idUser: data.idUser,
-        idSeccion: data.idSeccion,
-        conversation: data.conversation,
-      });
-      await newChat.save();
-    }
+  async getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<SessionRecord[]> {
+    return await SessionRecordModel.find({ idUser });
   }
 
-  async getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<VectorStoreMemory[]> {
-    return await VectorStoreMemoryModel.find({ idUser });
-  }
-
-  async getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<VectorStoreMemory[]> {
-    return await VectorStoreMemoryModel.find({ idSeccion });
-  }
-
-  async chatBot(message: string): Promise<any> {
-    const response = await openai.chat.completions.create({
-      model: "gemini-2.0-flash",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-    });
-
-    console.log(response.choices[0].message.content);
-
-    return response.choices[0].message.content;
+  async getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<SessionRecord[]> {
+    return await SessionRecordModel.find({ idSeccion });
   }
 
   async insertBookToDocuments(bookId: Types.ObjectId): Promise<void> {

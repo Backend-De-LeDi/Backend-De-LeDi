@@ -2,7 +2,7 @@ import { Document } from "mongoose";
 
 export interface Gamble {
   title: string;
-  ecenary: string;
+  scenery: string;
   page: number;
   option: string;
   score: number;

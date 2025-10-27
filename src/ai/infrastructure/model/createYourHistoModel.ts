@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const createYourHistoModel = z.object({
   title: z.string().min(1, "titulo del juego ").describe("el titulo debe ser simpre el original "),
-  ecenary: z
+  scenary: z
     .string()
     .min(1, "El escenario debe tener contenido narrativo")
-    .describe("Texto narrativo que representa el contenido del escenario"),
+    .describe("Texto narrativo que representa el contenido del escenario de 200 caracteres"),
   page: z
     .number()
     .min(1, "Número mínimo de página")

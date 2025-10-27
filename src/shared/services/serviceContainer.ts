@@ -10,9 +10,7 @@ import { FindProgresByID } from "../../userPogressBooks/aplication/service/FindB
 import { FindProgressMongo } from "../../userPogressBooks/infrastructure/bookProgressRepoMongo";
 import { CreateBookContent } from "../../bookContent/application/createBookContent";
 import { mongoRepositoryBookContent } from "../../bookContent/infrastructure/moongoRepositoryBookContent";
-import { CreateVectorStoreMemory } from "../../ai/applications/vectorStoreMemory.ts/createVectorStoreMemory";
 import { GetAllVectorStoresMemoryByIdUser } from "../../ai/applications/vectorStoreMemory.ts/getAllVectorStoreMemoryByIdSession";
-import { ChatBot } from "../../ai/applications/chatBot/chatBot";
 
 const recommendationsRepository = new MongoRecommendationRepository();
 const aiService = new ConnectionAI();
@@ -29,10 +27,8 @@ export const serviceContainer = {
     getIdsForRecommendation: new GetIdsForRecommendation(aiService),
     getCreateYourHistoryGame: new GetCreateYourHistoryGame(aiService),
     createEmbedding: new CreateEmbedding(aiService),
-    createVectorStoreMemory: new CreateVectorStoreMemory(aiService),
     getAllVectorStoresMemoryByIdSession: new GetAllVectorStoresMemoryByIdUser(aiService),
     getAllVectorStoresMemoryByIdUser: new GetAllVectorStoresMemoryByIdUser(aiService),
-    chatBot: new ChatBot(aiService)
   },
   progress: {
     findProgres: new FindProgresByID(progressRepository),
