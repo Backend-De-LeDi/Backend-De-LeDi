@@ -9,17 +9,20 @@ import { createComentLogic } from "./BookClub/coments/interface/controllers/crea
 import chalk from "chalk";
 import { app } from "./app";
 import { getAllComents, getComentByUserID, getComentsByForo } from "./BookClub/coments/interface/controllers/findComentControllers";
-import { emit } from "process";
-import { selecLevel } from "./userPogressBooks/domain/utils/selec_nivel";
 import { createAnsweController } from "./BookClub/coments/interface/controllers/createAsnwer.Controller";
+import { UpateController } from "./BookClub/coments/interface/controllers/update.Controller";
+import { DeleteComent } from "./BookClub/coments/interface/controllers/deleteComentControllers";
+import { socketAuth } from "./shared/middlewares/ValidateJWT.Socket";
 
 const server = createServer(app)
 const io = new Server(server, {
     cors: {
         origin: '*',
-        methods: ['GET', 'POST', 'PUT', 'DELETE']
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true
     }
 });
+io.use(socketAuth);
 
 
 io.on("connection", async (socket: Socket) => {
@@ -43,6 +46,10 @@ io.on("connection", async (socket: Socket) => {
 
     socket.on("get-foro-id", async (foroId: string) => {
         try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
             const foro = await findForoById(foroId)
             if (!foro) {
                 socket.emit("foro-not-found", { msg: "Foro no encontrado" });
@@ -53,17 +60,6 @@ io.on("connection", async (socket: Socket) => {
             socket.emit("error", { msg: "Error al obtener foro por ID" });
         }
     })
-    // ? creates- updates and deletes foros
-    socket.on("new-public", async (data: ComentTypes) => {
-        try {
-            await createComentLogic(data);
-            const coments = await getAllComents();
-            io.emit("coments", coments);
-        } catch (error) {
-            console.error("Error en new-public:", error);
-            socket.emit("error", { msg: "Error al crear el comentario" });
-        }
-    });
     //? get Coments
     socket.on("all-public", async () => {
         try {
@@ -77,6 +73,10 @@ io.on("connection", async (socket: Socket) => {
     });
     socket.on("all-public-foro", async (foroId: string) => {
         try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
             const coments = await getComentsByForo(foroId);
             socket.emit("coments-in-the-foro", coments);
         } catch (error) {
@@ -84,11 +84,15 @@ io.on("connection", async (socket: Socket) => {
             socket.emit("error", { msg: "Error al obtener comentarios del foro" });
         }
     });
-    socket.on("all-publics-idUSer", async (idUser: string) => {
+    socket.on("all-publics-idUSer", async () => {
         try {
-            const result = await getComentByUserID(idUser);
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+            const result = await getComentByUserID(user);
             console.log(result)
-            console.log(`comentarios de ${idUser},result`)
+            console.log(`comentarios de ${user},result`)
             io.emit("user-publics", result);
         } catch (error) {
             console.error("Error al traer las publicaciones del usuario:", error);
@@ -96,20 +100,69 @@ io.on("connection", async (socket: Socket) => {
                 msg: "Error al obtener comentarios por userID", error
             })
         }
-        socket.on("create-answer", async (idComent, data: ComentTypes) => {
-            try {
-                await createAnsweController(idComent, data);
-                const coments = await getAllComents();
-                io.emit("coments", coments);
-            } catch (error) {
-                console.error("Error en new-public:", error);
-                socket.emit("error", { msg: "Error al crear el comentario" });
+    });
+    // ? created coment and asnwers
+    socket.on("new-public", async (data: ComentTypes) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
             }
 
-        })
-
-
+            await createComentLogic(data);
+            const coments = await getAllComents();
+            io.emit("coments", coments);
+        } catch (error) {
+            console.error("Error en new-public:", error);
+            socket.emit("error", { msg: "Error al crear el comentario" });
+        }
     });
+    socket.on("create-answer", async (idComent: any, data: ComentTypes) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+
+            await createAnsweController(idComent, data);
+            const coments = await getAllComents();
+            io.emit("coments", coments);
+        } catch (error) {
+            console.error("Error en new-public:", error);
+            socket.emit("error", { msg: "Error al crear el comentario" });
+        }
+    })
+    //? Update and delete coments and answers
+    socket.on("update-coment", async (id: any, coment: ComentTypes) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+
+            await UpateController(id, user, coment)
+            const coments = await getAllComents();
+            io.emit("update", coments)
+        } catch (error) {
+            console.error("Error en update public:", error);
+            socket.emit("error", { msg: "Error al actualizar el comentario" });
+        }
+    })
+    socket.on("delete-coment", async (id: any) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+            await DeleteComent(id, user)
+            const coments = await getAllComents();
+            io.emit("Delete", coments)
+
+        } catch (error) {
+            console.error("Error en delete publics:", error);
+            socket.emit("error", { msg: "Error al eliminar el comentario" });
+        }
+    })
 })
 // ? configuración de puerto
 
