@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createYourHistoModel = z.object({
   title: z.string().min(1, "titulo del juego ").describe("el titulo debe ser simpre el original "),
-  scenary: z
+  scenery: z
     .string()
     .min(1, "El escenario debe tener contenido narrativo")
     .describe("Texto narrativo que representa el contenido del escenario de 200 caracteres"),
@@ -28,7 +28,7 @@ export const createYourHistoModel = z.object({
 
 export const final = z.object({
   title: z.string().min(1, "titulo del juego ").describe("el titulo debe ser simpre el original "),
-  ecenary: z
+  scenery: z
     .string()
     .min(1, "El escenario debe tener contenido narrativo")
     .describe("Texto narrativo que representa el contenido del escenario"),
@@ -42,7 +42,7 @@ export const final = z.object({
 
 export const quizModel = z.object({
   title: z.string().min(1, "titulo del juego ").describe("el titulo debe ser simpre el original "),
-  ecenary: z
+  scenery: z
     .string()
     .min(1, "El escenario debe tener contenido narrativo")
     .describe("Texto narrativo que representa el contenido del escenario"),

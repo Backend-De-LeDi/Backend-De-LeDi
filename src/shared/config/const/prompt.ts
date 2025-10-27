@@ -1,5 +1,5 @@
-import { Gamble, Quiz } from "../../types/gamesTypes/createYourHistory";
-import { ContentBookLiteral } from "../../types/gamesTypes/createYourHistory";
+import { Gamble, Quiz } from "../../types/gamesTypes/gameTypes";
+import { ContentBookLiteral } from "../../types/gamesTypes/gameTypes";
 import { FinalPrompt } from "../../class/finalPrompt";
 import { InitialPrompt } from "../../class/initialPrompts";
 import { OptionPrompt } from "../../class/optionsPrompt";

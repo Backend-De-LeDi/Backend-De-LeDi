@@ -1,8 +1,8 @@
-import { Gamble } from "../types/gamesTypes/createYourHistory";
-import { ContentBookLiteral } from "../types/gamesTypes/createYourHistory";
+import { Gamble } from "../types/gamesTypes/gameTypes";
+import { ContentBookLiteral } from "../types/gamesTypes/gameTypes";
 
 export class OptionPrompt {
-  constructor(private gamble: Gamble, private contentBook: ContentBookLiteral, private page: number) { }
+  constructor(private gamble: Gamble, private contentBook: ContentBookLiteral, private page: number) {}
 
   toString(): string {
     return `<
@@ -10,14 +10,15 @@ export class OptionPrompt {
   <ecenario que le diste anteriormente: ${this.gamble.scenery}>,
   <pagina que leiste anteriormente: ${this.gamble.page}>,
   <opcion elegida por el usuario: ${this.gamble.option}>,
-  <contenido en el cual te debes basar la siguiente opción: ${this.contentBook.text[this.page]
-      } descripcion (se libre en hacer que la opcion pueda usar el contenido base con otro contexto diferente y se creativo sin limites)>
+  <contenido en el cual te debes basar la siguiente opción: ${
+    this.contentBook.text[this.page]
+  } descripcion (se libre en hacer que la opcion pueda usar el contenido base con otro contexto diferente y se creativo sin limites)>
   >`;
   }
 }
 
 export class OptionQuiz {
-  constructor(private quiz: Gamble, private contentBook: ContentBookLiteral, private page: number) { }
+  constructor(private quiz: Gamble, private contentBook: ContentBookLiteral, private page: number) {}
   toString(): string {
     return `<
   title:${this.quiz.title}>,

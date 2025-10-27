@@ -13,7 +13,7 @@ const optionSchema = new Schema(
   { _id: false } // subdocumento sin _id propio
 );
 
-const temp = new Schema({
+const tempHistoryGame = new Schema({
   idBook: {
     type: Schema.ObjectId,
     ref: "Books",
@@ -43,4 +43,4 @@ const temp = new Schema({
   },
 });
 
-export const TempData = model("temp", temp);
+export const TempHistoryGame = model("tempHistoryGame", tempHistoryGame);

@@ -4,36 +4,33 @@ import { EmbeddingModel } from "./model/embeddingModel";
 import { Types } from "mongoose";
 import { cosineSimilarity } from "../../shared/utils/simility";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { createYourHistoModel, final } from "./model/createYourHistoModel";
+import { createYourHistoModel, final } from "./schemas/games";
 import { BookContentModel } from "../../bookContent/infrastructure/model/BookContentModel";
-import { ContentBookLiteral, Gamble, Quiz } from "../../shared/types/gamesTypes/createYourHistory";
+import { ContentBookLiteral, Gamble, Quiz } from "../../shared/types/gamesTypes/gameTypes";
 import { PromptFactory, PromptQuizFactory } from "../../shared/config/const/prompt";
 import { PromptSystem, PromptSystemQuiz } from "../../shared/class/promptSystem";
 import { separator } from "../../shared/utils/consoleSeparator";
 import { SessionRecord } from "../domain/entities/SessionRecord";
 import { SessionRecordModel } from "./model/sessionRecordModel";
-import { quizModel } from "./model/createYourHistoModel";
-import { finalQuiz } from "./model/createYourHistoModel";
+import { quizModel } from "./schemas/games";
+import { finalQuiz } from "./schemas/games";
 import { BookModel } from "../../books/infrastructure/model/books.model";
 import { AuthorModel } from "../../authorService/infrastructure/models/authores.Model";
 import { createClient } from "@supabase/supabase-js";
 import ENV from "../../shared/config/configEnv";
 import { generateEmbeddingForAi } from "../../shared/utils/generateEmbedding";
 import { BookDetail } from "../../shared/types/bookTypes/bookTypes";
-import { TempData } from "./model/tempData";
-import OpenAI from "openai"
-
-
+import { TempHistoryGame } from "./model/tempHistoryGame";
+import OpenAI from "openai";
 
 const supabaseBooks = createClient(ENV.URL_SUPABASE[0]!, ENV.SUPABASE_KEY[0]!);
 const supabaseAuthors = createClient(ENV.URL_SUPABASE[1]!, ENV.SUPABASE_KEY[1]!);
 
 export class ConnectionAI implements AIRepository {
-
   private openai = new OpenAI({
     apiKey: ENV.GEMINI_API_KEY,
-    baseURL: ENV.URL_GEMINI
-  })
+    baseURL: ENV.URL_GEMINI,
+  });
 
   async getIdsForRecommendation(userBookIds: string[]): Promise<string[]> {
     const filtered = await EmbeddingModel.find({ bookId: { $in: userBookIds } });

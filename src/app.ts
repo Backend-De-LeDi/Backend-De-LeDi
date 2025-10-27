@@ -16,7 +16,7 @@ import { progressRouter } from "./userPogressBooks/interface/routes/bookProgress
 import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
 import recommendationRouters from "./recommendations/interfaces/routers/recommendationRouters";
-import aIRouter from "./ai/interface/routers/aiRouters";
+import gameRouter from "./ai/interface/routers/gameRouters";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -66,4 +66,4 @@ app.use(bookRouter);
 app.use(forosRoutes);
 app.use(forosRoutes);
 app.use(recommendationRouters);
-app.use(aIRouter);
+app.use(gameRouter);

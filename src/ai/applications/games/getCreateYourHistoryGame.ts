@@ -1,5 +1,5 @@
 import { ConnectionAI } from "../../infrastructure/serviceOfAI";
-import { Gamble } from "../../../shared/types/gamesTypes/createYourHistory";
+import { Gamble } from "../../../shared/types/gamesTypes/gameTypes";
 
 export class GetCreateYourHistoryGame {
   constructor(private repository: ConnectionAI) {}

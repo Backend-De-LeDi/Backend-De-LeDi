@@ -1,4 +1,4 @@
-import { ContentBookLiteral } from "../types/gamesTypes/createYourHistory";
+import { ContentBookLiteral } from "../types/gamesTypes/gameTypes";
 
 export class InitialPrompt {
   constructor(private contentBook: ContentBookLiteral, private page: number) {}

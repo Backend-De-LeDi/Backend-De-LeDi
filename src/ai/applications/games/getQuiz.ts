@@ -1,5 +1,5 @@
 import { AIRepository } from "../../domain/services/AIRepository";
-import { Quiz } from "../../../shared/types/gamesTypes/createYourHistory";
+import { Quiz } from "../../../shared/types/gamesTypes/gameTypes";
 
 export class GetQuiz {
   constructor(private repository: AIRepository) {}

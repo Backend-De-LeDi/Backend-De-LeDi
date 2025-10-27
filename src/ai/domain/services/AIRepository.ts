@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { Gamble, Quiz } from "../../../shared/types/gamesTypes/createYourHistory";
+import { Gamble, Quiz } from "../../../shared/types/gamesTypes/gameTypes";
 import { SessionRecord } from "../entities/SessionRecord";
 
 export interface AIRepository {
@@ -9,8 +9,8 @@ export interface AIRepository {
   quiz(idBook: string, quiz: Quiz | undefined): Promise<any>;
   getAllVectorStoresMemoryByIdUser(idUser: Types.ObjectId): Promise<SessionRecord[]>;
   getAllVectorStoreMemoryByIdSession(idSeccion: string): Promise<SessionRecord[]>;
-  insertBookToDocuments(idBoook: Types.ObjectId): Promise<void>
-  deleteBookFromDocuments(idBook: string): Promise<void>
-  insertAuthorToDocuments(authorId: Types.ObjectId): Promise<void>
-  deleteAuthorFromDocuments(idBook: string): Promise<void>
+  insertBookToDocuments(idBoook: Types.ObjectId): Promise<void>;
+  deleteBookFromDocuments(idBook: string): Promise<void>;
+  insertAuthorToDocuments(authorId: Types.ObjectId): Promise<void>;
+  deleteAuthorFromDocuments(idBook: string): Promise<void>;
 }
