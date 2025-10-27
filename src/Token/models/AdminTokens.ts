@@ -6,6 +6,10 @@ const TokenSchema = new Schema<Itoken>({
     token: {
         type: String,
         required: true
+    },
+    userEmail: {
+        type: String,
+        required: true
     }
 })
 

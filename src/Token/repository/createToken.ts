@@ -3,5 +3,5 @@ import { Itoken } from "../types/Token.type";
 
 
 export interface createToken {
-    createAdminToken(): Promise<Itoken>
+    createAdminToken(email: string): Promise<Itoken>
 }

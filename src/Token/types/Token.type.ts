@@ -1,3 +1,4 @@
 export interface Itoken {
-    token: string
+    token: string,
+    userEmail: string
 }

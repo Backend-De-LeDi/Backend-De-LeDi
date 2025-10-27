@@ -10,10 +10,10 @@ import { generateCustomToken } from "../utils/GenerarToken";
 
 
 export class CreateToken implements createToken {
-    async createAdminToken(): Promise<Itoken> {
+    async createAdminToken(email: string): Promise<Itoken> {
 
         const tokenValue = generateCustomToken();
-        const tokenDoc = new TokenModel({ token: tokenValue });
+        const tokenDoc = new TokenModel({ token: tokenValue, userEmail: email });
         const result = await tokenDoc.save();
         programarEliminacionDeToken(result.token)
         return result;
