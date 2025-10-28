@@ -107,6 +107,37 @@ io.on("connection", async (socket: Socket) => {
             }
 
         })
+    socket.on("update-coment", async (id: any, coment: ComentTypes) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+
+            await UpateController(id, user, coment)
+            const coments = await getAllComents();
+            io.emit("update", coments)
+        } catch (error) {
+            console.error("Error en update public:", error);
+            socket.emit("error", { msg: "Error al actualizar el comentario" });
+        }
+    })
+    socket.on("delete-coment", async (id: any) => {
+        try {
+            const user = socket.data.user.id
+            if (!user) {
+                socket.emit("error", { msg: "usuario no logeado" });
+            }
+            await DeleteComent(id, user)
+            const coments = await getAllComents();
+            io.emit("Delete", coments)
+
+        } catch (error) {
+            console.error("Error en delete publics:", error);
+            socket.emit("error", { msg: "Error al eliminar el comentario" });
+        }
+    })
+})
 
 
     });
