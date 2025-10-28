@@ -1,9 +1,7 @@
 import { ChatBotRepository } from "../domain/repository/chatBotRepository";
 
 export class ChatBotDriver implements ChatBotRepository {
-  async createChat(msg: string, userId: string, session: string): Promise<{ output: string }[]> {
-    console.log(JSON.stringify({ msg, userId, session }));
-
+  async createChat(msg: string, userId: string = "hola", session: string): Promise<{ output: string }[]> {
     const req = await fetch("http://localhost:5678/webhook/bot", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

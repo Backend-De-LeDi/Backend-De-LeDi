@@ -37,4 +37,4 @@ const SessionRecordSchema = new Schema<SessionRecord>(
   { timestamps: true }
 );
 
-export const SessionRecordModel = model<SessionRecord>("vector_history", SessionRecordSchema);
+export const SessionRecordModel = model<SessionRecord>("vector_histories", SessionRecordSchema);

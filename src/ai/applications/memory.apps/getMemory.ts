@@ -1,15 +1,15 @@
 import { MemoryRepository } from "../../domain";
-import { Types } from "mongoose";
 import { SessionRecord } from "../../domain";
+import { Memory } from "../../../shared/types/memoryTypes/memory";
 
 export class MemoryApps {
-     constructor(private repository: MemoryRepository) { }
+  constructor(private repository: MemoryRepository) {}
 
-     async getByUser(idUser: Types.ObjectId): Promise<SessionRecord[]> {
-          return await this.repository.getAllVectorStoresMemoryByIdUser(idUser);
-     }
+  async getByUser(idUser: string): Promise<Memory[]> {
+    return await this.repository.getAllVectorStoresMemoryByIdUser(idUser);
+  }
 
-     async getBySession(idSeccion: string): Promise<SessionRecord[]> {
-          return await this.repository.getAllVectorStoreMemoryByIdSession(idSeccion);
-     }
+  async getBySession(idSession: string, idUser: string): Promise<Memory[]> {
+    return await this.repository.getAllVectorStoreMemoryByIdSession(idSession, idUser);
+  }
 }
