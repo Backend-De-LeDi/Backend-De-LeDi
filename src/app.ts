@@ -17,6 +17,7 @@ import { avaRoutes } from "./avatars/interface/routes/avatar.routes";
 import { forosRoutes } from "./BookClub/foros/interface/routes/foros.routes";
 import recommendationRouters from "./recommendations/interfaces/routers/recommendationRouters";
 import gameRouter from "./ai/interface/routers/gameRouters";
+import chatRouter from "./ai/interface/routers/chatBotRouters";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -67,3 +68,4 @@ app.use(forosRoutes);
 app.use(forosRoutes);
 app.use(recommendationRouters);
 app.use(gameRouter);
+app.use(chatRouter);
