@@ -38,6 +38,6 @@ export class PromptQuizFactory {
       return new InitialQuiz(contentBook, page).toString();
     }
 
-    return new OptionQuiz(quiz as Gamble, contentBook, page).toString();
+    return new OptionQuiz(quiz as Quiz, contentBook, page).toString();
   }
 }

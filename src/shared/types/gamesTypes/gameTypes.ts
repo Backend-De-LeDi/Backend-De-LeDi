@@ -8,19 +8,19 @@ export interface Gamble {
   score: number;
 }
 
-export type ContentBookLiteral = {
-  title: string;
-  text: string[];
-};
+export interface Quiz extends Omit<Gamble, "option"> {
+  option: QuizOption;
+}
 
 export interface QuizOption {
   text: string;
   status: boolean;
 }
 
-export interface Quiz extends Omit<Gamble, "option"> {
-  options: QuizOption;
-}
+export type ContentBookLiteral = {
+  title: string;
+  text: string[];
+};
 
 export type ContentBookMongoose = Document<
   unknown,
@@ -36,17 +36,42 @@ interface Option {
   score: number;
 }
 
-export interface ResGame {
-  title: string;
-  scenery: string;
-  page: number;
-  options?: Option[];
-  completed?: boolean;
-}
 
 export interface tempGamble {
   idBook: string;
   idUser: string;
   options: Option[];
   total: number;
+}
+
+export interface ResGameQuizFinal {
+  title: string;
+  completed: boolean;
+  textCompleted: string;
+}
+export interface ResGameQuiz {
+  title: string;
+  scenery: string;
+  page: number;
+  options: {
+    score: number;
+    status: boolean;
+    textOption: string;
+  }[];
+}
+
+export interface ResGameHistoryFinal {
+  title: string;
+  scenery: string;
+  page: number;
+  completed: boolean;
+}
+export interface ResGameHistory {
+  title: string;
+  scenery: string;
+  page: number;
+  options: {
+    score: number;
+    textOption: string;
+  }[];
 }

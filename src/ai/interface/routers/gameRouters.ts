@@ -10,7 +10,7 @@ gameRouter.post("/createYourHistory/:id", validateJWT, (req: Request, res: Respo
   gameControls.getGameCreateYourHistory(req, res);
 });
 
-gameRouter.get("/quiz/:id", validateJWT, (req: Request, res: Response) => {
+gameRouter.post("/quiz/:id", validateJWT, (req: Request, res: Response) => {
   gameControls.getQuiz(req, res);
 });
 

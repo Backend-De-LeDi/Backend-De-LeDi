@@ -43,4 +43,4 @@ const tempHistoryGame = new Schema({
   },
 });
 
-export const TempHistoryGame = model("tempHistoryGame", tempHistoryGame);
+export const TempHistoryGame = model("temp_History_Game", tempHistoryGame);

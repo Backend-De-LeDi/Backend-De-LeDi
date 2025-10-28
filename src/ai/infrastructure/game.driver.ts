@@ -1,6 +1,6 @@
 import { GameRepository } from "../domain";
 import { Types } from "mongoose";
-import { Gamble } from "../../shared/types/gamesTypes/gameTypes";
+import { Gamble, ResGameQuiz, ResGameQuizFinal } from "../../shared/types/gamesTypes/gameTypes";
 import { BookContentModel } from "../../bookContent/infrastructure/model/BookContentModel";
 import { ContentBookLiteral } from "../../shared/types/gamesTypes/gameTypes";
 import { PromptFactory } from "../../shared/config/const/prompt";
@@ -16,7 +16,8 @@ import { createYourHistoModel } from "./schemas/games";
 import { quizModel } from "./schemas/games";
 import { separator } from "../../shared/utils/consoleSeparator";
 import { Quiz } from "../../shared/types/gamesTypes/gameTypes";
-import { ResGame } from "../../shared/types/gamesTypes/gameTypes";
+import { ResGameHistoryFinal, ResGameHistory } from "../../shared/types/gamesTypes/gameTypes";
+
 
 export class GameDriver implements GameRepository {
   private openai = new OpenAI({
@@ -24,7 +25,7 @@ export class GameDriver implements GameRepository {
     baseURL: ENV.URL_GEMINI,
   });
 
-  async createYourHistoryGame(idBook: string, gamble: Gamble | undefined): Promise<any | void> {
+  async createYourHistoryGame(idBook: string, gamble: Gamble | undefined): Promise<ResGameHistory | ResGameHistoryFinal | null> {
     try {
       const idValid = new Types.ObjectId(idBook);
       const [contentBook] = await BookContentModel.find({ bookId: idValid }, { title: 1, text: 1, _id: 0 });
@@ -50,17 +51,18 @@ export class GameDriver implements GameRepository {
         response_format: zodResponseFormat(outOfBounds ? final : createYourHistoModel, "event"),
       });
 
-      const event = completion.choices[0].message.parsed;
+      const event: ResGameHistory | ResGameHistoryFinal | null = completion.choices[0].message.parsed;
 
       return event;
     } catch (error) {
+      return null
       separator();
       console.log(error);
       separator();
     }
   }
 
-  async quiz(idBook: string, quiz: Quiz): Promise<any> {
+  async quiz(idBook: string, quiz: Quiz): Promise<ResGameQuizFinal | ResGameQuiz | null> {
     try {
       const idValid = new Types.ObjectId(idBook);
       const [contentBook] = await BookContentModel.find({ bookId: idValid }, { title: 1, text: 1, _id: 0 });
@@ -86,12 +88,13 @@ export class GameDriver implements GameRepository {
         response_format: zodResponseFormat(outOfBounds ? finalQuiz : quizModel, "event"),
       });
 
-      const event = completion.choices[0].message.parsed;
+      const event: ResGameQuizFinal | ResGameQuiz | null = completion.choices[0].message.parsed;
       return event;
     } catch (error) {
       separator();
       console.log(error);
       separator();
+      return null
     }
   }
 }
