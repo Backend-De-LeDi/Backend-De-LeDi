@@ -19,6 +19,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "@supabase/supabase-js": "^2.58.0",
     "@types/bcrypt": "^5.0.2",
     "@types/chalk": "^0.4.31",
@@ -48,6 +49,7 @@
     "onnxruntime-node": "^1.22.0-rev",
     "openai": "^5.23.0",
     "pdf-parse": "^1.1.1",
+    "sendgrid": "^5.2.3",
     "sharp": "^0.34.4",
     "socket.io": "^4.8.1",
     "zod": "^3.25.50"
