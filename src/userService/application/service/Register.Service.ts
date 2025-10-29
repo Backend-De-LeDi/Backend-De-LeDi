@@ -1,3 +1,4 @@
+
 import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
@@ -7,23 +8,32 @@ import { calcularEdad } from "../../../shared/utils/calcularNivel";
 import { getAllAvatars } from "../../interfaces/Apis/avatarApi";
 import { avatarsAssignment } from "../../domain/utils/avatarAssignment";
 import { getLevel } from "../../interfaces/Apis/FetchLevel";
+import { api_response } from "../../../shared/types/reponse.types";
 
-export class Register {
+export class Register implements IRegisterRepository {
     constructor(
         private readonly userRepo: IRegisterRepository,
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
 
-    async createUser(user: User): Promise<User> {
+    async createUser(user: User): Promise<User | api_response> {
+
         const emailExists = await this.authRepo.findByEmail(user.email);
         if (emailExists) {
-            throw new Error("Email already in use");
+            return {
+                success: false,
+                message: "Email already in use",
+                status: 400
+            };
         }
-
         const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
         if (usernameExists) {
-            throw new Error("Username already in use");
+            return {
+                success: false,
+                message: "Username already in use",
+                status: 400
+            };
         }
 
         const nivel = calcularEdad(user.birthDate);

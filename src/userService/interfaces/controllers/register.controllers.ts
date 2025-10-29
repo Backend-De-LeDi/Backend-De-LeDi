@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { AuthMongoRepostitory, UniqueUsernameRepository, UserMongoRepository } from "../../infrastructure/userRespositoryMongo";
-import { validarUsuario } from "../../application/validations/userValidation";
 import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
@@ -19,7 +18,6 @@ const uploadService = new UploadService();
 export const registers = async (req: Request, res: Response) => {
   try {
     const user: User = req.body;
-    const usuarioValido = validarUsuario(user);
     const newUser = { ...user };
 
     const result = await userService.createUser(newUser);
