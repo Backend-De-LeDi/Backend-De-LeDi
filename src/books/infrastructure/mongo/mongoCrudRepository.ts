@@ -33,7 +33,7 @@ export class MongoCrudRepository implements BooksCrudRepository {
     await docsApp.insertBook(id);
   }
 
-  //  🔄️
+  //  ✅
   async updateBookById(id: Types.ObjectId, book: Books): Promise<void> {
     const result = await BookModel.findByIdAndUpdate(id, book);
     if (result) {
