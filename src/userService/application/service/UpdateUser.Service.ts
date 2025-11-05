@@ -3,6 +3,7 @@ import { User } from "../../domain/entities/UserTypes";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UniqueUserName } from "../../domain/ports/UniqueUserName";
 import bcrypt from 'bcrypt';
+import { api_response } from "../../../shared/types/resul.type";
 
 
 export class UpdateUSer implements UpdateUSerRepository {
@@ -11,17 +12,26 @@ export class UpdateUSer implements UpdateUSerRepository {
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
-    async updateUSer(id: any, user: Partial<User>): Promise<User | null> {
+    async updateUSer(id: any, user: Partial<User>): Promise<User | null | api_response> {
         if (user.email) {
             const emailExists = await this.authRepo.findByEmail(user.email);
             if (emailExists) {
-                throw new Error("Email already in use");
+                return {
+                    success: false,
+                    message: "Email already in use",
+                    status: 400
+                };
             }
+
         }
         if (user.userName) {
             const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
             if (usernameExists) {
-                throw new Error("Username already in use");
+                return {
+                    success: false,
+                    message: "Username already in use",
+                    status: 400
+                };
             }
 
         }

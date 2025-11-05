@@ -26,6 +26,10 @@ export const findAndUpdate = async (req: Request, res: Response) => {
 
     if (!result) {
       res.status(302).json({ msg: "the user not update" });
+    } else {
+      if ('success' in result && !result.success) {
+        res.status(result.status).json(result);
+      }
     }
     res.status(200).json({ msg: "user update successful" });
   } catch (error) {
