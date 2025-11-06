@@ -1,4 +1,5 @@
 
+
 import { User } from "../../domain/entities/UserTypes";
 import { IRegisterRepository } from "../../domain/ports/RegisterRepositoryPorts";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
@@ -26,9 +27,19 @@ export class Register implements IRegisterRepository {
                 message: "Email already in use",
                 status: 400
             };
+            return {
+                success: false,
+                message: "Email already in use",
+                status: 400
+            };
         }
         const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
         if (usernameExists) {
+            return {
+                success: false,
+                message: "Username already in use",
+                status: 400
+            };
             return {
                 success: false,
                 message: "Username already in use",

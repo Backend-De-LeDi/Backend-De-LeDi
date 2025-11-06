@@ -18,7 +18,7 @@ interface MulterRequest extends Request {
 }
 export const saveLevel = async (req: MulterRequest, res: Response) => {
   try {
-    const { level } = req.body;
+    const { level, level_string, maxPoint } = req.body;
     const file = req.file;
 
     const levelUploaded = await UploadServiceLevel.uploadLevel(file as Express.Multer.File);
@@ -29,7 +29,8 @@ export const saveLevel = async (req: MulterRequest, res: Response) => {
         url_secura: levelUploaded.url_secura,
         id_image: levelUploaded.id_image,
       },
-      maxPoint: 0
+      level_string,
+      maxPoint
     };
 
     const result = await levelControllers.saveLevel(date);
@@ -49,14 +50,23 @@ export const deleteLevel = async (req: Request, res: Response) => {
     const id = req.params.id;
     const idValid = new mongoose.Types.ObjectId(id);
 
-    const isDeletingCoverImage: boolean = await deleteCoverImage(id);
-    if (!isDeletingCoverImage) {
-      res.status(500).json({
-        msg: "Ocurrió un error al eliminar la imagen en Cloudinary. Verifica si sigue existiendo.",
-      });
+    const level = await levelControllers.findLevelByID(id)
+    if (!level) {
+      res.status(404).json('level not found')
+    } else {
+      const isDeletingCoverImage: boolean = await deleteCoverImage(level?.img.id_image)
+      if (!isDeletingCoverImage) {
+        res.status(500).json({
+          msg: "Ocurrió un error al eliminar la imagen en Cloudinary. Verifica si sigue existiendo.",
+        });
+      } else {
+        await levelControllers.deleteLevel(idValid);
+        res.status(200).json({ msg: "Avatar eliminado exitosamente" });
+
+      }
     }
-    await levelControllers.deleteLevel(idValid);
-    res.status(200).json({ msg: "Avatar eliminado exitosamente" });
+
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error interno del servidor" });

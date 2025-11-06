@@ -19,6 +19,7 @@ import recommendationRouters from "./recommendations/interfaces/routers/recommen
 import gameRouter from "./ai/interface/routers/gameRouters";
 import chatRouter from "./ai/interface/routers/chatBotRouters";
 import memoryRouter from "./ai/interface/routers/memoryRouters";
+import { levelRoutes } from "./Leves/interface/routes/level.routes";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -63,9 +64,8 @@ app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
 app.use(avaRoutes);
-app.use(avaRoutes);
+app.use(levelRoutes)
 app.use(bookRouter);
-app.use(forosRoutes);
 app.use(forosRoutes);
 app.use(recommendationRouters);
 app.use(gameRouter);

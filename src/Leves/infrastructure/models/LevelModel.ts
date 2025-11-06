@@ -14,7 +14,10 @@ const LevelSchema = new Schema<LevesTypes>({
     img: {
         url_secura: { type: String, required: true },
         id_image: { type: String, required: true }
-    },
+    }, level_string: {
+        type: String,
+        required: true
+    }
 
 });
 

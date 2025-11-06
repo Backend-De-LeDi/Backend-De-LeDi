@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { User } from "../entities/UserTypes";
 import { api_response } from "../../../shared/types/reponse.types";
 
