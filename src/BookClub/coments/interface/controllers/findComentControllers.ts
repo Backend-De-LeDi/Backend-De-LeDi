@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { FindComentService } from "../../app/service/findComent.Service";
 import { FindComentsMongo } from "../../infraestructure/comentsMongoRepo";
 import { Result } from "express-validator";
@@ -17,19 +17,17 @@ export const getAllComents = async () => {
         return error
     }
 }
-export const getComentById = async (req: Request, res: Response) => {
+export const getComentById = async (id: any) => {
     try {
-        const { id } = req.params
         const result = await findComent.findComentById(id)
 
         if (!result) {
-            res.status(404).json({ msg: 'coment not found' })
+            return "The coment not found"
         }
-        res.status(200).json({ msg: 'the coment', result })
+        return result
 
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ msg: 'the internal server error', error })
+        return error
     }
 }
 export const getComentsByForo = async (foroId: string) => {

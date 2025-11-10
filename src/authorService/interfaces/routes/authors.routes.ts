@@ -8,30 +8,19 @@ import multer from "multer";
 import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { authorUpdateValidation, authorValidation } from "../../app/validations/authorValidations";
 
-
-export const autorRoutes = Router()
+export const autorRoutes = Router();
 const upload = multer({ dest: "uploads/" });
 
-
-autorRoutes.post("/author/create",
-    validateJWT,
-    validarRol("Admin")
-    , authorValidation, (req, res) => {
-        const authorData = req.body;
-    }, upload.single("avatar"),
-    createAuthor);
-autorRoutes.get("/author/:id", getAuthorById)
-autorRoutes.get("/author", getAuthorByName)
-autorRoutes.get("/AllAuthores", getAllAuthores)
-autorRoutes.delete('/author/:id',
-    validateJWT,
-    validarRol("Admin"),
-    deleteAuthorById)
-autorRoutes.put("/author/:id",
-    validateJWT,
-    validarRol("Admin"),
-    authorUpdateValidation
-    , (req, res) => {
-        const authorData = req.body;
-    },
-    updataAuthors)
+autorRoutes.post(
+  "/author/create",
+  validateJWT,
+  validarRol("Admin"),
+  authorValidation,
+  upload.single("avatar"),
+  createAuthor
+);
+autorRoutes.get("/author/:id", getAuthorById);
+autorRoutes.get("/author", getAuthorByName);
+autorRoutes.get("/AllAuthores", getAllAuthores);
+autorRoutes.delete("/author/:id", validateJWT, validarRol("Admin"), deleteAuthorById);
+autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"), authorUpdateValidation, updataAuthors);

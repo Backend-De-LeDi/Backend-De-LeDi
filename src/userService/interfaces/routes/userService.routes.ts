@@ -8,9 +8,7 @@ import { UserValidation } from "../../application/validations/userValidation";
 
 export const userRoutes = Router();
 
-userRoutes.post("/register", UserValidation, (req, res) => {
-    const userData = req.body;
-}, registers);
+userRoutes.post("/register", UserValidation, registers);
 userRoutes.put("/updateUser", validateJWT, findAndUpdate);
 userRoutes.get("/users", findUser);
 userRoutes.get("/oneUser", validateJWT, findById);

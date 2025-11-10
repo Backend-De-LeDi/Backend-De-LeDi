@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+src
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.env
+*.md
+*.log
+README.md
+respuestas.txt
+tintas.ai
+tsconfig.json

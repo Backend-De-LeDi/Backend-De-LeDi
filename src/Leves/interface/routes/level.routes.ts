@@ -9,7 +9,7 @@ export const levelRoutes = Router()
 const upload = multer({ dest: "uploads/" });
 
 
-levelRoutes.post("/saveLevel", upload.single("levels"), saveLevel)
+levelRoutes.post("/saveLevel", upload.single("img"), saveLevel)
 levelRoutes.delete("/deleteLevel/:id", deleteLevel)
 levelRoutes.get("/getLevel", getLeves)
 levelRoutes.get("/firtsLevel", getFirtsLevel)

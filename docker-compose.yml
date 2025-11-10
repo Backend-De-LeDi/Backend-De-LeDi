@@ -1,0 +1,8 @@
+services:
+  app:
+    image: backend-of-tintas
+    ports:
+      - "3402:3402"
+    env_file:
+      - .env
+    restart: unless-stopped

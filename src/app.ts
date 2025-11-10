@@ -19,6 +19,7 @@ import recommendationRouters from "./recommendations/interfaces/routers/recommen
 import gameRouter from "./ai/interface/routers/gameRouters";
 import chatRouter from "./ai/interface/routers/chatBotRouters";
 import memoryRouter from "./ai/interface/routers/memoryRouters";
+import { levelRoutes } from "./Leves/interface/routes/level.routes";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -32,11 +33,11 @@ if (!fs.existsSync(fileUpload)) fs.mkdirSync(fileUpload, { recursive: true });
 
 // ? configuración de middlewares
 app.use(
-  cors({
-    origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
+	cors({
+		origin: ["http://localhost:5500", "http://localhost:3402", "http://localhost:5173"],
+		methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+		credentials: true,
+	})
 );
 app.use(cookies());
 app.use(morgan("dev"));
@@ -46,15 +47,15 @@ app.use(express.static("./src/uploads"));
 
 // ? configuración de sesiones
 app.use(
-  session({
-    secret: "tu_clave_secreta",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // poner true solo si usas HTTPS
-      maxAge: 3600000,
-    },
-  })
+	session({
+		secret: "tu_clave_secreta",
+		resave: false,
+		saveUninitialized: false,
+		cookie: {
+			secure: false, // poner true solo si usas HTTPS
+			maxAge: 3600000,
+		},
+	})
 );
 
 // ? configuración de rutas
@@ -63,9 +64,8 @@ app.use(authRoutes);
 app.use(autorRoutes);
 app.use(progressRouter);
 app.use(avaRoutes);
-app.use(avaRoutes);
+app.use(levelRoutes)
 app.use(bookRouter);
-app.use(forosRoutes);
 app.use(forosRoutes);
 app.use(recommendationRouters);
 app.use(gameRouter);

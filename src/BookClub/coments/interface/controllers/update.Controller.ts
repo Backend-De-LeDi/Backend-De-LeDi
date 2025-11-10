@@ -9,4 +9,5 @@ const updateComentControllers = new UpdateCometService(UpdateComentsMongo)
 
 export const UpateController = async (idComent: any, userId: any, coment: ComentTypes) => {
     return await updateComentControllers.updateComents(idComent, userId, coment)
+
 }

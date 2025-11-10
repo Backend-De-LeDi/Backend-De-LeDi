@@ -8,8 +8,8 @@ import { validateJWT } from "../../../shared/middlewares/validateJWT";
 import { findByProgressIdControllers } from "../controllers/findProgress";
 
 
-progressRouter.post('/SaveProgress', saveBookProgress)
+progressRouter.post('/SaveProgress',validateJWT ,saveBookProgress)
 progressRouter.get('/Progress', validateJWT, findByProgressIdControllers)
-progressRouter.put('/progress', updateProgresBook)
-progressRouter.delete('/progress', deleteProgresBook)
+progressRouter.put('/progress',validateJWT, updateProgresBook)
+progressRouter.delete('/progress', validateJWT,deleteProgresBook)
 
