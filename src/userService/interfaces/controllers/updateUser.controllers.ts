@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AuthMongoRepostitory, UniqueUsernameRepository, UpdateUSerMongo } from "../../infrastructure/userRespositoryMongo";
+import { AuthMongoRepostitory, findAndDeleteMongo, UniqueUsernameRepository, UpdateUSerMongo } from "../../infrastructure/userRespositoryMongo";
 import { User } from "../../domain/entities/UserTypes";
 import { AuthUserRepository } from "../../domain/ports/AuthUserRepository";
 import { UpdateUSer } from "../../application/service/UpdateUser.Service";
@@ -12,8 +12,9 @@ interface UserRequestParams {
 const userRespositoryMongo: UpdateUSerRepository = new UpdateUSerMongo();
 const authRepositoryMongo: AuthUserRepository = new AuthMongoRepostitory();
 const uniqueUsername = new UniqueUsernameRepository();
+const findUser = new findAndDeleteMongo()
 
-const updateUserService: UpdateUSerRepository = new UpdateUSer(userRespositoryMongo, authRepositoryMongo, uniqueUsername);
+const updateUserService: UpdateUSerRepository = new UpdateUSer(userRespositoryMongo, authRepositoryMongo, uniqueUsername, findUser);
 
 export const findAndUpdate = async (req: Request, res: Response) => {
   try {

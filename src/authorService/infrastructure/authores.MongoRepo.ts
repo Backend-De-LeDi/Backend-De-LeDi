@@ -25,6 +25,8 @@ export class updateAuthorMongo implements UpdateAuthorRepository {
   async updateAuthor(id: any, author: Partial<Author>) {
     const newAuthor = await AuthorModel.findByIdAndUpdate(id, author, { new: true });
     if (newAuthor) {
+      await docsApp.deleteAuthor(newAuthor._id.toString());
+      await docsApp.insertAuthor(newAuthor._id);
       return newAuthor;
     }
     return null;

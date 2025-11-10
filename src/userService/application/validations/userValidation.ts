@@ -1,14 +1,21 @@
+import { NextFunction, Request, Response } from "express";
 import { UserZodSchema } from "./userZodSchema";
-import { ZodError } from "zod";
 
-export function validarUsuario(data: any) {
-    const parsed = UserZodSchema.safeParse(data);
+export function UserValidation(req: Request, res: Response, next: NextFunction) {
+    try {
+        const parsed = UserZodSchema.safeParse(req.body);
 
-    if (!parsed.success) {
-        console.log(parsed.error)
+        if (!parsed.success) {
+            console.log(parsed.error);
+            res.status(400).json({
+                error: 'Datos de validación inválidos',
+                details: parsed.error.errors
+            });
+        }
 
-        throw parsed.error;
+        req.body = parsed.data;
+        next();
+    } catch (error) {
+        next(error);
     }
-
-    return parsed.data;
 }
