@@ -2,9 +2,15 @@ import { Request, Response } from "express";
 import { FindAuthors } from "../../app/service/FindAuthor.service";
 import { FindAuthor as findAuthorRepo } from "../../domain/ports/findAuthorRepository";
 import { findAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
+import { CreateMetric } from "../../../metrics/app";
+import { MongoIndexMetric } from "../../../metrics/infrastructure";
+import { MetricEventDetails } from "../../../shared/types/metricTypes/metricDetails";
 
 const findAuthorRepo = new findAuthorMongoRepo();
 const findAuthorService = new FindAuthors(findAuthorRepo);
+
+const metricRepo = new MongoIndexMetric();
+const createMetric = new CreateMetric(metricRepo);
 
 export const getAuthorById = async (req: Request, res: Response) => {
   try {
@@ -13,11 +19,19 @@ export const getAuthorById = async (req: Request, res: Response) => {
 
     if (!author) {
       res.status(404).json({ message: "Autor no encontrado" });
-      return
+      return;
     }
 
+    const data: MetricEventDetails = {
+      idBook: undefined,
+      idAuthor: author._id,
+      subgenre: undefined,
+      format: undefined,
+    };
+    await createMetric.exec(data);
+
     res.status(200).json(author);
-    return
+    return;
   } catch (error) {
     console.error("Error al buscar autor:", error);
     res.status(500).json({ message: "Error interno del servidor" });
