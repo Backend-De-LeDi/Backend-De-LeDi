@@ -19,7 +19,7 @@ import recommendationRouters from "./recommendations/interfaces/routers/recommen
 import gameRouter from "./ai/interface/routers/gameRouters";
 import chatRouter from "./ai/interface/routers/chatBotRouters";
 import memoryRouter from "./ai/interface/routers/memoryRouters";
-import { levelRoutes } from "./Leves/interface/routes/level.routes";
+import { levelRoutes } from "./levels/interface/routes/level.routes";
 import { bookMetricRouter } from "./metrics/interface/router/book.route";
 import { subgenreMetricRouter } from "./metrics/interface/router/subgenre.route";
 import { formatMetricRouter } from "./metrics/interface/router/format.route";

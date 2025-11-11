@@ -1,15 +1,15 @@
 import { Types } from "mongoose";
-import { ILevesRepo } from "../../domain/ports/levelPorts";
-import { LevesTypes } from "../../domain/entities/LevesTypes";
+import { ILevelsRepo } from "../../domain/ports/levelPorts";
+import { LevelsTypes } from "../../domain/entities/LevesTypes";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 
 
 
-export class LevelService implements ILevesRepo {
+export class LevelService implements ILevelsRepo {
     constructor(
-        private readonly levelRepo: ILevesRepo
+        private readonly levelRepo: ILevelsRepo
     ) { }
-    async saveLevel(avatar: LevesTypes): Promise<LevesTypes> {
+    async saveLevel(avatar: LevelsTypes): Promise<LevelsTypes> {
         const newAvatar = avatar;
         return await this.levelRepo.saveLevel(newAvatar)
     }
@@ -29,13 +29,13 @@ export class LevelService implements ILevesRepo {
         }
         await this.levelRepo.deleteLevel(id)
     }
-    async findLevel(level: number): Promise<LevesTypes> {
+    async findLevel(level: number): Promise<LevelsTypes> {
         return await this.levelRepo.findLevel(level)
     }
-    async findLevelByID(id: any): Promise<LevesTypes | null> {
+    async findLevelByID(id: any): Promise<LevelsTypes | null> {
         return this.levelRepo.findLevelByID(id)
     }
-    async findFirtsLevel(uno: number): Promise<LevesTypes | null> {
+    async findFirtsLevel(uno: number): Promise<LevelsTypes | null> {
         return this.levelRepo.findFirtsLevel(uno)
     }
 }

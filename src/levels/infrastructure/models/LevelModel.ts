@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-import { LevesTypes } from "../../domain/entities/LevesTypes";
+import { LevelsTypes } from "../../domain/entities/LevesTypes";
 
-const LevelSchema = new Schema<LevesTypes>({
+const LevelSchema = new Schema<LevelsTypes>({
     level: {
         type: Number,
         required: true
@@ -21,4 +21,4 @@ const LevelSchema = new Schema<LevesTypes>({
 
 });
 
-export const LevelModel = mongoose.model<LevesTypes>("Leves", LevelSchema);
+export const LevelModel = mongoose.model<LevelsTypes>("Levels", LevelSchema);

@@ -1,17 +1,17 @@
 import { Types } from "mongoose";
-import { LevesTypes } from "../domain/entities/LevesTypes";
+import { LevelsTypes } from "../domain/entities/LevesTypes";
 import { LevelModel } from "./models/LevelModel";
-import { ILevesRepo } from "../domain/ports/levelPorts";
+import { ILevelsRepo } from "../domain/ports/levelPorts";
 
 
 
 
-export class LevelMongoRepository implements ILevesRepo {
-    async saveLevel(level: LevesTypes): Promise<LevesTypes> {
+export class LevelMongoRepository implements ILevelsRepo {
+    async saveLevel(level: LevelsTypes): Promise<LevelsTypes> {
         const newLevel = new LevelModel(level);
         return await newLevel.save()
     }
-    async findLevel(level: number): Promise<LevesTypes> {
+    async findLevel(level: number): Promise<LevelsTypes> {
         const result = await LevelModel.findOne({ level: level })
         if (!result) throw new Error('Level not found')
         return result
@@ -21,10 +21,10 @@ export class LevelMongoRepository implements ILevesRepo {
         const result = await LevelModel.findByIdAndDelete(id)
 
     }
-    async findLevelByID(id: any): Promise<LevesTypes | null> {
+    async findLevelByID(id: any): Promise<LevelsTypes | null> {
         return await LevelModel.findById(id)
     }
-    async findFirtsLevel(uno: number): Promise<LevesTypes | null> {
+    async findFirtsLevel(uno: number): Promise<LevelsTypes | null> {
         return await LevelModel.findOne({ level: uno })
     }
 }
