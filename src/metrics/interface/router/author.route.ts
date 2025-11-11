@@ -6,7 +6,7 @@ import { validarRol } from "../../../shared/middlewares/validateRol";
 export const authorMetricRouter = Router();
 const controller = new GetAuthorMetricController();
 
-authorMetricRouter.get("/MetricBook/day", validateJWT, validarRol("Admin"), async (req: Request, res: Response) => {
+authorMetricRouter.get("/MetricAuthor/day", validateJWT, validarRol("Admin"), async (req: Request, res: Response) => {
   await controller.getAuthorMetricByDay(req, res);
 });
 
