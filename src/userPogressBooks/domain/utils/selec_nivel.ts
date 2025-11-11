@@ -1,14 +1,12 @@
-import { LevelService } from "../../../Leves/app/services/Level.service";
-import { ILevesRepo } from "../../../Leves/domain/ports/levelPorts";
-import { LevelMongoRepository } from "../../../Leves/infrastructure/Level.mongoRepository";
-import { FindAndDeleteUser } from "../../../userService/application/service/FindAndDelete.service";
-import { UpdateUSer } from "../../../userService/application/service/UpdateUser.Service";
-import { AuthUserRepository } from "../../../userService/domain/ports/AuthUserRepository";
-import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
-import { UpdateUSerRepository } from "../../../userService/domain/ports/UpdateUserRepository";
-import { AuthMongoRepostitory, findAndDeleteMongo, UniqueUsernameRepository, UpdateUSerMongo } from "../../../userService/infrastructure/userRespositoryMongo";
 
-const levelMongo: ILevesRepo = new LevelMongoRepository();
+import { LevelService } from "../../../levels/app/services/Level.service";
+import { ILevelsRepo } from "../../../levels/domain/ports/levelPorts";
+import { LevelMongoRepository } from "../../../levels/infrastructure/Level.mongoRepository";
+import { FindAndDeleteUser } from "../../../userService/application/service/FindAndDelete.service";
+import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
+import { findAndDeleteMongo } from "../../../userService/infrastructure/userRespositoryMongo";
+
+const levelMongo: ILevelsRepo = new LevelMongoRepository();
 const levelControllers = new LevelService(levelMongo);
 const findAndDeleteUser: FindAndDeleteRepo = new findAndDeleteMongo();
 const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDeleteUser);

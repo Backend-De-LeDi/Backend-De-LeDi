@@ -27,11 +27,6 @@ export class Register implements IRegisterRepository {
                 message: "Email already in use",
                 status: 400
             };
-            return {
-                success: false,
-                message: "Email already in use",
-                status: 400
-            };
         }
         const usernameExists = await this.uniqueRepo.findByUserName(user.userName);
         if (usernameExists) {
@@ -40,11 +35,7 @@ export class Register implements IRegisterRepository {
                 message: "Username already in use",
                 status: 400
             };
-            return {
-                success: false,
-                message: "Username already in use",
-                status: 400
-            };
+
         }
 
         const nivel = calcularEdad(user.birthDate);
@@ -55,7 +46,7 @@ export class Register implements IRegisterRepository {
             const level = await getLevel()
             const avatarAssignment = await avatarsAssignment(avatars)
             console.log(avatarAssignment)
-            const newUser = { ...user, nivel, avatar: avatarAssignment, level, password: hashedPassword };
+            const newUser = { ...user, nivel, avatar: avatarAssignment, level: level, password: hashedPassword };
             console.log(newUser)
             return await this.userRepo.createUser(newUser);
 

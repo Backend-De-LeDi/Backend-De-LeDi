@@ -1,15 +1,13 @@
 import { Request, Response } from "express";
-import { UploadService } from "../../../shared/services/uploadAvatar.service";
-
 import mongoose from "mongoose";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
-import { LevesTypes } from "../../domain/entities/LevesTypes";
+import { LevelsTypes } from "../../domain/entities/LevesTypes";
 import { LevelMongoRepository } from "../../infrastructure/Level.mongoRepository";
-import { ILevesRepo } from "../../domain/ports/levelPorts";
+import { ILevelsRepo } from "../../domain/ports/levelPorts";
 import { LevelService } from "../../app/services/Level.service";
 import { UploadServiceLevel } from "../../../shared/services/uploadLevel.Service";
 
-const levelMongo: ILevesRepo = new LevelMongoRepository();
+const levelMongo: ILevelsRepo = new LevelMongoRepository();
 const levelControllers = new LevelService(levelMongo);
 
 // Extend Request type to include file property
@@ -23,7 +21,7 @@ export const saveLevel = async (req: MulterRequest, res: Response) => {
 
     const levelUploaded = await UploadServiceLevel.uploadLevel(file as Express.Multer.File);
 
-    const date: LevesTypes = {
+    const date: LevelsTypes = {
       level,
       img: {
         url_secura: levelUploaded.url_secura,

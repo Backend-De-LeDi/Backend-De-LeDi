@@ -1,7 +1,7 @@
 import { photoProfile } from "../../../shared/types/photo.Types";
 
 //dates of level
-export class LevesTypes {
+export class LevelsTypes {
   constructor(
     public readonly level: number,
     public readonly level_string: string,
