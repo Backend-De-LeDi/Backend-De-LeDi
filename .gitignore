@@ -1,9 +1,4 @@
 node_modules
 .env
-<<<<<<< HEAD
 dist
 uploads
-=======
-uploads
-dist
->>>>>>> main
