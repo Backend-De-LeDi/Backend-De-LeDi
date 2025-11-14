@@ -20,6 +20,8 @@ import { BookBase, BookSearch } from "../../../shared/types/bookTypes/bookTypes"
 import mongoose from "mongoose";
 import { BookCover } from "../../../shared/types/bookTypes/bookTypes";
 import { ContentBook } from "../../../shared/types/bookTypes/contentBookTypes";
+import { MongoIndexMetric } from "../../../metrics/infrastructure/mongo/mongoIndexMetric";
+import { CreateMetric } from "../../../metrics/app";
 
 const mongoCrudRepo = new MongoCrudRepository();
 const mongoQueyRepo = new MongoQueryRepository();
@@ -29,6 +31,9 @@ const getAllService = new GetAllBooks(mongoCrudRepo);
 const getAllByLevelService = new GetAllBooksByLevel(mongoQueyRepo);
 const getByIdService = new GetBooksById(mongoCrudRepo);
 const updateService = new UpdateBooksById(mongoCrudRepo);
+
+const MetricRepo = new MongoIndexMetric();
+const createMetric = new CreateMetric(MetricRepo);
 
 export class BooksCrudController {
   // 🔄️
@@ -242,6 +247,17 @@ export class BooksCrudController {
       const book = await getByIdService.run(idValid);
 
       if (!book) return res.status(200).json({ msg: "libro no encontrado" });
+
+      const eventDataForMetric = {
+        idBook: book._id as mongoose.Types.ObjectId,
+        idAuthor: undefined,
+        subgenre: undefined,
+        format: undefined,
+      };
+
+      createMetric.exec(eventDataForMetric).catch((metricError: any) => {
+        console.error("Error al crear la métrica:", metricError);
+      });
 
       return res.json(book);
     } catch (error) {
