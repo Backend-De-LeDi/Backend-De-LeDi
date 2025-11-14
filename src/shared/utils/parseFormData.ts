@@ -19,6 +19,9 @@ export const parseFormData = (req: Request, res: Response, next: NextFunction): 
     if ("available" in req.body) {
       req.body.available = parseBoolean(req.body.available);
     }
+    if ("anthology" in req.body) {
+      req.body.anthology = parseBoolean(req.body.anthology);
+    }
 
     if ("subgenre" in req.body) {
       req.body.subgenre = parseArray(req.body.subgenre);

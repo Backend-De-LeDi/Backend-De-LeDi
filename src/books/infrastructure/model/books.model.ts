@@ -30,6 +30,7 @@ const bookSchema = new Schema<BookDetail>(
     fileExtension: { type: String, require: true },
     totalPages: { type: Number },
     duration: { type: Number },
+    anthology: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -41,7 +42,7 @@ bookSchema.index(
     synopsis: "text",
     theme: "text",
     genre: "text",
-    subgenre: "text"
+    subgenre: "text",
   },
   {
     default_language: "spanish",
@@ -52,8 +53,8 @@ bookSchema.index(
       synopsis: 2,
       theme: 2,
       genre: 1,
-      subgenre: 1
-    }
+      subgenre: 1,
+    },
   }
 );
 
