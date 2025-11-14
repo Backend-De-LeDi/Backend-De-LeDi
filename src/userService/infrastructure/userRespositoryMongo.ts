@@ -48,7 +48,7 @@ export class UpdateUSerMongo implements UpdateUSerRepository {
 
 export class findAndDeleteMongo implements FindAndDeleteRepo {
   async findByID(id: Types.ObjectId): Promise<User | null> {
-    const result = await UserModel.findById(id).populate("avatar");
+    const result = await UserModel.findById(id).populate("avatar").populate("levels");
     return result;
   }
 
@@ -56,7 +56,7 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
     const result = await UserModel.findByIdAndDelete(id);
   }
   async findUser(): Promise<User[]> {
-    const result = await UserModel.find().populate("avatar");
+    const result = await UserModel.find().populate("avatar").populate("levels");
     return result;
   }
 }
