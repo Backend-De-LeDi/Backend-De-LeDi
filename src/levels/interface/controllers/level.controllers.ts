@@ -84,7 +84,11 @@ export const getLeves = async (req: Request, res: Response) => {
 export const getFirtsLevel = async (req: Request, res: Response) => {
 	try {
 		const firtsLevel = await levelControllers.findFirtsLevel(1)
-		res.status(200).json(firtsLevel)
+		const dates = {
+			level: firtsLevel?._id,
+			imgLevel: firtsLevel?.img.url_secura
+		}
+		res.status(200).json(dates)
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ msg: "Error interno al obtener los avatares" });
