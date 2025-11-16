@@ -28,6 +28,7 @@ export interface BookBase extends Document {
   format: string;
   totalPages?: number;
   duration?: number;
+  anthology?: boolean;
   fileExtension: string;
 }
 

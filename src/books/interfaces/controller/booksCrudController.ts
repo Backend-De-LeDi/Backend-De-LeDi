@@ -57,6 +57,7 @@ export class BooksCrudController {
         totalPages,
         duration,
         fileExtension,
+        anthology,
       }: BookBase = req.body;
 
       const files = req.files as {
@@ -116,6 +117,7 @@ export class BooksCrudController {
         fileExtension,
         totalPages,
         duration,
+        anthology,
       };
 
       await createService.run(newBook);

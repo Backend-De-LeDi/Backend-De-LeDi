@@ -20,6 +20,7 @@ export class Books {
     public format: string,
     public fileExtension: string,
     public totalPages?: number,
-    public duration?: number
-  ) { }
+    public duration?: number,
+    public anthology?: boolean
+  ) {}
 }
