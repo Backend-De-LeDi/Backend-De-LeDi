@@ -17,9 +17,7 @@ export class Register implements IRegisterRepository {
         private readonly authRepo: AuthUserRepository,
         private readonly uniqueRepo: UniqueUserName
     ) { }
-
     async createUser(user: User): Promise<User | api_response> {
-
         const emailExists = await this.authRepo.findByEmail(user.email);
         if (emailExists) {
             return {
@@ -35,11 +33,8 @@ export class Register implements IRegisterRepository {
                 message: "Username already in use",
                 status: 400
             };
-
         }
         const level = await getLevel()
-        const levelImg = level.url
-        const levelId = level.id
 
         const nivel = calcularEdad(user.birthDate);
         const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -47,13 +42,13 @@ export class Register implements IRegisterRepository {
         if (!user.avatar) {
             const avatars = await getAllAvatars()
             const avatarAssignment = await avatarsAssignment(avatars)
-            const newUser = { ...user, nivel, avatar: avatarAssignment, levelId: levelId, levelImg: levelImg, password: hashedPassword };
-            console.log(newUser)
-            return await this.userRepo.createUser(newUser);
-
+            if (avatarAssignment) {
+                const newUser = { ...user, nivel, avatar: avatarAssignment, levelId: level.id, levelImg: level.url, password: hashedPassword };
+                console.log(newUser)
+                return await this.userRepo.createUser(newUser);
+            }
         }
-
-        const newUser = { ...user, nivel, levelId: levelId, levelImg: levelImg, password: hashedPassword };
+        const newUser = { ...user, nivel, levelId: level.id, levelImg: level.url, password: hashedPassword };
         return await this.userRepo.createUser(newUser);
     }
 }

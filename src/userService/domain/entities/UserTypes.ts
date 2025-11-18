@@ -11,7 +11,7 @@ export class User {
     public readonly rol: string,
     public readonly nivel: string,
     public readonly level: any,
-    public readonly avatar: any,
+    public readonly avatar: string,
     public readonly imgLevel: string,
     public readonly point: number,
     public readonly preference: {

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/UserTypes";
 import { Schema } from "mongoose";
+import { string } from "zod";
 
 const UserSchema = new Schema<User>(
 	{
@@ -52,8 +53,8 @@ const UserSchema = new Schema<User>(
 			default: 0,
 		},
 		avatar: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Avatars",
+			type: String,
+			required: true
 		},
 		preference: {
 			type: new Schema({
