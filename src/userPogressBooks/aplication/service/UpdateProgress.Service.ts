@@ -1,10 +1,9 @@
-import { Types } from "mongoose";
+import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
+import { UpdateUSerRepository } from "../../../userService/domain/ports/UpdateUserRepository";
 import { BookUserProgresRepo } from "../../domain/entities/BookPogress.types";
+import { FindProgressPort } from "../../domain/ports/findProgres";
 import { UpdateProgresPort } from "../../domain/ports/updateProgressPort";
 import { selecLevel } from "../../domain/utils/selec_nivel";
-import { UpdateUSerRepository } from "../../../userService/domain/ports/UpdateUserRepository";
-import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
-import { FindProgressPort } from "../../domain/ports/findProgres";
 
 export class UpdateProgressService implements UpdateProgresPort {
     constructor(
@@ -17,43 +16,30 @@ export class UpdateProgressService implements UpdateProgresPort {
     async updateProgres(
         id: string,
         data: Partial<BookUserProgresRepo>
-
     ): Promise<BookUserProgresRepo | null> {
 
-        const progreso = await this.findProgreso.findById(id)
+        const progreso = await this.findProgreso.findById(id);
+        if (!progreso) return null;
 
         if (data.status === "finished") {
             data.finishDate = new Date();
 
-            const userData = await this.getUser.findByID(progreso?.idUser);
-            console.log(userData?.point)
-            if (userData) {
-                const newPoints = userData.point + 100;
+            const user = await this.getUser.findByID(progreso.idUser);
+            if (user) {
+                const newPoints = user.point + 100;
 
-                await this.updateUser.updateUSer(userData._id, { point: newPoints });
+                await this.updateUser.updateUSer(user._id, { point: newPoints });
 
-                const newLevelId = await selecLevel(userData._id);
+                const levelData = await selecLevel(user._id);
 
-                if (newLevelId && newLevelId !== userData.level) {
-                    await this.updateUser.updateUSer(userData._id, { level: newLevelId });
+                if (levelData && levelData.id.toString() !== user.level.toString()) {
+                    await this.updateUser.updateUSer(user._id, {
+                        level: levelData.id,
+                        imgLevel: levelData.img
+                    });
                 }
             }
         }
-
-
-        // if (book.format === "ebook" || book.format === "pdf" || book.format === "epub") {
-        //     data.unit = "page";
-        //     data.total = book.totalPages || 0;
-        // } else if (book.format === "audiobook" || book.format === "video") {
-        //     data.unit = "second";
-        //     data.total = book.duration || 0;
-        // }
-        // data.position = data.position ?? 0;
-
-
-        // if (data.total && data.position !== undefined) {
-        //     data.percent = Math.min(100, (data.position / data.total) * 100);
-        // }
 
         return await this.progresRepo.updateProgres(id, data);
     }

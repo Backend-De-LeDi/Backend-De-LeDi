@@ -3,6 +3,7 @@ import { UpdateAuthor } from "../../app/service/UpdateAuthor.service";
 import { findAuthorMongoRepo, updateAuthorMongo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
 import { UploadService } from "../../../shared/services/uploadAvatar.service";
+import { authorUpdateValidation } from "../../app/validations/authorValidations";
 
 const updateAuthorRepo = new updateAuthorMongo();
 const findAuthorRepo = new findAuthorMongoRepo();
@@ -13,6 +14,22 @@ export const updataAuthors = async (req: Request, res: Response) => {
     const newAuthor: Author = req.body;
 
     const { id } = req.params;
+
+    const parsed = authorUpdateValidation(newAuthor);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        success: false,
+        message: "Datos de usuario inválidos",
+        errors: parsed.errors.map(error => ({
+          field: error.path.join('.'),
+          message: error.message
+        })),
+        status: 400
+      });
+      return;
+    }
+
 
     if (req.file) {
       const file = req.file;
@@ -25,6 +42,11 @@ export const updataAuthors = async (req: Request, res: Response) => {
     }
 
     const result = await updataAuthor.updateAuthor(id, newAuthor);
+    console.log(result)
+    if (!result) {
+      res.status(302).json({ msg: 'the author not update' })
+      return
+    }
 
     res.status(200).json({ msg: "author update successful" });
     return;

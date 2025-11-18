@@ -23,11 +23,7 @@ export class UpdateUSer implements UpdateUSerRepository {
                     message: "Email already in use",
                     status: 400
                 };
-                return {
-                    success: false,
-                    message: "Email already in use",
-                    status: 400
-                };
+
             }
 
         }

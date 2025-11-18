@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { LevelsTypes } from "../../domain/entities/LevesTypes";
 import { LevelMongoRepository } from "../../infrastructure/Level.mongoRepository";
 import { ILevelsRepo } from "../../domain/ports/levelPorts";
 import { LevelService } from "../../app/services/Level.service";
-import { UploadServiceLevel } from "../../../shared/services/uploadLevel.Service";
+import { UploadServiceLevel } from "../../../../shared/services/uploadLevel.Service";
+import { deleteCoverImage } from "../../../../shared/utils/deleteCoverImage";
 
 const levelMongo: ILevelsRepo = new LevelMongoRepository();
 const levelControllers = new LevelService(levelMongo);

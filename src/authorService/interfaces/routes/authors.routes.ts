@@ -15,7 +15,6 @@ autorRoutes.post(
   "/author/create",
   validateJWT,
   validarRol("Admin"),
-  authorValidation,
   upload.single("avatar"),
   createAuthor
 );
@@ -23,4 +22,4 @@ autorRoutes.get("/author/:id", getAuthorById);
 autorRoutes.get("/author", getAuthorByName);
 autorRoutes.get("/AllAuthores", getAllAuthores);
 autorRoutes.delete("/author/:id", validateJWT, validarRol("Admin"), deleteAuthorById);
-autorRoutes.put("/author/:id", validateJWT, validarRol("Admin"), authorUpdateValidation, updataAuthors);
+autorRoutes.put("/author/:id", updataAuthors);

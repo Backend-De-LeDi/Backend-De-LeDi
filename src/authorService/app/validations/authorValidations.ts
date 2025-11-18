@@ -1,39 +1,84 @@
-import { Request, Response, NextFunction } from 'express';
-import { AuthorUpdateZodSchema, AuthorZodSchema } from './authorZodSchema';
+import { Request, Response, NextFunction } from "express";
+import { z } from "zod";
+import { AuthorZodSchema, updataAuthorsZodSchema } from "./authZodSchema";
+import { Author } from "../../domain/entidades/author.Types";
 
-export function authorValidation(req: Request, res: Response, next: NextFunction) {
-    try {
-        const parsed = AuthorZodSchema.safeParse(req.body);
-
-        if (!parsed.success) {
-            console.log(parsed.error);
-            res.status(400).json({
-                error: 'Datos de validación inválidos',
-                details: parsed.error.errors
-            });
-        }
-
-        req.body = parsed.data;
-        next();
-    } catch (error) {
-        next(error);
+// Tipo explícito del resultado:
+type AuthorValidationResult =
+    | {
+        success: true;
+        data: Omit<Author, "_id" | "avatar">;
+        status: 200;
     }
+    | {
+        success: false;
+        message: string;
+        errors: Array<{
+            path: any; field: string; message: string
+        }>;
+        status: 400;
+    };
+type AuthorUpdateValidationResult =
+    | {
+        success: true;
+        data: Partial<Omit<Author, "_id" | "avatar">>;
+        status: 200;
+    }
+    | {
+        success: false;
+        message: string;
+        errors: Array<{
+            path: (string | number)[];
+            field: string;
+            message: string;
+        }>;
+        status: 400;
+    };
+
+export function authorValidation(data: Author): AuthorValidationResult {
+    const parsed = AuthorZodSchema.safeParse(data);
+
+    if (!parsed.success) {
+        return {
+            success: false,
+            message: "Datos de usuario inválidos",
+            errors: parsed.error.errors.map((error) => ({
+                path: error.path,
+                field: error.path.join("."),
+                message: error.message,
+            })),
+            status: 400,
+        };
+    }
+
+    return {
+        success: true,
+        data: parsed.data,
+        status: 200,
+    };
 }
-export function authorUpdateValidation(req: Request, res: Response, next: NextFunction) {
-    try {
-        const parsed = AuthorUpdateZodSchema.safeParse(req.body);
 
-        if (!parsed.success) {
-            console.log(parsed.error);
-            res.status(400).json({
-                error: 'Datos de validación inválidos',
-                details: parsed.error.errors
-            });
-        }
-
-        req.body = parsed.data;
-        next();
-    } catch (error) {
-        next(error);
+export function authorUpdateValidation(
+    date: Partial<Author>
+): AuthorUpdateValidationResult {
+    const parsed = updataAuthorsZodSchema.safeParse(date);
+    if (!parsed.success) {
+        return {
+            success: false,
+            message: "Datos de usuario inválidos",
+            errors: parsed.error.errors.map((error) => ({
+                path: error.path,
+                field: error.path.join("."),
+                message: error.message,
+            })),
+            status: 400,
+        };
     }
+
+    return {
+        success: true,
+        data: parsed.data,
+        status: 200,
+    };
+
 }

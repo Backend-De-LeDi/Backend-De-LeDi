@@ -19,3 +19,4 @@ export class UploadService {
     return new photoProfile(result.public_id, result.secure_url);
   }
 }
+

@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import ENV from "../config/configEnv";
-import chalk from "chalk";
 
 cloudinary.config({
     cloud_name: ENV.CLOUD_NAME,
@@ -11,6 +10,15 @@ cloudinary.config({
 export async function subirImagen(rutaArchivo: string) {
     try {
         const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "User_avatar" });
+        return result;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function subirAuthorimg(rutaArchivo: string) {
+    try {
+        const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "Author_fotos" });
         return result;
     } catch (error) {
         console.log(error)

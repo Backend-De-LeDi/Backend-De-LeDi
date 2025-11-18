@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { ILevelsRepo } from "../../domain/ports/levelPorts";
 import { LevelsTypes } from "../../domain/entities/LevesTypes";
-import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
+import { deleteCoverImage } from "../../../../shared/utils/deleteCoverImage";
 
 
 

@@ -19,11 +19,11 @@ import recommendationRouters from "./recommendations/interfaces/routers/recommen
 import gameRouter from "./ai/interface/routers/gameRouters";
 import chatRouter from "./ai/interface/routers/chatBotRouters";
 import memoryRouter from "./ai/interface/routers/memoryRouters";
-import { levelRoutes } from "./levels/interface/routes/level.routes";
 import { bookMetricRouter } from "./metrics/interface/router/book.route";
 import { subgenreMetricRouter } from "./metrics/interface/router/subgenre.route";
 import { formatMetricRouter } from "./metrics/interface/router/format.route";
 import { authorMetricRouter } from "./metrics/interface/router/author.route";
+import { levelRoutes } from "./Gamificacion/levels/interface/routes/level.routes";
 
 // ? creación de la aplicación Express
 export const app = express();

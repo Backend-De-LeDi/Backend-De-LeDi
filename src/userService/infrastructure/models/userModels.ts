@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/UserTypes";
 import { Schema } from "mongoose";
-import { string } from "zod";
 
 const UserSchema = new Schema<User>(
 	{
@@ -36,6 +35,10 @@ const UserSchema = new Schema<User>(
 		level: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Levels",
+		},
+		imgLevel: {
+			type: String,
+			required: true
 		},
 		rol: {
 			type: String,

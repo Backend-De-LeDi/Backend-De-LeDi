@@ -1,7 +1,7 @@
 
-import { LevelService } from "../../../levels/app/services/Level.service";
-import { ILevelsRepo } from "../../../levels/domain/ports/levelPorts";
-import { LevelMongoRepository } from "../../../levels/infrastructure/Level.mongoRepository";
+import { LevelService } from "../../../Gamificacion/levels/app/services/Level.service";
+import { ILevelsRepo } from "../../../Gamificacion/levels/domain/ports/levelPorts";
+import { LevelMongoRepository } from "../../../Gamificacion/levels/infrastructure/Level.mongoRepository";
 import { FindAndDeleteUser } from "../../../userService/application/service/FindAndDelete.service";
 import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo } from "../../../userService/infrastructure/userRespositoryMongo";
@@ -16,7 +16,6 @@ const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDelete
 
 
 export async function selecLevel(id: string) {
-    // Buscar usuario
     const userFind = await findAndDelService.findByID(id);
     if (!userFind) return null;
 
@@ -36,5 +35,6 @@ export async function selecLevel(id: string) {
         return currentLevelId;
     }
 
-    return nextLevel._id;
+    const result = { id: nextLevel._id, img: nextLevel.img }
+    return result
 }

@@ -1,6 +1,3 @@
-import { AvatarType } from "../../../avatars/domain/entities/AvatarsTypes";
-import { LevelsTypes } from "../../../levels/domain/entities/LevesTypes";
-
 import ENV from "../../../shared/config/configEnv";
 
 
