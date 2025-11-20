@@ -1,7 +1,7 @@
 
-import { LevelService } from "../../../Gamificacion/levels/app/services/Level.service";
-import { ILevelsRepo } from "../../../Gamificacion/levels/domain/ports/levelPorts";
-import { LevelMongoRepository } from "../../../Gamificacion/levels/infrastructure/Level.mongoRepository";
+import { LevelService } from "../../../gamification/levels/app/services/Level.service";
+import { ILevelsRepo } from "../../../gamification/levels/domain/ports/levelPorts";
+import { LevelMongoRepository } from "../../../gamification/levels/infrastructure/Level.mongoRepository";
 import { FindAndDeleteUser } from "../../../userService/application/service/FindAndDelete.service";
 import { FindAndDeleteRepo } from "../../../userService/domain/ports/FindAndDeleteRepo";
 import { findAndDeleteMongo } from "../../../userService/infrastructure/userRespositoryMongo";

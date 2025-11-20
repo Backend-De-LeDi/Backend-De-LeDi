@@ -23,7 +23,7 @@ import { bookMetricRouter } from "./metrics/interface/router/book.route";
 import { subgenreMetricRouter } from "./metrics/interface/router/subgenre.route";
 import { formatMetricRouter } from "./metrics/interface/router/format.route";
 import { authorMetricRouter } from "./metrics/interface/router/author.route";
-import { levelRoutes } from "./Gamificacion/levels/interface/routes/level.routes";
+import { levelRoutes } from "./gamification/levels/interface/routes/level.routes";
 
 // ? creación de la aplicación Express
 export const app = express();
