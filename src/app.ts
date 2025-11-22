@@ -25,6 +25,7 @@ import { formatMetricRouter } from "./metrics/interface/router/format.route";
 import { authorMetricRouter } from "./metrics/interface/router/author.route";
 import { levelRoutes } from "./gamification/levels/interface/routes/level.routes";
 import { medalRoutes } from "./gamification/games.medals/interface/routes/medal.routes";
+import { comentRoutes } from "./BookClub/coments/interface/routes/coment.routes";
 
 // ? creación de la aplicación Express
 export const app = express();
@@ -81,3 +82,4 @@ app.use(subgenreMetricRouter);
 app.use(medalRoutes)
 app.use(formatMetricRouter);
 app.use(authorMetricRouter);
+app.use(comentRoutes)

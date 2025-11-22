@@ -47,3 +47,19 @@ export const getComentByUserID = async (userid: string) => {
         return error
     }
 }
+export const getAdmindComent = async (req: Request, res: Response) => {
+    try {
+        const result = await findComent.findAdminComent()
+        console.log(result)
+
+        if (!result === null) {
+            res.status(200).json({ msg: 'the admin not post the coments' })
+        }
+
+        res.status(200).json(result)
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Internal server error", error });
+    }
+}

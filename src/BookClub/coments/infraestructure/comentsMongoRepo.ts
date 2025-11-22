@@ -23,12 +23,18 @@ export class FindComentsMongo implements IfindComents {
             .exec();
     }
     async findComentByForo(foroId: any): Promise<ComentTypes[]> {
-        return await comentsModel.find({ idForo: foroId }).populate("idUser");
+        return await comentsModel.find({ idForo: foroId }).populate("idUser", "userName email").populate('idForo', "title");
     }
     async findComentByUserID(userID: string): Promise<ComentTypes[]> {
         return await comentsModel.find({ idUser: userID })
             .populate("idUser", "userName email")
             .populate("idForo", "title");
+    }
+    async findAdminComent(): Promise<ComentTypes[] | null> {
+        return await comentsModel.find({ Admin: true })
+            .populate("idUser", "userName email")
+            .populate("idForo", "title")
+            .exec();
     }
 }
 
