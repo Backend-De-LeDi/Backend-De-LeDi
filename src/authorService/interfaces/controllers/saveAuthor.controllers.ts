@@ -3,9 +3,9 @@ import { CreateAuthor } from "../../app/service/SaveAuthor.service";
 import { ISaveAuthorRepository } from "../../domain/ports/saveAuthorRepository";
 import { findAuthorMongoRepo, SaveAuthorMongoRepo } from "../../infrastructure/authores.MongoRepo";
 import { Author } from "../../domain/entidades/author.Types";
-import { UploadService } from "../../../shared/services/uploadAvatar.service";
 import { deleteCoverImage } from "../../../shared/utils/deleteCoverImage";
 import { authorValidation } from "../../app/validations/authorValidations";
+import { UploadAuthorService } from "../../../shared/services/upload_Author.Service";
 
 const saveAuthorMongo: ISaveAuthorRepository = new SaveAuthorMongoRepo();
 const findAuthorRepo = new findAuthorMongoRepo();
@@ -16,7 +16,7 @@ export const createAuthor = async (req: Request, res: Response) => {
   try {
     const author: Author = req.body;
     const file = req.file;
-
+    console.log(author)
 
     const parsed = authorValidation(author);
 
@@ -30,10 +30,11 @@ export const createAuthor = async (req: Request, res: Response) => {
         })),
         status: 400
       });
+
       return;
     }
 
-    const avatar = await UploadService.uploadAvatar(file as Express.Multer.File);
+    const avatar = await UploadAuthorService.uploadAuthor(file as Express.Multer.File);
     const newAuthor = { ...author, avatar };
 
     const result = await authorService.saveAuthors(newAuthor);

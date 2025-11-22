@@ -1,6 +1,6 @@
 import { fileDelete } from "../utils/deleteFile";
 import { photoProfile } from "../types/photo.Types";
-import { subirImagenLevel } from "../utils/levelUpdateImg";
+import { subirImagenLevel } from "../utils/img/levelUpdateImg";
 
 export class UploadServiceLevel {
   static async uploadLevel(file: Express.Multer.File): Promise<photoProfile> {

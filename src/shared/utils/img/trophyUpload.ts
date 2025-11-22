@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import ENV from "../config/configEnv";
+import ENV from "../../config/configEnv";
 
 cloudinary.config({
     cloud_name: ENV.CLOUD_NAME,
@@ -7,9 +7,9 @@ cloudinary.config({
     api_secret: ENV.API_SECRET,
 });
 
-export async function subirImgTrophy(rutaArchivo: string) {
+export async function subirImgMedals(rutaArchivo: string) {
     try {
-        const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "trofeos_img" });
+        const result = await cloudinary.uploader.upload(rutaArchivo, { folder: "Medals_img" });
         return result;
     } catch (error) {
         console.log(error)

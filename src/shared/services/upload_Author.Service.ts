@@ -1,12 +1,12 @@
 import { fileDelete } from "../utils/deleteFile";
 import { photoProfile } from "../types/photo.Types";
-import { subirImgTrophy } from "../utils/trophyUpload";
+import { subirAuthorimg } from "../utils/img/avatarUser";
 
-export class UploadService {
-    static async uploadAvatar(file: Express.Multer.File): Promise<photoProfile> {
+export class UploadAuthorService {
+    static async uploadAuthor(file: Express.Multer.File): Promise<photoProfile> {
         if (!file) throw new Error("No se recibió ningún archivo");
 
-        const result = await subirImgTrophy(file.path);
+        const result = await subirAuthorimg(file.path);
         if (!result || !result.secure_url || !result.public_id) {
             throw new Error("Error al subir la imagen");
         }

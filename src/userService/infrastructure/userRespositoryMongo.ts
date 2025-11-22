@@ -58,7 +58,7 @@ export class findAndDeleteMongo implements FindAndDeleteRepo {
     const result = await UserModel.findByIdAndDelete(id);
   }
   async findUser(): Promise<User[]> {
-    const result = await UserModel.find().populate("avatar");
+    const result = await UserModel.find();
     return result;
   }
 }

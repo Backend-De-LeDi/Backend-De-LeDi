@@ -13,28 +13,35 @@ const findAndDelService: FindAndDeleteUser = new FindAndDeleteUser(findAndDelete
 
 
 
-
-
 export async function selecLevel(id: string) {
     const userFind = await findAndDelService.findByID(id);
     if (!userFind) return null;
 
     const currentLevelId = userFind.level;
-
     const currentLevel = await levelControllers.findLevelByID(currentLevelId);
-    if (!currentLevel) return currentLevelId;
+    if (!currentLevel) return null;
 
+    // SI NO SUBE DE NIVEL → DEVUELVE OBJETO
     if (userFind.point < currentLevel.maxPoint) {
-        return currentLevelId;
+        return {
+            id: currentLevelId,
+            img: currentLevel.img.url_secura
+        };
     }
 
     const nextLevelNumber = currentLevel.level + 1;
     const nextLevel = await levelControllers.findLevel(nextLevelNumber);
 
     if (!nextLevel) {
-        return currentLevelId;
+        return {
+            id: currentLevelId,
+            img: currentLevel.img.url_secura
+        };
     }
 
-    const result = { id: nextLevel._id, img: nextLevel.img }
-    return result
+    // SI SUBE DE NIVEL → DEVUELVE OBJETO
+    return {
+        id: nextLevel._id,
+        img: nextLevel.img.url_secura
+    };
 }

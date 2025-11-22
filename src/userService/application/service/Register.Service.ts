@@ -35,7 +35,7 @@ export class Register implements IRegisterRepository {
             };
         }
         const level = await getLevel()
-
+        console.log("service level", level)
         const nivel = calcularEdad(user.birthDate);
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
@@ -43,12 +43,12 @@ export class Register implements IRegisterRepository {
             const avatars = await getAllAvatars()
             const avatarAssignment = await avatarsAssignment(avatars)
             if (avatarAssignment) {
-                const newUser = { ...user, nivel, avatar: avatarAssignment, levelId: level.id, levelImg: level.url, password: hashedPassword };
+                const newUser = { ...user, nivel, avatar: avatarAssignment, level: level.id, imgLevel: level.url, password: hashedPassword };
                 console.log(newUser)
                 return await this.userRepo.createUser(newUser);
             }
         }
-        const newUser = { ...user, nivel, levelId: level.id, levelImg: level.url, password: hashedPassword };
+        const newUser = { ...user, nivel, level: level.id, imgLevel: level.url, password: hashedPassword };
         return await this.userRepo.createUser(newUser);
     }
 }

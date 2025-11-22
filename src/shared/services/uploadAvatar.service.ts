@@ -1,5 +1,5 @@
 import { fileDelete } from "../utils/deleteFile";
-import { subirImagen } from "../utils/avatarUser";
+import { subirImagen } from "../utils/img/avatarUser";
 import { photoProfile } from "../types/photo.Types";
 
 export class UploadService {

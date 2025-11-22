@@ -10,7 +10,7 @@ export class BookSaveProgres {
     ) { }
     //Funcion de logica de negocio para Guardar libros 
     async saveBookProgres(data: BookUserProgresRepo): Promise<BookUserProgresRepo> {
-        
+
         const books = await this.getBooksByIds.run([new Types.ObjectId(data.idBook)]);
         const book = books[0];
 
@@ -28,6 +28,7 @@ export class BookSaveProgres {
         }
         data.position = data.position ?? 0;
         if (data.total > 0) {
+            console.log(data.total)
             data.percent = Math.min(100, (data.position / data.total) * 100);
         } else {
             data.percent = 0;

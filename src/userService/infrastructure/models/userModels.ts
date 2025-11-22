@@ -36,6 +36,7 @@ const UserSchema = new Schema<User>(
 		level: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Levels",
+			required: true
 		},
 		imgLevel: {
 			type: String,
@@ -66,6 +67,10 @@ const UserSchema = new Schema<User>(
 				},
 			}),
 		},
+		medals: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Medals",
+		}]
 	},
 	{ timestamps: true }
 );

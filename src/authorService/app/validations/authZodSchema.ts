@@ -13,10 +13,14 @@ export const AuthorZodSchema = z.object({
     profession: z.string()
         .min(1, { message: "La profesión es requerida" })
         .max(100, { message: "La profesión no puede exceder 100 caracteres" }),
-
     birthdate: z.union([
         z.string()
-            .datetime({ message: "La fecha debe tener un formato válido" })
+            .regex(/^\d{4}-\d{2}-\d{2}$/, {
+                message: "La fecha debe tener el formato YYYY-MM-DD"
+            })
+            .refine((val) => !isNaN(Date.parse(val)), {
+                message: "La fecha no es válida"
+            })
             .refine((val) => new Date(val) <= new Date(), {
                 message: "La fecha de nacimiento no puede ser futura"
             }),
@@ -48,12 +52,12 @@ export const updataAuthorsZodSchema = z.object({
     fullName: z.string()
         .min(1, { message: "El nombre completo es requerido" })
         .max(100, { message: "El nombre completo no puede exceder 100 caracteres" })
-        .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: "El nombre solo puede contener letras y espacios" })
+        .regex(/^[a.-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: "El nombre solo puede contener letras y espacios" })
         .optional(),
 
     biography: z.string()
         .min(10, { message: "La biografía debe tener al menos 10 caracteres" })
-        .max(2000, { message: "La biografía no puede exceder 2000 caracteres" })
+        .max(20000, { message: "La biografía no puede exceder 2000 caracteres" })
         .optional(),
 
     profession: z.string()
@@ -63,7 +67,12 @@ export const updataAuthorsZodSchema = z.object({
 
     birthdate: z.union([
         z.string()
-            .datetime({ message: "La fecha debe tener un formato válido" })
+            .regex(/^\d{4}-\d{2}-\d{2}$/, {
+                message: "La fecha debe tener el formato YYYY-MM-DD"
+            })
+            .refine((val) => !isNaN(Date.parse(val)), {
+                message: "La fecha no es válida"
+            })
             .refine((val) => new Date(val) <= new Date(), {
                 message: "La fecha de nacimiento no puede ser futura"
             }),
@@ -72,6 +81,7 @@ export const updataAuthorsZodSchema = z.object({
                 message: "La fecha de nacimiento no puede ser futura"
             })
     ]).optional(),
+
 
     birthplace: z.string()
         .min(1, { message: "El lugar de nacimiento es requerido" })

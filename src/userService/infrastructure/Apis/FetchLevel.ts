@@ -7,10 +7,10 @@ export async function getLevel(): Promise<{ id: any, url: string }> {
 
 
         const data = await response.json();
-
+        console.log("level dates", data)
         return {
-            id: data.id,
-            url: data.url
+            id: data.level,
+            url: data.imgLevel
         }
 
     } catch (error) {

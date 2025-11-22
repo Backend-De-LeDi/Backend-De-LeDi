@@ -8,7 +8,7 @@ export class BookUserProgresRepo {
         public position: number,
         public percent: number,
         public total: number,
-        public readonly status: "reading" | "finished" | "pending" | "abandoned",
+        public status: "reading" | "finished" | "pending" | "abandoned",
         public readonly startDate: Date,
         public finishDate: Date,
         public readonly UpdateLast: Date

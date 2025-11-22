@@ -17,6 +17,9 @@ export class User {
     public readonly preference: {
       category: string[];
       format: string[];
+    },
+    public readonly medals: {
+      medals: any
     }
   ) { }
 }

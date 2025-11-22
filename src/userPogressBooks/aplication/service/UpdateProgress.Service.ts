@@ -21,18 +21,25 @@ export class UpdateProgressService implements UpdateProgresPort {
         const progreso = await this.findProgreso.findById(id);
         if (!progreso) return null;
 
+
+        if (data.percent === 100 && progreso.status !== "finished") {
+            console.log("status finalizado")
+            data.status = "finished";
+        }
+
+
         if (data.status === "finished") {
             data.finishDate = new Date();
 
             const user = await this.getUser.findByID(progreso.idUser);
             if (user) {
                 const newPoints = user.point + 100;
-
                 await this.updateUser.updateUSer(user._id, { point: newPoints });
 
                 const levelData = await selecLevel(user._id);
 
                 if (levelData && levelData.id.toString() !== user.level.toString()) {
+                    console.log(levelData.id, levelData.img)
                     await this.updateUser.updateUSer(user._id, {
                         level: levelData.id,
                         imgLevel: levelData.img
